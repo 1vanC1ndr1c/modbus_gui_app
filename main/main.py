@@ -29,6 +29,7 @@ async def connect_to_socket():
             break
 
 
+
 # async def write_loop():
 # while True:
 # ws.send_bytes(b'000100000006090300040001')
