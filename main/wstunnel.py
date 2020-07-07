@@ -15,14 +15,19 @@ conf = {
 
 
 async def ws_handler(request):
+    #breakpoint()
     ws = aiohttp.web.WebSocketResponse()
     await ws.prepare(request)
+
     try:
-        conn_msg_str = await ws.receive_str()
-        conn_msg = json.loads(conn_msg_str)
+        print("Connection established.")
+        # conn_msg_str = await ws.receive_str()
+        # conn_msg = json.loads(conn_msg_str)
+
         reader, writer = await asyncio.open_connection(
-            conf['modubs']['host'], conf['modbus']['port'])
-    except Exception:
+            conf['modbus']['host'], conf['modbus']['port'])
+    except Exception as e:
+        #breakpoint()
         return ws
     await ws.send_str('ACK')
 
