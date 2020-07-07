@@ -39,9 +39,6 @@ def form_request(modbus_request, unit_address, used_tids_list, latest_tid):
     return (bytes.fromhex(tid + protocol + length + unit_address + modbus_request)), latest_tid, used_tids_list
 
 
-
-
-
 async def communicate_with_modbus(request):
     session = aiohttp.ClientSession()
     ws = await session.ws_connect('ws://localhost:3456/ws')
