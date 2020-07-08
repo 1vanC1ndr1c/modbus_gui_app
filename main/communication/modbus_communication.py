@@ -8,6 +8,8 @@ async def communicate_with_modbus(request):
 
     modbus_response = "No response."
 
+    print("REQUEST=",str(request))
+
     msg = await ws.receive()
     if isinstance(msg.data, bytes):
         modbus_response = msg.data
@@ -19,7 +21,7 @@ async def communicate_with_modbus(request):
     if modbus_response == "No response.":
         print("No response.")
 
-    print(modbus_response)
+    print("RESPONSE=", modbus_response)
 
     await ws.close()
     await session.close()

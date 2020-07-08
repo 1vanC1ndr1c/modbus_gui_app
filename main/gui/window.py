@@ -4,8 +4,7 @@ from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QComboBox, QPushButton, QStackedWidget, \
     QHBoxLayout, QLineEdit, QDialog
 
-from logic.request_processing import process_request
-
+import validation
 
 def init_gui():
     app = QApplication(sys.argv)
@@ -36,20 +35,33 @@ def init_gui():
 
     read_coils_option_parent_widget = QWidget()
     read_coils_option_parent_layout = QVBoxLayout()
+
     read_coils_option_first_row_layout = QHBoxLayout()
-    read_coils_option_first_row_text = QLabel("Starting Address:")
+    read_coils_option_first_row_text = QLabel("Starting Address(hex):")
     read_coils_option_first_row_input = QLineEdit()
     read_coils_option_first_row_input.setPlaceholderText("Insert the starting address...")
     read_coils_option_first_row_layout.addWidget(read_coils_option_first_row_text)
     read_coils_option_first_row_layout.addWidget(read_coils_option_first_row_input)
     read_coils_option_parent_layout.addLayout(read_coils_option_first_row_layout)
+
     read_coils_option_second_row_layout = QHBoxLayout()
-    read_coils_option_second_row_text = QLabel("Number of coils:")
+    read_coils_option_second_row_text = QLabel("Number of coils(dec):")
     read_coils_option_second_row_input = QLineEdit()
     read_coils_option_second_row_input.setPlaceholderText("Insert the number of coils...")
     read_coils_option_second_row_layout.addWidget(read_coils_option_second_row_text)
     read_coils_option_second_row_layout.addWidget(read_coils_option_second_row_input)
     read_coils_option_parent_layout.addLayout(read_coils_option_second_row_layout)
+
+    read_coils_option_third__row_layout = QHBoxLayout()
+    read_coils_option_third__row_text = QLabel("Unit Address(dec):")
+    read_coils_option_third__row_input = QLineEdit()
+    read_coils_option_third__row_input.setPlaceholderText("Insert the unit address...")
+    read_coils_option_third__row_layout.addWidget(read_coils_option_third__row_text)
+    read_coils_option_third__row_layout.addWidget(read_coils_option_third__row_input)
+    read_coils_option_parent_layout.addLayout(read_coils_option_third__row_layout)
+
+
+
     read_coils_option_parent_widget.setLayout(read_coils_option_parent_layout)
 
     # TODO add options for other instructions
@@ -70,7 +82,7 @@ def init_gui():
 
     # TODO pass arguments into this function
     button_submit.clicked.connect(
-        lambda c: validate_input_data_and_produce_a_response(
+        lambda c: validation.validate_input_data_and_produce_a_response(
             additional_options_stacked_widget.currentIndex(),
             additional_options_stacked_widget.currentWidget(),
             window))
@@ -82,30 +94,11 @@ def init_gui():
     app.exec_()
 
 
-def validate_input_data_and_produce_a_response(index, stackedWidget, window):
-    if index == 0:  # read coils, 2 inputs (starting address and no. of coils)
-        inputs = stackedWidget.findChildren(QLineEdit)  # get children that are used for data input
-        for index, inp in enumerate(inputs):
-            try:
-                if index == 0:  # check the validity of the first input
-                    start_address_hex = int(str(inp.text()), 16)
-                    if start_address_hex < 0x0000 or start_address_hex > 0xFFFF:
-                        init_error_window(window)
-                    else:
-                        process_request()
-
-
-            except:
-                init_error_window(window)
-
-    # print("YOLO")
-
-
-def init_error_window(window):
+def init_error_window(window, message):
     error_dlg_window = QDialog(window)
     error_dlg_window.setWindowTitle("ERROR")
     error_font = QFont("Arial", 12)
-    error_label = QLabel("Error, Wrong values were given.")
+    error_label = QLabel(message)
     error_label.setStyleSheet("color: red")
     error_label.setFont(error_font)
     error_layout = QVBoxLayout()
