@@ -1,5 +1,7 @@
 import aiohttp
 
+import request_processing
+
 
 async def communicate_with_modbus(request):
     session = aiohttp.ClientSession()
@@ -8,7 +10,7 @@ async def communicate_with_modbus(request):
 
     modbus_response = "No response."
 
-    print("REQUEST=",str(request))
+    print("REQUEST=", str(request))
 
     msg = await ws.receive()
     if isinstance(msg.data, bytes):
@@ -26,3 +28,4 @@ async def communicate_with_modbus(request):
     await ws.close()
     await session.close()
 
+    request_processing.set_response(modbus_response)

@@ -4,7 +4,6 @@ import contextlib
 import json
 import sys
 
-
 conf = {
     'ws': {
         'host': '0.0.0.0',
@@ -15,7 +14,7 @@ conf = {
 
 
 async def ws_handler(request):
-    #breakpoint()
+    # breakpoint()
     ws = aiohttp.web.WebSocketResponse()
     await ws.prepare(request)
 
@@ -27,7 +26,7 @@ async def ws_handler(request):
         reader, writer = await asyncio.open_connection(
             conf['modbus']['host'], conf['modbus']['port'])
     except Exception as e:
-        #breakpoint()
+        # breakpoint()
         return ws
     await ws.send_str('ACK')
 
@@ -69,6 +68,7 @@ def main():
     aiohttp.web.run_app(app,
                         host=conf['ws']['host'], port=conf['ws']['port'],
                         shutdown_timeout=0)
+
 
 if __name__ == '__main__':
     sys.exit(main())

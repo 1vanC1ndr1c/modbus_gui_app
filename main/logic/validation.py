@@ -5,7 +5,6 @@ from window import init_error_window
 
 
 def validate_input_data_and_produce_a_response(index, stackedWidget, window):
-
     if index == 0:  # read coils, 2 inputs (starting address and no. of coils)
         inputs = stackedWidget.findChildren(QLineEdit)  # get children that are used for data input
 
@@ -19,7 +18,7 @@ def validate_input_data_and_produce_a_response(index, stackedWidget, window):
 
         try:
             start_address_hex = int(str(start_address_hex), 16)
-            if start_address_hex < 0x0000 or start_address_hex > 0xFFFF:
+            if start_address_hex < 0x0001 or start_address_hex > 0xFFFF:
                 init_error_window(window, "Start address needs to be [0x0000, 0xFFFF]")
             else:
                 valid_start_address_hex = True
@@ -43,8 +42,6 @@ def validate_input_data_and_produce_a_response(index, stackedWidget, window):
                 valid_no_of_coils = True
         except:
             init_error_window(window, "Unit address needs to be a base 10 number.")
-        #TODO, also add location of the device
-
 
         if valid_no_of_coils is True and valid_start_address_hex is True:
             data = [start_address_hex, no_of_coils]
