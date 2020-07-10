@@ -1,12 +1,16 @@
+import sys
+
 from PySide2.QtWidgets import QLineEdit
 
-from request_processing import process_request
+from request_processing import send_request
 from window import init_error_window
 
+is_valid = False
 
-def validate_input_data_and_produce_a_response(index, stackedWidget, window):
+
+def validate_input_data(index, stacked_widget, window, request_queue):
     if index == 0:  # read coils, 2 inputs (starting address and no. of coils)
-        inputs = stackedWidget.findChildren(QLineEdit)  # get children that are used for data input
+        inputs = stacked_widget.findChildren(QLineEdit)  # get children that are used for data input
 
         valid_start_address_hex = False
         start_address_hex = inputs[0].text()
@@ -39,10 +43,17 @@ def validate_input_data_and_produce_a_response(index, stackedWidget, window):
             if unit_address < 1 or unit_address > 255:
                 init_error_window(window, "Unit address  needs to be [1, 255]")
             else:
-                valid_no_of_coils = True
+                valid_unit_address = True
         except:
             init_error_window(window, "Unit address needs to be a base 10 number.")
 
-        if valid_no_of_coils is True and valid_start_address_hex is True:
+        if valid_no_of_coils is True and valid_start_address_hex is True and valid_unit_address:
             data = [start_address_hex, no_of_coils]
-            process_request(unit_address, index + 1, data)
+            send_request(unit_address, index + 1, data, request_queue)
+            global is_valid
+            is_valid = True
+        else:
+            is_valid = False
+    if index == 1:
+        print("F2")
+        sys.exit()

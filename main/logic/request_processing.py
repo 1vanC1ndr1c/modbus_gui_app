@@ -1,16 +1,13 @@
 import asyncio
 
 from communication.modbus_communication import communicate_with_modbus
+from communication import  modbus_communication
 
 tid = 0
-# response = -1
-response = b'\x00\x01\x00\x00\x00\x05\x02\x01\x02\x80\x02'
 
-
-def process_request(unit_address, function_code, data):
-    formed_request, last_tid = form_request(unit_address, function_code, data)
-    # asyncio.get_event_loop().run_until_complete(communicate_with_modbus(formed_request))
-
+def send_request(unit_address, function_code, data, request_queue):
+    formed_request = form_request(unit_address, function_code, data)
+    request_queue.put(formed_request)
 
 # TID (global), Protocol(Always the same), Length(Needs to be calculated), Unit Address, MSG
 def form_request(unit_address, function_code, data):
@@ -41,15 +38,6 @@ def form_request(unit_address, function_code, data):
     full_request = new_tid + protocol + length + unit_address + modbus_request
     full_request = bytes.fromhex(full_request)
 
-    return full_request, new_tid
-    # return b'\x00\x01\x00\x00\x00\x06\x02\x01\x00"\x00\x16', 1    # test data
+    return full_request
+    # return b'\x00\x01\x00\x00\x00\x06\x02\x01\x00"\x00\x16'    # test data
 
-
-def set_response(r):
-    global response
-    response = r
-
-
-def get_response():
-    global response
-    return response

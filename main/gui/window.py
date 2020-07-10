@@ -7,11 +7,10 @@ from PySide2.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QCombo
     QHBoxLayout, QLineEdit, QDialog, QSpacerItem, QSizePolicy, QFrame
 
 import validation
-from request_processing import get_response
 from response_processing import process_response
 
 
-def init_gui():
+def init_gui(request_queue, response_queue):
     app = QApplication(sys.argv)
     app.setApplicationName("MODBUS")
     window = QWidget()
@@ -28,7 +27,7 @@ def init_gui():
     select_operation_layout.addWidget(select_operation_label)
     select_operation_combo_box = QComboBox()
     select_operation_combo_box.addItem("Read Coils")
-    select_operation_combo_box.addItem("not impl1")
+    select_operation_combo_box.addItem("Read Discrete Inputs")
     select_operation_combo_box.addItem("not impl2")
     select_operation_combo_box.addItem("not impl3")
     select_operation_combo_box.addItem("not impl4")
@@ -38,6 +37,7 @@ def init_gui():
     # Create additional options based on the selected options in the drop down menu.
     additional_options_stacked_widget = QStackedWidget()
 
+    # Read Coils.
     read_coils_option_parent_widget = QWidget()
     read_coils_option_parent_layout = QVBoxLayout()
     read_coils_option_first_row_layout = QHBoxLayout()
@@ -45,7 +45,6 @@ def init_gui():
     read_coils_option_first_row_input = QLineEdit()
     read_coils_option_first_row_input.setPlaceholderText("Insert the starting address...")
     read_coils_option_first_row_input.setMinimumWidth(300)
-
     read_coils_option_first_row_layout.addWidget(read_coils_option_first_row_text)
     read_coils_option_first_row_layout.addWidget(read_coils_option_first_row_input)
     read_coils_option_parent_layout.addLayout(read_coils_option_first_row_layout)
@@ -68,8 +67,35 @@ def init_gui():
 
     # TODO add options for other instructions
 
-    widget_other_option = QWidget()
-    additional_options_stacked_widget.addWidget(widget_other_option)
+    # Read Discrete Inputs.
+    read_discrete_inputs_option_parent_widget = QWidget()
+    read_discrete_inputs_option_parent_layout = QVBoxLayout()
+    # read_discrete_inputs_option_first_row_layout = QHBoxLayout()
+    # read_discrete_inputs_option_first_row_text = QLabel("First input address(hex):")
+    # read_discrete_inputs_option_first_row_input = QLineEdit()
+    # read_discrete_inputs_option_first_row_input.setPlaceholderText("Insert the first input address...")
+    # read_discrete_inputs_option_first_row_input.setMinimumWidth(300)
+    # read_discrete_inputs_option_first_row_layout.addWidget(read_discrete_inputs_option_first_row_text)
+    # read_discrete_inputs_option_first_row_layout.addWidget(read_discrete_inputs_option_first_row_input)
+    # read_discrete_inputs_option_parent_layout.addLayout(read_discrete_inputs_option_first_row_layout)
+    # read_discrete_inputs_option_second_row_layout = QHBoxLayout()
+    # read_discrete_inputs_option_second_row_text = QLabel("Register count(dec):")
+    # read_discrete_inputs_option_second_row_input = QLineEdit()
+    # read_discrete_inputs_option_second_row_input.setPlaceholderText("Insert the number of registers...")
+    # read_discrete_inputs_option_second_row_layout.addWidget(read_discrete_inputs_option_second_row_text)
+    # read_discrete_inputs_option_second_row_layout.addWidget(read_discrete_inputs_option_second_row_input)
+    # read_discrete_inputs_option_parent_layout.addLayout(read_discrete_inputs_option_second_row_layout)
+    # read_discrete_inputs_option_third__row_layout = QHBoxLayout()
+    # read_discrete_inputs_option_third__row_text = QLabel("Unit Address(dec):")
+    # read_discrete_inputs_option_third__row_input = QLineEdit()
+    # read_discrete_inputs_option_third__row_input.setPlaceholderText("Insert the unit address...")
+    # read_discrete_inputs_option_third__row_layout.addWidget(read_discrete_inputs_option_third__row_text)
+    # read_discrete_inputs_option_third__row_layout.addWidget(read_discrete_inputs_option_third__row_input)
+    # read_discrete_inputs_option_parent_layout.addLayout(read_discrete_inputs_option_third__row_layout)
+    # read_discrete_inputs_option_parent_widget.setLayout(read_discrete_inputs_option_parent_layout)
+    additional_options_stacked_widget.addWidget(read_discrete_inputs_option_parent_widget)
+
+    # Other options
 
     left_side_layout.addWidget(additional_options_stacked_widget)
     select_operation_combo_box.activated[int].connect(additional_options_stacked_widget.setCurrentIndex)
@@ -81,14 +107,14 @@ def init_gui():
     button_submit.sizeHint()
     left_side_layout.addWidget(button_submit)
     button_submit.clicked.connect(
-        lambda c: validation.validate_input_data_and_produce_a_response(
+        lambda c: validation.validate_input_data(
             additional_options_stacked_widget.currentIndex(),
             additional_options_stacked_widget.currentWidget(),
-            window))
+            window, request_queue))
     button_submit.clicked.connect(
         lambda c: right_side_response_init(
             additional_options_stacked_widget.currentIndex(), right_side_layout,
-            get_response(), additional_options_stacked_widget))
+            response_queue.get(), additional_options_stacked_widget))
 
     # Right side of the window =========================================================================
 
@@ -113,11 +139,7 @@ def init_gui():
 
 
 def right_side_response_init(request_code, right_side_layout, response, stacked_widget):
-    # reset the right side of the window
-    for cnt in reversed(range(right_side_layout.count())):
-        widget = right_side_layout.takeAt(cnt).widget()
-        if widget is not None:
-            widget.deleteLater()
+    reset_layout(right_side_layout)
 
     right_side_layout.setAlignment(QtCore.Qt.AlignTop)
 
@@ -134,6 +156,11 @@ def right_side_response_init(request_code, right_side_layout, response, stacked_
 
     response_title_font = QFont("Arial", 12)
     response_title_font.setUnderline(True)
+
+    if validation.is_valid is False and request_code != -1:
+        invalid_data_label = QLabel("Invalid Data.")
+        right_side_layout.addWidget(invalid_data_label)
+        return
 
     if request_code == 0:
 
@@ -160,6 +187,15 @@ def right_side_response_init(request_code, right_side_layout, response, stacked_
             response_box2.addWidget(response_result_label)
             response_box2.addWidget(response_value_label)
             right_side_layout.addLayout(response_box2)
+
+
+def reset_layout(layout):
+    while layout.count():
+        child = layout.takeAt(0)
+        if child.widget() is not None:
+            child.widget().deleteLater()
+        elif child.layout() is not None:
+            reset_layout(child.layout())
 
 
 def init_error_window(window, message):
