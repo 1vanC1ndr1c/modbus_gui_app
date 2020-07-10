@@ -47,13 +47,13 @@ def validate_input_data(index, stacked_widget, window, request_queue):
         except:
             init_error_window(window, "Unit address needs to be a base 10 number.")
 
-        if valid_no_of_coils is True and valid_start_address_hex is True and valid_unit_address:
+        if valid_no_of_coils is True and valid_start_address_hex is True and valid_unit_address is True:
             data = [start_address_hex, no_of_coils]
             send_request(unit_address, index + 1, data, request_queue)
             global is_valid
             is_valid = True
         else:
             is_valid = False
-    if index == 1:
+    elif index == 1:
         print("F2")
-        sys.exit()
+        is_valid = False

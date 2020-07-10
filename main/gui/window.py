@@ -7,7 +7,7 @@ from PySide2.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QCombo
     QHBoxLayout, QLineEdit, QDialog, QSpacerItem, QSizePolicy, QFrame
 
 import validation
-from response_processing import process_response
+from response_processing import process_response, get_response
 
 
 def init_gui(request_queue, response_queue):
@@ -112,9 +112,9 @@ def init_gui(request_queue, response_queue):
             additional_options_stacked_widget.currentWidget(),
             window, request_queue))
     button_submit.clicked.connect(
-        lambda c: right_side_response_init(
+        lambda d: right_side_response_init(
             additional_options_stacked_widget.currentIndex(), right_side_layout,
-            response_queue.get(), additional_options_stacked_widget))
+            get_response(response_queue), additional_options_stacked_widget)) # TODO REQ queue here is the error
 
     # Right side of the window =========================================================================
 

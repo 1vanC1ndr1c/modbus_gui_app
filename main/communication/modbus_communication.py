@@ -3,8 +3,6 @@ import functools
 from concurrent.futures.thread import ThreadPoolExecutor
 import aiohttp
 
-import request_processing
-
 
 async def communicate_with_modbus(request_queue, response_queue):
     session = aiohttp.ClientSession()

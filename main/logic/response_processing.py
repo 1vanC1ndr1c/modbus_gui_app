@@ -1,6 +1,13 @@
 from PySide2.QtWidgets import QLineEdit
 
 
+def get_response(response_queue):
+    if response_queue.empty() is True:
+        return -1
+    else:
+        return response_queue.get()
+
+
 def process_response(response, stacked_widget):
     modbus_response = str(response).split("\\x")
     modbus_response = modbus_response[10:]
