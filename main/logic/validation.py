@@ -1,5 +1,3 @@
-import sys
-
 from PySide2.QtWidgets import QLineEdit, QComboBox
 
 from request_processing import send_request
@@ -11,7 +9,7 @@ is_valid = False
 def validate_input_data(index, stacked_widget, window, request_queue):
     inputs = stacked_widget.findChildren(QLineEdit)  # get children that are used for data input
 
-    if index == 0 or index == 1 or index == 2 or index == 3 or index == 4:  # read coils, read discrete inputs
+    if index == 0 or index == 1 or index == 2 or index == 3 or index == 4 or index == 5:
         valid_start_address_hex = False
         start_address_hex = inputs[0].text()
         valid_no_of_elements = False
@@ -31,8 +29,19 @@ def validate_input_data(index, stacked_widget, window, request_queue):
         except:
             init_error_window(window, "Start address needs to be in hexadecimal format.")
 
+        if index == 5:
+            try:
+                no_of_elements = int(str(no_of_elements), 16)
+                if no_of_elements < 0x0000 or no_of_elements > 0xFFFF:
+                    init_error_window(window, "Number of elements needs to be [0x0000, 0xFFFF]")
+                else:
+                    valid_start_address_hex = True
+            except:
+                init_error_window(window, "Number of elements needs  in hexadecimal format.")
+
         try:
-            no_of_elements = int(str(no_of_elements))
+            if index != 5:
+                no_of_elements = int(str(no_of_elements))
             if index == 4:
                 if no_of_elements < 0x01 or no_of_elements > 0xFF:
                     init_error_window(window, "Coil Value needs to be [0x00, 0xFF]")

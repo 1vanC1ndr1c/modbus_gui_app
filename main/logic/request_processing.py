@@ -6,6 +6,7 @@ def send_request(unit_address, function_code, data, request_queue):
     request_queue.put(formed_request)
 
 
+
 # TID (global), Protocol(Always the same), Length(Needs to be calculated), Unit Address, MSG
 def form_request(unit_address, function_code, data):
     # reset the tid if the maximum is reached
@@ -37,6 +38,14 @@ def form_request(unit_address, function_code, data):
             modbus_request = modbus_request + start_add + "ff" + "00"
         else:
             modbus_request = modbus_request + start_add + "00" + "00"
+
+    elif function_code == '06':
+        start_add = data[0]
+        start_add = start_add - 1
+        start_add = str(hex(start_add))[2:].rjust(4, '0')
+        reg_val = data[1]
+        reg_val = str(hex(reg_val))[2:].rjust(4, '0')
+        modbus_request = modbus_request + start_add + reg_val
 
     length = len(bytes.fromhex(modbus_request)) + 1  # defined as length of bytes after the 'length' field
     length = str(length).rjust(4, '0')

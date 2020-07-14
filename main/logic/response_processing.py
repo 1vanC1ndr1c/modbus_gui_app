@@ -12,20 +12,23 @@ def get_response(response_queue):
 
 
 def process_response(response, stacked_widget):
-    if str(response).split('\\')[8].startswith('x8'):  # check for errors in the response
-        err_msg = str(response).split('\\')[9]
-        err_msg = err_msg.replace("\'", "")
-        err_msg = err_msg.replace("\"", "")
-        err_msg = err_msg.replace("x", "")
-        if err_msg == "01":
-            err_msg = "ERROR: Illegal function"
-        elif err_msg == "02":
-            err_msg = "ERROR: Illegal data address"
-        elif err_msg == "03":
-            err_msg = "ERROR: Illegal data value"
-        else:
-            err_msg = "ERROR: Slave device failure"
-        return [-1, err_msg]
+    try:
+        if str(response).split('\\')[8].startswith('x8'):  # check for errors in the response
+            err_msg = str(response).split('\\')[9]
+            err_msg = err_msg.replace("\'", "")
+            err_msg = err_msg.replace("\"", "")
+            err_msg = err_msg.replace("x", "")
+            if err_msg == "01":
+                err_msg = "ERROR: Illegal function"
+            elif err_msg == "02":
+                err_msg = "ERROR: Illegal data address"
+            elif err_msg == "03":
+                err_msg = "ERROR: Illegal data value"
+            else:
+                err_msg = "ERROR: Slave device failure"
+            return [-1, err_msg]
+    except:
+        print("Response is too small")
 
     if stacked_widget.currentIndex() == 0 or stacked_widget.currentIndex() == 1:
         modbus_response = str(response).split("\\x")
@@ -79,5 +82,5 @@ def process_response(response, stacked_widget):
             location_and_value.append([location, val])
         return location_and_value
 
-    elif stacked_widget.currentIndex() == 4:
+    elif stacked_widget.currentIndex() == 4 or stacked_widget.currentIndex() == 5:
         return [1]

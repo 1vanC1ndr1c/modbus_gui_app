@@ -1,10 +1,9 @@
 import sys
 
 from PySide2 import QtCore
-from PySide2.QtCore import QRect
 from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QComboBox, QPushButton, QStackedWidget, \
-    QHBoxLayout, QLineEdit, QDialog, QSpacerItem, QSizePolicy, QFrame, QScrollArea
+    QHBoxLayout, QLineEdit, QDialog, QSizePolicy, QFrame, QScrollArea
 
 import validation
 from response_processing import process_response, get_response
@@ -31,7 +30,7 @@ def init_gui(request_queue, response_queue):
     select_operation_combo_box.addItem("Read Holding Registers")
     select_operation_combo_box.addItem("Read Input Registers")
     select_operation_combo_box.addItem("Write Single Coil")
-    select_operation_combo_box.addItem("not impl5")
+    select_operation_combo_box.addItem("Write Single Register")
     select_operation_combo_box.addItem("not impl6")
     select_operation_combo_box.addItem("not impl7")
     select_operation_combo_box.addItem("not impl8")
@@ -153,7 +152,7 @@ def init_gui(request_queue, response_queue):
     read_input_registers_option_parent_widget.setLayout(read_input_registers_option_parent_layout)
     additional_options_stacked_widget.addWidget(read_input_registers_option_parent_widget)
 
-    #   # Write Single Coil.
+    # Write Single Coil.
     write_single_coil_option_parent_widget = QWidget()
     write_single_coil_option_parent_layout = QVBoxLayout()
     write_single_coil_option_first_row_layout = QHBoxLayout()
@@ -164,24 +163,52 @@ def init_gui(request_queue, response_queue):
     write_single_coil_option_first_row_layout.addWidget(write_single_coil_option_first_row_text)
     write_single_coil_option_first_row_layout.addWidget(write_single_coil_option_first_row_input)
     write_single_coil_option_parent_layout.addLayout(write_single_coil_option_first_row_layout)
+    write_single_coil_option_second_row_layout = QHBoxLayout()
+    write_single_coil_option_second_row_text = QLabel("Choose coil state:")
+    write_single_coil_option_second_row_input = QComboBox()
+    write_single_coil_option_second_row_input.addItem("ON")
+    write_single_coil_option_second_row_input.addItem("OFF")
+    write_single_coil_option_second_row_layout.addWidget(write_single_coil_option_second_row_text)
+    write_single_coil_option_second_row_layout.addWidget(write_single_coil_option_second_row_input)
+    write_single_coil_option_parent_layout.addLayout(write_single_coil_option_second_row_layout)
     write_single_coil_option_third_row_layout = QHBoxLayout()
-    write_single_coil_option_third_row_text = QLabel("Choose coil state:")
-    write_single_coil_option_third_row_input = QComboBox()
-    write_single_coil_option_third_row_input.addItem("ON")
-    write_single_coil_option_third_row_input.addItem("OFF")
+    write_single_coil_option_third_row_text = QLabel("Unit Address(dec):")
+    write_single_coil_option_third_row_input = QLineEdit()
+    write_single_coil_option_third_row_input.setPlaceholderText("Insert the unit address...")
     write_single_coil_option_third_row_layout.addWidget(write_single_coil_option_third_row_text)
     write_single_coil_option_third_row_layout.addWidget(write_single_coil_option_third_row_input)
     write_single_coil_option_parent_layout.addLayout(write_single_coil_option_third_row_layout)
-
-    write_single_coil_option_fourth_row_layout = QHBoxLayout()
-    write_single_coil_option_fourth_row_text = QLabel("Unit Address(dec):")
-    write_single_coil_option_fourth_row_input = QLineEdit()
-    write_single_coil_option_fourth_row_input.setPlaceholderText("Insert the unit address...")
-    write_single_coil_option_fourth_row_layout.addWidget(write_single_coil_option_fourth_row_text)
-    write_single_coil_option_fourth_row_layout.addWidget(write_single_coil_option_fourth_row_input)
-    write_single_coil_option_parent_layout.addLayout(write_single_coil_option_fourth_row_layout)
     write_single_coil_option_parent_widget.setLayout(write_single_coil_option_parent_layout)
     additional_options_stacked_widget.addWidget(write_single_coil_option_parent_widget)
+
+    # Write Single Register.
+    write_single_register_option_parent_widget = QWidget()
+    write_single_register_option_parent_layout = QVBoxLayout()
+    write_single_register_option_first_row_layout = QHBoxLayout()
+    write_single_register_option_first_row_text = QLabel("First coil address(hex):")
+    write_single_register_option_first_row_input = QLineEdit()
+    write_single_register_option_first_row_input.setPlaceholderText("Insert the first coil address...")
+    write_single_register_option_first_row_input.setMinimumWidth(300)
+    write_single_register_option_first_row_layout.addWidget(write_single_register_option_first_row_text)
+    write_single_register_option_first_row_layout.addWidget(write_single_register_option_first_row_input)
+    write_single_register_option_parent_layout.addLayout(write_single_register_option_first_row_layout)
+    write_single_register_option_second_row_layout = QHBoxLayout()
+    write_single_register_option_second_row_text = QLabel("Choose Register value:")
+    write_single_register_option_second_row_input = QLineEdit()
+    write_single_register_option_second_row_input.setPlaceholderText("Insert the register value...")
+    write_single_register_option_second_row_input.setMinimumWidth(300)
+    write_single_register_option_second_row_layout.addWidget(write_single_register_option_second_row_text)
+    write_single_register_option_second_row_layout.addWidget(write_single_register_option_second_row_input)
+    write_single_register_option_parent_layout.addLayout(write_single_register_option_second_row_layout)
+    write_single_register_option_third_row_layout = QHBoxLayout()
+    write_single_register_option_third_row_text = QLabel("Unit Address(dec):")
+    write_single_register_option_third_row_input = QLineEdit()
+    write_single_register_option_third_row_input.setPlaceholderText("Insert the unit address...")
+    write_single_register_option_third_row_layout.addWidget(write_single_register_option_third_row_text)
+    write_single_register_option_third_row_layout.addWidget(write_single_register_option_third_row_input)
+    write_single_register_option_parent_layout.addLayout(write_single_register_option_third_row_layout)
+    write_single_register_option_parent_widget.setLayout(write_single_register_option_parent_layout)
+    additional_options_stacked_widget.addWidget(write_single_register_option_parent_widget)
 
     left_side_layout.addWidget(additional_options_stacked_widget)
     select_operation_combo_box.activated[int].connect(additional_options_stacked_widget.setCurrentIndex)
@@ -276,7 +303,6 @@ def right_side_response_init(request_code, right_side_layout, response, stacked_
             response_box2.addWidget(response_result_label)
             right_side_layout.addLayout(response_box2)
         elif response_return_value[0] == -1:
-            print("da")
             response_result_label = QLabel(response_return_value[1])
             response_result_label.setStyleSheet("color: red")
             response_result_label.setFont(response_title_font)
@@ -338,9 +364,13 @@ def right_side_response_init(request_code, right_side_layout, response, stacked_
             response_box2.addWidget(response_scroll)
             right_side_layout.addLayout(response_box2)
         right_side_layout.addStretch()
-    elif request_code == 4:
+
+    elif request_code == 4 or request_code == 5:
         response_box1 = QHBoxLayout()
-        response_title_label = QLabel("Write single coil response: ")
+        if request_code == 4:
+            response_title_label = QLabel("Write single coil response: ")
+        else:
+            response_title_label = QLabel("Write register response: ")
         response_title_label.setFont(response_title_font)
         response_scroll = QScrollArea()
         response_scroll.setWidgetResizable(True)
@@ -360,7 +390,10 @@ def right_side_response_init(request_code, right_side_layout, response, stacked_
             response_box2.addWidget(response_result_label)
             right_side_layout.addLayout(response_box2)
         else:
-            response_result_label = QLabel("Write single coil was successful")
+            if request_code == 4:
+                response_result_label = QLabel("Write single coil was successful")
+            else:
+                response_result_label = QLabel("Write register was successful")
             response_result_label.setFont(response_title_font)
             response_box2.addWidget(response_result_label)
             right_side_layout.addLayout(response_box2)

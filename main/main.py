@@ -14,8 +14,7 @@ if __name__ == '__main__':
     response_queue = queue.Queue()
 
     # request = b'\x00\x01\x00\x00\x00\x06\x02\x01\x00"\x00\x16'  # test data
-    #request_queue.put(request)
-
+    # request_queue.put(request)
 
     gui_thread = Thread(target=window.init_gui, args=(request_queue, response_queue))
     com_thread = Thread(target=com_f, args=(request_queue, response_queue))
