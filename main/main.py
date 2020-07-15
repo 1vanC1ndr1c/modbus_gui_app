@@ -27,6 +27,8 @@ if __name__ == '__main__':
     # request = b'\x00\x01\x00\x00\x00\x06\x02\x01\x00"\x00\x16'  # test data
     # request_queue.put(request)
 
+
+    db_init()
     # db test REQUEST
     new_tid = "0001"
     protocol = "0000"
@@ -44,18 +46,18 @@ if __name__ == '__main__':
     db_data.append(modbus_request[2:])
     db_write(db_data)
     #
-    # db test RESPONSE 1
-    db_data = []
-    resp1 = b'\x00\x01\x00\x00\x00\x04\x02\x01\x01\x01'
-    db_data.append("RESPONSE")
-    db_data.append(resp1)
-    db_write(db_data)
-    #
-    # db test RESPONSE 2
-    db_data = []
-    resp1 = "ERROR: Illegal data address"
-    db_data.append("RESPONSE")
-    db_data.append(resp1)
-    db_write(db_data)
+    # # db test RESPONSE 1
+    # db_data = []
+    # resp1 = b'\x00\x01\x00\x00\x00\x04\x02\x01\x01\x01'
+    # db_data.append("RESPONSE")
+    # db_data.append(resp1)
+    # db_write(db_data)
+    # #
+    # # db test RESPONSE 2
+    # db_data = []
+    # resp1 = "ERROR: Illegal data address"
+    # db_data.append("RESPONSE")
+    # db_data.append(resp1)
+    # db_write(db_data)
 
     # db_init()
