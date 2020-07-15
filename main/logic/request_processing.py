@@ -1,15 +1,13 @@
-from db_handler import db_write
-
 tid = 0
 
 
-def send_request(unit_address, function_code, data, request_queue):
-    formed_request = form_request(unit_address, function_code, data)
+def send_request(unit_address, function_code, data, request_queue, db_write_queue):
+    formed_request = form_request(unit_address, function_code, data, db_write_queue)
     request_queue.put(formed_request)
 
 
 # TID (global), Protocol(Always the same), Length(Needs to be calculated), Unit Address, MSG
-def form_request(unit_address, function_code, data):
+def form_request(unit_address, function_code, data, db_write_queue):
     # reset the tid if the maximum is reached
 
     global tid
@@ -57,7 +55,7 @@ def form_request(unit_address, function_code, data):
     full_request = bytes.fromhex(full_request)
 
     db_data = ["REQUEST", new_tid, protocol, length, unit_address, function_code, modbus_request[2:]]
-    db_write(db_data)
+    db_write_queue.put(db_data)
 
     return full_request
     # return b'\x00\x01\x00\x00\x00\x06\x02\x01\x00"\x00\x16'    # test data

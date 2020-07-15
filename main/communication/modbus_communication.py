@@ -4,7 +4,7 @@ from concurrent.futures.thread import ThreadPoolExecutor
 import aiohttp
 
 
-async def communicate_with_modbus(request_queue, response_queue):
+async def communicate_with_modbus(request_queue, response_queue, db_write_queue):
     session = aiohttp.ClientSession()
     ws = await session.ws_connect('ws://localhost:3456/ws')
     executor = ThreadPoolExecutor(1)
@@ -14,6 +14,8 @@ async def communicate_with_modbus(request_queue, response_queue):
             response = await ws.receive()
             if isinstance(response.data, bytes):
                 response_queue.put(response.data)
+                response_data = ["RESPONSE", response.data]
+                db_write_queue.put(response_data)
                 print("RESPONSE: ", response.data)
 
     async def ws_write_loop():

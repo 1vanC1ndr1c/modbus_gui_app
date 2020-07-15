@@ -1,7 +1,5 @@
 from PySide2.QtWidgets import QLineEdit
 
-from db_handler import db_write
-
 
 def get_response(response_queue):
     try:
@@ -14,8 +12,6 @@ def get_response(response_queue):
 
 
 def process_response(response, stacked_widget):
-    db_data = ["RESPONSE"]
-
     try:
         if str(response).split('\\')[8].startswith('x8'):  # check for errors in the response
             err_msg = str(response).split('\\')[9]
@@ -30,16 +26,12 @@ def process_response(response, stacked_widget):
                 err_msg = "ERROR: Illegal data value"
             else:
                 err_msg = "ERROR: Slave device failure"
-            db_data.append(err_msg)
-            db_write(db_data)
             return [-1, err_msg]
     except:
-        db_write("Request not processed.")
-        print("Response is too small")
+        # db_write("Request not processed.")
+        print("Response not processed.")
 
     if stacked_widget.currentIndex() == 0 or stacked_widget.currentIndex() == 1:
-        db_data.append(response)
-        db_write(db_data)
         modbus_response = str(response).split("\\x")
         modbus_response = modbus_response[10:]
         binary_data = ""
@@ -93,3 +85,6 @@ def process_response(response, stacked_widget):
 
     elif stacked_widget.currentIndex() == 4 or stacked_widget.currentIndex() == 5:
         return [1]
+
+
+

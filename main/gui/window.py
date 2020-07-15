@@ -3,22 +3,32 @@ import sys
 from PySide2 import QtCore
 from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QComboBox, QPushButton, QStackedWidget, \
-    QHBoxLayout, QLineEdit, QDialog, QSizePolicy, QFrame, QScrollArea
+    QHBoxLayout, QLineEdit, QDialog, QSizePolicy, QFrame, QScrollArea, QMenu, QMainWindow, QMenuBar, QAction
 
 import validation
 from response_processing import process_response, get_response
 
 
-def init_gui(request_queue, response_queue):
+def init_gui(request_queue, response_queue, db_write_queue, db_read_queue):
     app = QApplication(sys.argv)
     app.setApplicationName("MODBUS")
-    window = QWidget()
+    window = QMainWindow()
     window.setGeometry(300, 300, 1200, 450)
+    main_widget = QWidget()
     font = QFont("Arial", 12)
-    window.setFont(font)
+    main_widget.setFont(font)
     parent_layout = QHBoxLayout()
     right_side_layout = QVBoxLayout()
     left_side_layout = QVBoxLayout()
+
+    menu_bar = window.menuBar()
+    menu = QMenu("History")
+    history_action = QAction("Open History")
+    history_action.setShortcut("Ctrl+H")
+    history_action.setStatusTip("See the history of requests and responses")
+    history_action.triggered.connect(lambda l: init_history_window(db_read_queue))
+    menu.addAction(history_action)
+    menu_bar.addMenu(menu)
 
     # Left side of the window =========================================================================================
     select_operation_layout = QHBoxLayout()
@@ -223,7 +233,7 @@ def init_gui(request_queue, response_queue):
         lambda c: validation.validate_input_data(
             additional_options_stacked_widget.currentIndex(),
             additional_options_stacked_widget.currentWidget(),
-            window, request_queue))
+            main_widget, request_queue, db_write_queue))
 
     button_submit.clicked.connect(
         lambda d: right_side_response_init(
@@ -247,7 +257,8 @@ def init_gui(request_queue, response_queue):
     parent_layout.addLayout(left_side_layout)
     parent_layout.addWidget(middle_vertical_line)
     parent_layout.addLayout(right_side_layout)
-    window.setLayout(parent_layout)
+    main_widget.setLayout(parent_layout)
+    window.setCentralWidget(main_widget)
     window.show()
     app.exec_()
 
@@ -410,7 +421,7 @@ def reset_layout(layout):
 
 
 def init_error_window(window, message):
-    error_dlg_window = QDialog(window)
+    error_dlg_window = QDialog(None, QtCore.Qt.WindowCloseButtonHint)
     error_dlg_window.setWindowTitle("ERROR")
     error_font = QFont("Arial", 12)
     error_label = QLabel(message)
@@ -420,3 +431,19 @@ def init_error_window(window, message):
     error_layout.addWidget(error_label)
     error_dlg_window.setLayout(error_layout)
     error_dlg_window.exec_()
+
+
+def init_history_window(db_read_queue):
+    print("history window")
+    str = "TEST"
+    db_read_queue.put(str)
+    db_read_queue.put(str)
+    # TODO no refresh button because the window cannont be enabled simultaneously with r/w on modbus
+    # TODO enable "MORE" functionality, i.e. show more than 10 lines
+    history_dlg_window = QDialog(None, QtCore.Qt.WindowCloseButtonHint)
+    history_dlg_window.setWindowTitle("HISTORY")
+    history_label = QLabel("HISTORY")
+    history_layout = QVBoxLayout()
+    history_layout.addWidget(history_label)
+    history_dlg_window.setLayout(history_layout)
+    history_dlg_window.exec_()

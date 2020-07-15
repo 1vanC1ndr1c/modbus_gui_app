@@ -6,7 +6,7 @@ from window import init_error_window
 is_valid = False
 
 
-def validate_input_data(index, stacked_widget, window, request_queue):
+def validate_input_data(index, stacked_widget, window, request_queue, db_write_queue):
     inputs = stacked_widget.findChildren(QLineEdit)  # get children that are used for data input
 
     if index == 0 or index == 1 or index == 2 or index == 3 or index == 4 or index == 5:
@@ -81,7 +81,7 @@ def validate_input_data(index, stacked_widget, window, request_queue):
             if index == 4:
                 select_state = stacked_widget.findChildren(QComboBox)[0].currentIndex()
                 data = [start_address_hex, select_state]
-            send_request(unit_address, index + 1, data, request_queue)
+            send_request(unit_address, index + 1, data, request_queue, db_write_queue)
             global is_valid
             is_valid = True
         else:
