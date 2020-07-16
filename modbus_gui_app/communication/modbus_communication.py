@@ -14,8 +14,8 @@ async def communicate_with_modbus(request_queue, response_queue, db_write_queue)
             response = await ws.receive()
             if isinstance(response.data, bytes):
                 response_queue.put(response.data)
-                response_data = ["RESPONSE", response.data]
-                db_write_queue.put(response_data)
+                # response_data = ["RESPONSE", response.data]
+                # db_write_queue.put(response_data)
                 print("RESPONSE: ", response.data)
 
     async def ws_write_loop():

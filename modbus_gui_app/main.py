@@ -2,7 +2,7 @@ import asyncio
 import sys
 
 from modbus_gui_app.database.db_handler import start_db
-from modbus_gui_app.modbus_communication import communicate_with_modbus
+from modbus_communication import communicate_with_modbus
 from modbus_gui_app.gui import window
 from threading import Thread
 import queue
@@ -23,7 +23,7 @@ def main():
 
     gui_thread.start()
     com_thread.start()
-    db_thread.start()
+    #db_thread.start()
 
     # TEST STUFF
     # database test REQUEST
