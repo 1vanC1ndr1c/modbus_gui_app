@@ -37,7 +37,7 @@ def validate_input_data(index, stacked_widget, window, request_queue, db_write_q
                 else:
                     valid_start_address_hex = True
             except:
-                init_error_window(window, "Number of elements needs  in hexadecimal format.")
+                init_error_window(window, "Number of elements needs to be in hexadecimal format.")
 
         try:
             if index != 5:

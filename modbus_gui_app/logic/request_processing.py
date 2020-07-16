@@ -6,10 +6,8 @@ def send_request(unit_address, function_code, data, request_queue, db_write_queu
     request_queue.put(formed_request)
 
 
-# TID (global), Protocol(Always the same), Length(Needs to be calculated), Unit Address, MSG
 def form_request(unit_address, function_code, data, db_write_queue):
     # reset the tid if the maximum is reached
-
     global tid
     if tid == 9999:
         tid = 0

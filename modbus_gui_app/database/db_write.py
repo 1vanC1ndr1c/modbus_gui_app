@@ -46,28 +46,6 @@ def db_write(db_data):
             modbus_info = modbus_info + response[i]
         modbus_info = modbus_info + apostrophe
 
-        # cursor.execute("SELECT 1 FROM req_and_resp WHERE TYPE_AND_TID=" + type_and_tid)
-        #
-        # if cursor.fetchone():  # if found, update table
-        #     print("Key Found! Update the DB.")
-        #     try:
-        #         conn.execute("UPDATE req_and_resp set " +
-        #                      "INDEX_AND_TYPE = " + id + str_sep +
-        #                      "TIME_STAMP = " + time_stamp + str_sep +
-        #                      "PROTOCOL = " + protocol + str_sep +
-        #                      "LEN = " + length + str_sep +
-        #                      "UNIT_ADDRESS = " + unit_address + str_sep +
-        #                      "F_CODE = " + function_code + str_sep +
-        #                      "MODBUS_DATA = " + modbus_info +
-        #                      "WHERE TYPE_AND_TID = " + type_and_tid)
-        #         conn.commit()
-        #         print("Records updated successfully.")
-        #         conn.close()
-        #     except Exception as e:
-        #         print("Error! = ", e)
-        #
-        # else:  # else, insert into the table
-        #     print("Key not found. Insert the new values into the DB.")
         str_ins = "INSERT INTO REQ_AND_RESP (TIME_STAMP, " \
                   "INDEX_AND_TYPE, " \
                   "TYPE_AND_TID, " \

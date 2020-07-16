@@ -1,12 +1,13 @@
 import sys
 
 from PySide2 import QtCore
-from PySide2.QtGui import QFont
+from PySide2.QtGui import QFont, QStandardItemModel
 from PySide2.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QComboBox, QPushButton, QStackedWidget, \
-    QHBoxLayout, QLineEdit, QDialog, QSizePolicy, QFrame, QScrollArea, QMenu, QMainWindow, QMenuBar, QAction
+    QHBoxLayout, QLineEdit, QDialog, QSizePolicy, QFrame, QScrollArea, QMenu, QMainWindow, QAction, QTableView
 
-import validation
-from response_processing import process_response, get_response
+from  modbus_gui_app.logic import validation
+from modbus_gui_app.database import db_read
+from modbus_gui_app.logic.response_processing import process_response, get_response
 
 
 def init_gui(request_queue, response_queue, db_write_queue, db_read_queue):
@@ -282,7 +283,7 @@ def right_side_response_init(request_code, right_side_layout, response, stacked_
     response_title_font = QFont("Arial", 12)
     response_title_font.setUnderline(True)
 
-    if validation.is_valid is False and request_code != -1:
+    if  validation.is_valid is False and request_code != -1:
         invalid_data_label = QLabel("Invalid Data.")
         right_side_layout.addWidget(invalid_data_label)
         return
@@ -434,16 +435,30 @@ def init_error_window(window, message):
 
 
 def init_history_window(db_read_queue):
-    print("history window")
-    str = "TEST"
-    db_read_queue.put(str)
-    db_read_queue.put(str)
-    # TODO no refresh button because the window cannont be enabled simultaneously with r/w on modbus
-    # TODO enable "MORE" functionality, i.e. show more than 10 lines
     history_dlg_window = QDialog(None, QtCore.Qt.WindowCloseButtonHint)
+    history_dlg_window.setMinimumWidth(1025)
+    history_dlg_window.setMinimumHeight(500)
     history_dlg_window.setWindowTitle("HISTORY")
-    history_label = QLabel("HISTORY")
-    history_layout = QVBoxLayout()
-    history_layout.addWidget(history_label)
-    history_dlg_window.setLayout(history_layout)
+    history_parent_layout = QVBoxLayout()
+
+    # table
+    table_widget = QTableView()
+    names = QStandardItemModel()
+    names.setHorizontalHeaderLabels(["TIME STAMP", "TRANSACTION ID", "TYPE", "PROTOCOL",
+                                     "LENGTH", "UNIT_ADDRESS", "FUNCTION CODE", "MODBUS DATA"])
+    table_widget.setStyleSheet("QHeaderView::section { background-color:lightgray }")
+    table_widget.setModel(names)
+    history_parent_layout.addWidget(table_widget)
+
+    # Submit buttton and it's functionality
+    button_submit = QPushButton()
+    button_submit.setText("Get Data")
+    button_submit.setStyleSheet("background-color: green")
+    button_submit.sizeHint()
+    history_parent_layout.addWidget(button_submit)
+
+    data = []
+    # button_submit.clicked.connect(
+    #     lambda c: db_read(10, data))
+    history_dlg_window.setLayout(history_parent_layout)
     history_dlg_window.exec_()

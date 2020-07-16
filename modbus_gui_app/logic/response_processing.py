@@ -38,7 +38,7 @@ def process_response(response, stacked_widget):
         for r in modbus_response:
             r = r.replace("\'", "")
             r = r.replace("\"", "")
-            scale = 16  # equals to hexadecimal
+            scale = 16
             num_of_bits = 8
             # get the reversed the bits
             bin_data_byte = bin(int(r, scale))[2:].zfill(num_of_bits)
@@ -48,7 +48,7 @@ def process_response(response, stacked_widget):
 
         indices = []
 
-        inputs = stacked_widget.widget(stacked_widget.currentIndex()).findChildren(QLineEdit)  # get the number of coils
+        inputs = stacked_widget.widget(stacked_widget.currentIndex()).findChildren(QLineEdit)
         start_add = inputs[0].text()
         start_add = int(str(start_add), 16)
         start_add = hex(start_add)
@@ -64,7 +64,7 @@ def process_response(response, stacked_widget):
     elif stacked_widget.currentIndex() == 2 or stacked_widget.currentIndex() == 3:
         modbus_response = str(response).split("\\x")
         modbus_response = modbus_response[10:]
-        inputs = stacked_widget.widget(stacked_widget.currentIndex()).findChildren(QLineEdit)  # get the number of coils
+        inputs = stacked_widget.widget(stacked_widget.currentIndex()).findChildren(QLineEdit)
         start_add = inputs[0].text()
         start_add = int(str(start_add), 16)
         start_add = hex(start_add)
@@ -85,6 +85,3 @@ def process_response(response, stacked_widget):
 
     elif stacked_widget.currentIndex() == 4 or stacked_widget.currentIndex() == 5:
         return [1]
-
-
-

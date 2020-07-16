@@ -69,5 +69,5 @@ fabric.properties
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
-/main/test.db
-/main/req_and_resp.db
+/modbus_gui_app/test.db
+/modbus_gui_app/req_and_resp.db
