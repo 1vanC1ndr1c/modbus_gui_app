@@ -1,29 +1,34 @@
+from threading import Thread
 import asyncio
+import queue
 import sys
 
-from modbus_gui_app.database.db_handler import start_db
+from modbus_gui_app.logic.state_manager import StateManager
 from modbus_communication import communicate_with_modbus
-from modbus_gui_app.gui import window
-from threading import Thread
-import queue
+from modbus_gui_app.database.db_handler import start_db
+from modbus_gui_app.gui.window import start_app
 
 
-def start_communication(req_queue, resp_queue, write_queue):
-    asyncio.new_event_loop().run_until_complete(communicate_with_modbus(req_queue, resp_queue, write_queue))
+def start_communication(req_queue, resp_queue, st_mngr):
+    asyncio.new_event_loop().run_until_complete(communicate_with_modbus(req_queue, resp_queue, st_mngr))
+
 
 def main():
-    request_queue = queue.Queue()
-    response_queue = queue.Queue()
+    modbus_request_queue = queue.Queue()
+    modbus_response_queue = queue.Queue()
     db_write_queue = queue.Queue()
     db_read_queue = queue.Queue()
 
-    com_thread = Thread(target=start_communication, args=(request_queue, response_queue, db_write_queue))
-    gui_thread = Thread(target=window.init_gui, args=(request_queue, response_queue, db_write_queue, db_read_queue))
-    db_thread = Thread(target=start_db, args=(db_write_queue, db_read_queue))
+    state_manager = StateManager(modbus_request_queue, modbus_response_queue)
 
-    gui_thread.start()
+    gui_thread = Thread(target=start_app, args=(state_manager,))
+    com_thread = Thread(target=start_communication, args=(modbus_request_queue, modbus_response_queue, state_manager))
+
     com_thread.start()
-    #db_thread.start()
+    gui_thread.start()
+
+    # db_thread = Thread(target=start_db, args=(db_write_queue, db_read_queue))
+    # db_thread.start()
 
     # TEST STUFF
     # database test REQUEST
@@ -52,7 +57,8 @@ def main():
     # db_write_queue.put(db_data)
 
     # request = b'\x00\x01\x00\x00\x00\x06\x02\x01\x00"\x00\x16'  # test data
-    # request_queue.put(request)
+    # modbus_request_queue.put(request)
+
 
 if __name__ == '__main__':
-   sys.exit(main())
+    sys.exit(main())

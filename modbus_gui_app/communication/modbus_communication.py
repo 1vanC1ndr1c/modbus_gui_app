@@ -1,30 +1,33 @@
-import asyncio
-import functools
 from concurrent.futures.thread import ThreadPoolExecutor
+import functools
+import asyncio
 import aiohttp
 
+from modbus_gui_app.communication.deserializer import deserialize
+from modbus_gui_app.communication.serializer import serialize
 
-async def communicate_with_modbus(request_queue, response_queue, db_write_queue):
+
+async def communicate_with_modbus(request_queue, response_queue, state_manager):
     session = aiohttp.ClientSession()
     ws = await session.ws_connect('ws://localhost:3456/ws')
     executor = ThreadPoolExecutor(1)
 
     async def ws_read_loop():
         while True:
-            response = await ws.receive()
-            if isinstance(response.data, bytes):
-                response_queue.put(response.data)
-                # response_data = ["RESPONSE", response.data]
-                # db_write_queue.put(response_data)
-                print("RESPONSE: ", response.data)
+            bytes_response = await ws.receive()
+            if isinstance(bytes_response.data, bytes):
+                print("RESPONSE: ", bytes_response.data)
+                deserialized_dict = deserialize(bytes_response.data, state_manager)
+                response_queue.put(deserialized_dict)
 
     async def ws_write_loop():
         while True:
-            request = await asyncio.get_event_loop().run_in_executor(executor, functools.partial(
+            dictionary = await asyncio.get_event_loop().run_in_executor(executor, functools.partial(
                 get_msg_from_queue, queue=request_queue))
-            print("REQUEST: ", request)
+            request_serialized = serialize(dictionary, state_manager)
+            print("REQUEST: ", request_serialized)
             try:
-                await ws.send_bytes(request)
+                await ws.send_bytes(request_serialized)
             except Exception:
                 pass
 
