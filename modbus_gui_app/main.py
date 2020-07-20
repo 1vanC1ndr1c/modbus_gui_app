@@ -20,11 +20,9 @@ def main():
     db_read_queue = queue.Queue()
 
     state_manager = StateManager(modbus_request_queue, modbus_response_queue)
-
-    gui_thread = Thread(target=start_app, args=(state_manager,))
     com_thread = Thread(target=start_communication, args=(modbus_request_queue, modbus_response_queue, state_manager))
-
     com_thread.start()
+    gui_thread = Thread(target=start_app, args=(state_manager,))
     gui_thread.start()
 
     # db_thread = Thread(target=start_db, args=(db_write_queue, db_read_queue))

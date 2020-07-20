@@ -68,7 +68,8 @@ def deserialize(bytes_response, state_manager):
         for i in range(0, len(modbus_response), 2):
             try:
                 values.append((modbus_response[i] + modbus_response[i + 1]).replace("\'", ""))
-            except:
+            except Exception as e:
+                print(e)
                 pass
         if len(values) == 0:
             values = "/"

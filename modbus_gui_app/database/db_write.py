@@ -2,6 +2,7 @@ import sqlite3
 from datetime import datetime
 
 
+# todo make it fit with state manager
 def db_writer(db_write_queue, db_read_queue):
     while True:
         data = db_write_queue.get()

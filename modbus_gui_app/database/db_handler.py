@@ -5,6 +5,7 @@ from modbus_gui_app.database.db_read import db_reader
 from modbus_gui_app.database.db_write import db_writer
 
 
+# todo make it fit with state manager
 def start_db(db_write_queue, db_read_queue):
     db_init()
     db_read_thread = Thread(target=db_reader, args=(db_read_queue,))

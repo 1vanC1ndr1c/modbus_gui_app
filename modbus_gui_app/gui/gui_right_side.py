@@ -35,6 +35,9 @@ def right_side_response_init(right_side_layout, dictionary, first_init, parent_l
 
     response = dictionary.get("current_response_serialized")
 
+    is_valid_response = dictionary.get("current_response_is_valid")
+    err_msg = dictionary.get("current_response_err_msg")
+
     if function_code == 1 or function_code == 2:
         response_box1 = QHBoxLayout()
         if function_code == 1:
@@ -53,17 +56,18 @@ def right_side_response_init(right_side_layout, dictionary, first_init, parent_l
         right_side_layout.addLayout(response_box1)
         response_return_value = dictionary.get("current_response_returned_values")
         response_box2 = QHBoxLayout()
-        if response_return_value == "/":
+
+        if is_valid_response is False:
+            response_result_label = QLabel(err_msg)
+            response_result_label.setStyleSheet("color: red")
+            response_result_label.setFont(response_title_font)
+            response_box2.addWidget(response_result_label)
+            right_side_layout.addLayout(response_box2)
+        elif response_return_value == "/":
             if function_code == 1:
                 response_result_label = QLabel("No Coils Are Set.")
             else:
                 response_result_label = QLabel("No Inputs Are Set.")
-            response_result_label.setFont(response_title_font)
-            response_box2.addWidget(response_result_label)
-            right_side_layout.addLayout(response_box2)
-        elif response_return_value[0] == -1:
-            response_result_label = QLabel(response_return_value[1])
-            response_result_label.setStyleSheet("color: red")
             response_result_label.setFont(response_title_font)
             response_box2.addWidget(response_result_label)
             right_side_layout.addLayout(response_box2)
@@ -98,17 +102,17 @@ def right_side_response_init(right_side_layout, dictionary, first_init, parent_l
         response_return_value = dictionary.get("current_response_returned_values")
 
         response_box2 = QHBoxLayout()
-        if response_return_value == "/":
+        if is_valid_response is False:
+            response_result_label = QLabel(err_msg)
+            response_result_label.setStyleSheet("color: red")
+            response_result_label.setFont(response_title_font)
+            response_box2.addWidget(response_result_label)
+            right_side_layout.addLayout(response_box2)
+        elif response_return_value == "/":
             if function_code == 3:
                 response_result_label = QLabel("No Holding Registers Are Set.")
             else:
                 response_result_label = QLabel("No Input Registers Are Set.")
-            response_result_label.setFont(response_title_font)
-            response_box2.addWidget(response_result_label)
-            right_side_layout.addLayout(response_box2)
-        elif response_return_value[0] == -1:
-            response_result_label = QLabel(response_return_value[1])
-            response_result_label.setStyleSheet("color: red")
             response_result_label.setFont(response_title_font)
             response_box2.addWidget(response_result_label)
             right_side_layout.addLayout(response_box2)
@@ -141,10 +145,9 @@ def right_side_response_init(right_side_layout, dictionary, first_init, parent_l
         response_box1.addWidget(response_scroll)
         response_box1.setAlignment(QtCore.Qt.AlignTop)
         right_side_layout.addLayout(response_box1)
-        response_return_value = dictionary.get("current_response_returned_values")
         response_box2 = QHBoxLayout()
-        if response_return_value[0] == -1:
-            response_result_label = QLabel(response_return_value[1])
+        if is_valid_response is False:
+            response_result_label = QLabel(err_msg)
             response_result_label.setStyleSheet("color: red")
             response_result_label.setFont(response_title_font)
             response_box2.addWidget(response_result_label)

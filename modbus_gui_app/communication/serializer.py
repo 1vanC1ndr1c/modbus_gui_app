@@ -10,6 +10,24 @@ def serialize(dict, state_manager):
     function_code = str(hex(function_code))[2:].rjust(2, '0')
     modbus_request = function_code + ''
 
+    state_manager.set_current_unit_address(str(unit_address))
+    state_manager.set_current_function_code(str(function_code))
+
+    if function_code == '01':
+        state_manager.set_current_request_name("Read Coils.")
+    elif function_code == "02":
+        state_manager.set_current_request_name("Read Discrete Inputs .")
+    elif function_code == "03":
+        state_manager.set_current_request_name("Read Holding Registers.")
+    elif function_code == "04":
+        state_manager.set_current_request_name("Read Input Registers .")
+    elif function_code == "05":
+        state_manager.set_current_request_name("Write Single Coil.")
+    elif function_code == "06":
+        state_manager.set_current_request_name("Write Single Register.")
+    else:
+        state_manager.set_current_request_name("Unknown Request.")
+
     if function_code == '01' or function_code == '02' or function_code == '03' or function_code == '04':
         start_add = data[0]
         start_add = start_add - 1
@@ -40,6 +58,7 @@ def serialize(dict, state_manager):
     length = str(length).rjust(4, '0')
 
     unit_address = str(unit_address).rjust(2, '0')
+
     serialized_request = new_tid + protocol + length + unit_address + modbus_request
     serialized_request = bytes.fromhex(serialized_request)
 
