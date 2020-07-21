@@ -1,73 +1,62 @@
 import sqlite3
-from datetime import datetime
 
 
-# todo make it fit with state manager
-def db_writer(db_write_queue, db_read_queue):
+def db_writer(db_write_queue):
     while True:
-        data = db_write_queue.get()
-        db_write(data)
+        dictionary = db_write_queue.get()
+        db_write(dictionary)
 
 
-def db_write(db_data):
+def db_write(dictionary):
     conn = sqlite3.connect('req_and_resp.db')
     print("Writing: Connected to the DB.")
-    cursor = conn.cursor()
 
-    if db_data[0] == "REQUEST":  # write the request into the database
-        str_sep = ", "
-        apostrophe = "\'"
-        id = str(db_data[1]) + ".1"
-        time_stamp = apostrophe + str(datetime.now()) + apostrophe
-        type_and_tid = apostrophe + "REQ" + str(db_data[1]) + apostrophe
-        protocol = apostrophe + str(db_data[2]) + apostrophe
-        length = apostrophe + str(db_data[3]) + apostrophe
-        unit_address = apostrophe + str(db_data[4]) + apostrophe
-        function_code = apostrophe + str(db_data[5]) + apostrophe
-        modbus_info = apostrophe
-        for i in range(6, len(db_data)):
-            modbus_info = modbus_info + db_data[i]
-        modbus_info = modbus_info + apostrophe
-        # check if the entry already exists
+    apostrophe = "\'"
+    req_time_stamp = dictionary["current_request_sent_time"]
+    tid = dictionary["current_tid"]
+    req_type = "Request."
+    unit_address = dictionary["current_unit_address"]
+    f_code = dictionary["current_function_code"]
+    req_f_code_name = dictionary["current_request_name"]
+    req_from_gui = str(dictionary["current_request_from_gui"])
+    req_validity = dictionary["current_request_from_gui_is_valid"]
+    req_err_msg = dictionary["current_request_from_gui_error_msg"]
+    req_byte = dictionary["current_request_serialized"]
+    resp_time_stamp = dictionary["current_response_received_time"]
+    resp_type = "Response."
+    resp_validity = dictionary["current_response_is_valid"]
+    resp_err_msg = dictionary["current_response_err_msg"]
+    resp_byte = dictionary["current_response_serialized"]
+    resp_return_value = str(dictionary["current_response_returned_values"])
 
-    else:  # write the response into the database
-        str_sep = ", "
-        apostrophe = "\'"
-        time_stamp = apostrophe + str(datetime.now()) + apostrophe
-        response = str(db_data[1]).replace("x", "").replace("\'", "").split("\\")[1:]
-        tid = response[0] + response[1]
-        id = str(tid) + ".2"
-        type_and_tid = apostrophe + "RESP" + tid + apostrophe
-        protocol = apostrophe + response[2] + response[3] + apostrophe
-        length = apostrophe + response[4] + response[5] + apostrophe
-        unit_address = apostrophe + response[6] + apostrophe
-        function_code = apostrophe + response[7] + apostrophe
-        modbus_info = apostrophe
-        for i in range(8, len(response)):
-            modbus_info = modbus_info + response[i]
-        modbus_info = modbus_info + apostrophe
+    str_ins = "INSERT INTO REQ_AND_RESP (" \
+              "REQ_SENT_TIME, " \
+              "TID, " \
+              "REQ_TYPE, " \
+              "UNIT_ADDRESS, " \
+              "FUNCTION_CODE, " \
+              "REQ_NAME, " \
+              "REQ_FROM_GUI, " \
+              "REQ_IS_VALID, " \
+              "REQ_ERR_MSG, " \
+              "REQ_BYTE, " \
+              "RESP_REC_TIME, " \
+              "RESP_TYPE, " \
+              "RESP_BYTE, " \
+              "RESP_VALID, " \
+              "RESP_ERR_MSG, " \
+              "RESP_RET_VAL) "
 
-        str_ins = "INSERT INTO REQ_AND_RESP (TIME_STAMP, " \
-                  "INDEX_AND_TYPE, " \
-                  "TYPE_AND_TID, " \
-                  "PROTOCOL, " \
-                  "LEN, " \
-                  "UNIT_ADDRESS, " \
-                  "F_CODE, " \
-                  "MODBUS_DATA) "
-        try:
-            conn.execute(str_ins + "VALUES (" +
-                         time_stamp + str_sep +
-                         id + str_sep +
-                         type_and_tid + str_sep +
-                         protocol + str_sep +
-                         length + str_sep +
-                         unit_address + str_sep +
-                         function_code + str_sep +
-                         modbus_info + " )")
+    try:
+        conn.execute(str_ins + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                     (req_time_stamp, tid, req_type, unit_address, f_code,
+                      req_f_code_name, req_from_gui, req_validity, req_err_msg,
+                      req_byte, resp_time_stamp, resp_type, resp_byte, resp_validity,
+                      resp_err_msg, resp_return_value))
 
-            conn.commit()
-            print("Records created successfully.")
-            conn.close()
-        except Exception as e:
-            print("Error! = ", e)
+        conn.commit()
+        print("Writing: Records created successfully.")
+        conn.close()
+
+    except Exception as e:
+        print("Writing: Error! = ", e)

@@ -4,10 +4,14 @@ from copy import deepcopy
 
 
 class StateManager:
-    def __init__(self, modbus_request_queue, modbus_response_queue):
+    def __init__(self, modbus_request_queue, modbus_response_queue,
+                 db_read_queue_request, db_read_queue_response, db_write_queue):
         self.modbus_request_queue = modbus_request_queue
         self.modbus_response_queue = modbus_response_queue
         self.last_ten_dicts = {}
+        self.db_read_queue_request = db_read_queue_request
+        self.db_read_queue_response = db_read_queue_response
+        self.db_write_queue = db_write_queue
 
     gui = None
     current_state_dict = {
@@ -15,17 +19,20 @@ class StateManager:
         "current_unit_address": "00",
         "current_function_code": "00",
         "current_request_name": "Unknown Request.",
-        "current_request_from_gui": '/',
+        "current_request_from_gui": '-',
         "current_request_from_gui_is_valid": False,
-        "current_request_from_gui_error_msg": "/",
+        "current_request_from_gui_error_msg": "-",
         "current_request_serialized": b'0',
-        "current_request_sent": 0,
-        "current_response_received": 0,
+        "current_request_sent_time": 0,
+        "current_response_received_time": 0,
         "current_response_serialized": b'0',
         "current_response_is_valid": False,
-        "current_response_err_msg": "/",
-        "current_response_returned_values": "/",
+        "current_response_err_msg": "-",
+        "current_response_returned_values": "-",
     }
+
+    db_current_index = 0
+    db_dicts = {}
 
     # setters
     def set_gui(self, gui):
@@ -54,12 +61,19 @@ class StateManager:
     def set_current_request_name(self, req_name):
         self.current_state_dict["current_request_name"] = req_name
 
+    def set_db_dicts(self, data):
+        self.db_dicts = data
+
     # getters
     def get_dict(self):
         return self.current_state_dict
 
     def get_last_ten_dicts(self):
         return self.last_ten_dicts
+
+    def get_db_dicts(self):
+        self.state_manager_read_from_db()
+        return self.db_dicts
 
     # communication
     def send_request(self, index, widget):
@@ -71,52 +85,56 @@ class StateManager:
             self.set_current_tid()
             self.current_state_dict["current_request_from_gui"] = validation_result
             self.current_state_dict["current_request_from_gui_is_valid"] = True
-            self.current_state_dict["current_request_from_gui_error_msg"] = "/"
-            self.current_state_dict["current_request_sent"] = datetime.now()
+            self.current_state_dict["current_request_from_gui_error_msg"] = "-"
+            self.current_state_dict["current_request_sent_time"] = datetime.now()
             self.modbus_request_queue.put(self.current_state_dict)
         else:
             # data is invalid, inform the GUI, set dict values
             self.set_current_tid()
-            self.current_state_dict["current_request_from_gui"] = "/"
+            self.current_state_dict["current_request_from_gui"] = "-"
             self.current_state_dict["current_request_from_gui_is_valid"] = False
             self.current_state_dict["current_request_from_gui_error_msg"] = validation_result
-            self.current_state_dict["current_response_serialized"] = "/"
-            self.current_state_dict["current_request_sent"] = datetime.now()
+            self.current_state_dict["current_response_serialized"] = "-"
+            self.current_state_dict["current_request_sent_time"] = datetime.now()
             self.set_current_request_serialized('/')
             self.set_current_response_serialized('/')
 
     def get_response(self):
         try:
             # TODO fix this somehow, don't like it
-            deserialized_dict = self.modbus_response_queue.get(block=True)
+            deserialized_dict = self.modbus_response_queue.get(block=True, timeout=5)
         except:
-            deserialized_dict = "/"
-        self.current_state_dict["current_response_received"] = datetime.now()
-        if deserialized_dict != "/":
+            deserialized_dict = "-"
+            self.current_state_dict["current_response_err_msg"] = "No Response Received."
+        self.current_state_dict["current_response_received_time"] = datetime.now()
+        if deserialized_dict != "-":
             for key in deserialized_dict:
                 if key in self.current_state_dict:
                     self.current_state_dict[key] = deserialized_dict[key]
-
+        # dictionary housekeeping
         self.update_history_last_ten()
+        self.state_manager_write_to_db()
+
+    # internal data and database
 
     def update_history_last_ten(self):
         # save only the last 10. If more, delete the oldest one.
         if len(self.last_ten_dicts) >= 10:
             min_key = min(self.last_ten_dicts.keys())
             self.last_ten_dicts.pop(min_key)
-
         # use deepcopy, otherwise, the older data will be overwritten
         tid = deepcopy(self.current_state_dict["current_tid"])
         self.last_ten_dicts[tid] = deepcopy(self.current_state_dict)
 
-    def write_to_db(self):
-        # TODO save the current dict into the db
+    def state_manager_write_to_db(self):
+        self.db_write_queue.put(self.current_state_dict)
         return
 
-    def stm_read_from_db(self, start_index, no_of_elements):
-        # TODO read from db
+    def state_manager_read_from_db(self):
+        self.db_read_queue_request.put(["READ FROM DB", self.db_current_index])
+        self.db_read_queue_response.get()  # wait for the response
+        self.db_current_index = self.db_current_index + 10
 
-        # the data will be stored in a list of dictionaries
-        db_dict_list = []
-
-        return db_dict_list
+    def reset_db_dict(self):
+        self.db_dicts = {}
+        self.db_current_index = 0

@@ -3,7 +3,7 @@ from PySide2.QtGui import QFont
 from PySide2 import QtCore
 
 
-def right_side_response_init(right_side_layout, dictionary, first_init, parent_layout):
+def right_side_response_init(right_side_layout, dictionary, first_init):
     reset_layout(right_side_layout)
 
     right_side_layout.setAlignment(QtCore.Qt.AlignTop)
@@ -63,7 +63,7 @@ def right_side_response_init(right_side_layout, dictionary, first_init, parent_l
             response_result_label.setFont(response_title_font)
             response_box2.addWidget(response_result_label)
             right_side_layout.addLayout(response_box2)
-        elif response_return_value == "/":
+        elif response_return_value == "-":
             if function_code == 1:
                 response_result_label = QLabel("No Coils Are Set.")
             else:
@@ -108,7 +108,7 @@ def right_side_response_init(right_side_layout, dictionary, first_init, parent_l
             response_result_label.setFont(response_title_font)
             response_box2.addWidget(response_result_label)
             right_side_layout.addLayout(response_box2)
-        elif response_return_value == "/":
+        elif response_return_value == "-":
             if function_code == 3:
                 response_result_label = QLabel("No Holding Registers Are Set.")
             else:

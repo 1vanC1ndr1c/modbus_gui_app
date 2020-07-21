@@ -17,45 +17,20 @@ def main():
     modbus_request_queue = queue.Queue()
     modbus_response_queue = queue.Queue()
     db_write_queue = queue.Queue()
-    db_read_queue = queue.Queue()
+    db_read_queue_request = queue.Queue()
+    db_read_queue_response = queue.Queue()
 
-    state_manager = StateManager(modbus_request_queue, modbus_response_queue)
+    state_manager = StateManager(modbus_request_queue, modbus_response_queue,
+                                 db_read_queue_request, db_read_queue_response,
+                                 db_write_queue)
+
     com_thread = Thread(target=start_communication, args=(modbus_request_queue, modbus_response_queue, state_manager))
     com_thread.start()
+    db_thread = Thread(target=start_db, args=(db_write_queue, db_read_queue_request,
+                                              db_read_queue_response, state_manager))
+    db_thread.start()
     gui_thread = Thread(target=start_app, args=(state_manager,))
     gui_thread.start()
-
-    # db_thread = Thread(target=start_db, args=(db_write_queue, db_read_queue))
-    # db_thread.start()
-
-    # TEST STUFF
-    # database test REQUEST
-    # new_tid = "0001"
-    # protocol = "0000"
-    # length = "0006"
-    # unit_address = "33"
-    # function_code = "01"
-    # modbus_request = "00100016"
-    # db_data = ["REQUEST", new_tid, protocol, length, unit_address, function_code, modbus_request[2:]]
-    # db_write_queue.put(db_data)
-    #
-    # # database test RESPONSE 1
-    # # db_data = []
-    # # resp1 = b'\x00\x01\x00\x00\x00\x04\x02\x01\x01\x01'
-    # # db_data.append("RESPONSE")
-    # # db_data.append(resp1)
-    # # db_write_queue.put(db_data)
-    #
-    # # # database test RESPONSE 2
-    # db_data = []
-    # resp2 = b'\x00\x02\x00\x00\x00\x03\x03\x81\x02'
-    # db_data.append("RESPONSE")
-    # db_data.append(resp2)
-    # # db_write(db_data)
-    # db_write_queue.put(db_data)
-
-    # request = b'\x00\x01\x00\x00\x00\x06\x02\x01\x00"\x00\x16'  # test data
-    # modbus_request_queue.put(request)
 
 
 if __name__ == '__main__':

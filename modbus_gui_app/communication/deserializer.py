@@ -23,7 +23,7 @@ def deserialize(bytes_response, state_manager):
     except:
         deserialize_dict["current_response_is_valid"] = False
         deserialize_dict["current_response_err_msg"] = "Error with the request processing!"
-        deserialize_dict["current_response_serialized"] = "/"
+        deserialize_dict["current_response_serialized"] = "-"
         return deserialize_dict
 
     function_code = state_manager.get_dict()["current_request_from_gui"][3]
@@ -57,9 +57,9 @@ def deserialize(bytes_response, state_manager):
                 indices.append(res)
 
         if len(indices) == 0:
-            indices = "/"
+            indices = "-"
         deserialize_dict["current_response_returned_values"] = indices
-        deserialize_dict["current_response_err_msg"] = "/"
+        deserialize_dict["current_response_err_msg"] = "-"
         return deserialize_dict
 
     elif function_code == 3 or function_code == 4:
@@ -72,9 +72,9 @@ def deserialize(bytes_response, state_manager):
                 print(e)
                 pass
         if len(values) == 0:
-            values = "/"
+            values = "-"
             deserialize_dict["current_response_returned_values"] = values
-            deserialize_dict["current_response_err_msg"] = "/"
+            deserialize_dict["current_response_err_msg"] = "-"
             return deserialize_dict
 
         location_and_value = []
@@ -82,11 +82,11 @@ def deserialize(bytes_response, state_manager):
             location = i + int(start_add, 16)
             location = hex(location)
             location_and_value.append([location, val])
-        deserialize_dict["current_response_err_msg"] = "/"
+        deserialize_dict["current_response_err_msg"] = "-"
         deserialize_dict["current_response_returned_values"] = location_and_value
         return deserialize_dict
 
     elif function_code == 5 or function_code == 6:
-        deserialize_dict["current_response_err_msg"] = "/"
+        deserialize_dict["current_response_err_msg"] = "-"
         deserialize_dict["current_response_returned_values"] = str(bytes_response)
         return deserialize_dict

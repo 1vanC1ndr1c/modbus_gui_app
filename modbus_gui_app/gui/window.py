@@ -6,7 +6,7 @@ from PySide2.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, Q
 
 from modbus_gui_app.gui.gui_right_side import right_side_response_init, init_error_window
 from modbus_gui_app.gui.gui_left_side import left_side_request_options_init
-from modbus_gui_app.gui.history_window import init_history_window
+from modbus_gui_app.gui.history_window import HistoryWindow
 
 
 def start_app(state_manager):
@@ -21,6 +21,7 @@ class Gui:
         self.right_side_layout = QVBoxLayout()
         self.left_side_layout = QVBoxLayout()
         self.parent_layout = QHBoxLayout()
+        self.history_window = HistoryWindow(state_manager)
 
     def init_gui(self):
         app = QApplication(sys.argv)
@@ -36,7 +37,7 @@ class Gui:
         history_action = QAction("Open History")
         history_action.setShortcut("Ctrl+H")
         history_action.setStatusTip("See the history of requests and responses")
-        history_action.triggered.connect(lambda l: init_history_window(self.state_manager))
+        history_action.triggered.connect(lambda l: self.history_window.init_history_window())
         menu.addAction(history_action)
         menu_bar.addMenu(menu)
 
