@@ -27,9 +27,11 @@ def deserialize(bytes_response, state_manager):
 
     function_code = state_manager.get_dict()["current_request_from_gui"][3]
 
+    # todo shouldnt transform to string
     modbus_response = str(bytes_response).replace("x", "").split("\\")
     modbus_response = modbus_response[10:]
     start_add = state_manager.get_dict()["current_request_from_gui"][0]
+    print(modbus_response)
     start_add = int(str(start_add), 16)
     start_add = hex(start_add)
 
@@ -80,7 +82,10 @@ def deserialize(bytes_response, state_manager):
         for i, val in enumerate(values):
             location = i + int(start_add, 16)
             location = hex(location)
-            location_and_value.append([location, val])
+            if str(val) != "0000":
+                location_and_value.append([location, val])
+        if len(location_and_value) == 0:
+            location_and_value = "-"
         deserialize_dict["current_response_err_msg"] = "-"
         deserialize_dict["current_response_returned_values"] = location_and_value
         return deserialize_dict
