@@ -2,7 +2,7 @@ import sys
 
 from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QStackedWidget, \
-    QHBoxLayout, QSizePolicy, QFrame, QMenu, QMainWindow, QAction
+    QHBoxLayout, QSizePolicy, QFrame, QMenu, QMainWindow, QAction, QStyleFactory
 
 from modbus_gui_app.gui.gui_right_side import right_side_response_init, init_error_window
 from modbus_gui_app.gui.gui_left_side import left_side_request_options_init
@@ -25,6 +25,7 @@ class Gui:
 
     def init_gui(self):
         app = QApplication(sys.argv)
+        app.setStyle("fusion")
         app.setApplicationName("MODBUS")
         window = QMainWindow()
         window.setGeometry(300, 300, 1200, 450)

@@ -105,6 +105,8 @@ class HistoryWindow:
         if self.isFirst is True:
             self.isFirst = False
             state_manager.reset_db_dict()
+            self.rows.removeRow(0)
+
         self.more_data = state_manager.get_db_dicts()
         self.set_history_data(self.more_data)
 

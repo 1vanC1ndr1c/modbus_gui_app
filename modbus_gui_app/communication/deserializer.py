@@ -27,7 +27,7 @@ def deserialize(bytes_response, state_manager):
 
     function_code = state_manager.get_dict()["current_request_from_gui"][3]
 
-    modbus_response = str(bytes_response).split("\\x")
+    modbus_response = str(bytes_response).replace("x", "").split("\\")
     modbus_response = modbus_response[10:]
     start_add = state_manager.get_dict()["current_request_from_gui"][0]
     start_add = int(str(start_add), 16)
