@@ -1,8 +1,7 @@
+# TODO reformat, but first fix => it should probably be working in some encoding rather than pure hex format
 def deserialize(bytes_response, state_manager):
-    deserialize_dict = {}
+    deserialize_dict = {"current_response_serialized": bytes_response, "current_response_is_valid": True}
 
-    deserialize_dict["current_response_serialized"] = bytes_response
-    deserialize_dict["current_response_is_valid"] = True
     try:
         if str(bytes_response).split('\\')[8].startswith('x8'):  # check for errors in the response
             err_msg = str(bytes_response).split('\\')[9]

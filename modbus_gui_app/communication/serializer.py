@@ -1,67 +1,144 @@
-def serialize(dict, state_manager):
-    data = dict.get("current_request_from_gui")
-
-    new_tid = dict.get("current_tid")
-    new_tid = str(new_tid).rjust(4, '0')  # transaction ID formed into 2 bytes
-    protocol = '0000'  # doesn't change
-    unit_address = data[2]
-
+def serialize(dictionary, state_manager):
+    data = dictionary.get("current_request_from_gui")
     function_code = data[3]
     function_code = str(hex(function_code))[2:].rjust(2, '0')
-    modbus_request = function_code + ''
 
-    state_manager.set_current_unit_address(str(unit_address))
-    state_manager.set_current_function_code(str(function_code))
-
-    if function_code == '01':
-        state_manager.set_current_request_name("Read Coils.")
+    if function_code == "01":
+        full_request = read_coils_serialize(function_code, data, state_manager, dictionary)
+        return full_request
     elif function_code == "02":
-        state_manager.set_current_request_name("Read Discrete Inputs .")
+        full_request = read_discrete_inputs_serialize(function_code, data, state_manager, dictionary)
+        return full_request
     elif function_code == "03":
-        state_manager.set_current_request_name("Read Holding Registers.")
+        full_request = read_holding_registers_serialize(function_code, data, state_manager, dictionary)
+        return full_request
     elif function_code == "04":
-        state_manager.set_current_request_name("Read Input Registers .")
+        full_request = read_input_registers_serialize(function_code, data, state_manager, dictionary)
+        return full_request
     elif function_code == "05":
-        state_manager.set_current_request_name("Write Single Coil.")
+        full_request = write_single_coil_serialize(function_code, data, state_manager, dictionary)
+        return full_request
     elif function_code == "06":
-        state_manager.set_current_request_name("Write Single Register.")
+        full_request = write_single_register_serialize(function_code, data, state_manager, dictionary)
+        return full_request
     else:
         state_manager.set_current_request_name("Unknown Request.")
+        return b'0'
 
-    if function_code == '01' or function_code == '02' or function_code == '03' or function_code == '04':
-        start_add = data[0]
-        start_add = start_add - 1
-        start_add = str(hex(start_add))[2:].rjust(4, '0')
-        no_of_coils = data[1]
-        no_of_coils = str(hex(no_of_coils))[2:].rjust(4, '0')
-        modbus_request = modbus_request + start_add + no_of_coils
 
-    elif function_code == '05':
-        start_add = data[0]
-        start_add = start_add - 1
-        start_add = str(hex(start_add))[2:].rjust(4, '0')
-        state_select = data[1]
-        if state_select == 0:
-            modbus_request = modbus_request + start_add + "ff" + "00"
-        else:
-            modbus_request = modbus_request + start_add + "00" + "00"
+def read_coils_serialize(function_code, data, state_manager, dictionary):
+    state_manager.set_current_request_name("Read Coils.")
 
-    elif function_code == '06':
-        start_add = data[0]
-        start_add = start_add - 1
-        start_add = str(hex(start_add))[2:].rjust(4, '0')
-        reg_val = data[1]
-        reg_val = str(hex(reg_val))[2:].rjust(4, '0')
-        modbus_request = modbus_request + start_add + reg_val
+    new_tid, protocol, unit_address, start_add = \
+        get_tid_protocol_unitaddr_startaddr(dictionary, data, state_manager, function_code)
 
-    length = len(bytes.fromhex(modbus_request)) + 1  # defined as length of bytes after the 'length' field
-    length = str(length).rjust(4, '0')
+    no_of_coils = str(hex(data[1]))[2:].rjust(4, '0')
 
+    modbus_request = function_code + ''
+    modbus_request = modbus_request + start_add + no_of_coils
+
+    serialized_request = generate_serialized_request(modbus_request, new_tid, protocol, unit_address, state_manager)
+    return serialized_request
+
+
+def read_discrete_inputs_serialize(function_code, data, state_manager, dictionary):
+    state_manager.set_current_request_name("Read Discrete Inputs .")
+
+    new_tid, protocol, unit_address, start_add = \
+        get_tid_protocol_unitaddr_startaddr(dictionary, data, state_manager, function_code)
+
+    no_of_discrete_inputs = str(hex(data[1]))[2:].rjust(4, '0')
+
+    modbus_request = function_code + ''
+    modbus_request = modbus_request + start_add + no_of_discrete_inputs
+
+    serialized_request = generate_serialized_request(modbus_request, new_tid, protocol, unit_address, state_manager)
+    return serialized_request
+
+
+def read_holding_registers_serialize(function_code, data, state_manager, dictionary):
+    state_manager.set_current_request_name("Read Holding Registers.")
+
+    new_tid, protocol, unit_address, start_add = \
+        get_tid_protocol_unitaddr_startaddr(dictionary, data, state_manager, function_code)
+
+    no_of_holding_registers = str(hex(data[1]))[2:].rjust(4, '0')
+
+    modbus_request = function_code + ''
+    modbus_request = modbus_request + start_add + no_of_holding_registers
+
+    serialized_request = generate_serialized_request(modbus_request, new_tid, protocol, unit_address, state_manager)
+    return serialized_request
+
+
+def read_input_registers_serialize(function_code, data, state_manager, dictionary):
+    state_manager.set_current_request_name("Read Input Registers.")
+
+    new_tid, protocol, unit_address, start_add = \
+        get_tid_protocol_unitaddr_startaddr(dictionary, data, state_manager, function_code)
+
+    no_of_input_registers = str(hex(data[1]))[2:].rjust(4, '0')
+
+    modbus_request = function_code + ''
+    modbus_request = modbus_request + start_add + no_of_input_registers
+
+    serialized_request = generate_serialized_request(modbus_request, new_tid, protocol, unit_address, state_manager)
+    return serialized_request
+
+
+def write_single_coil_serialize(function_code, data, state_manager, dictionary):
+    state_manager.set_current_request_name("Write Single Coil.")
+
+    new_tid, protocol, unit_address, start_add = \
+        get_tid_protocol_unitaddr_startaddr(dictionary, data, state_manager, function_code)
+
+    state_select = data[1]
+    modbus_request = function_code + ''
+    if state_select == 0:
+        modbus_request = modbus_request + start_add + "ff" + "00"
+    else:
+        modbus_request = modbus_request + start_add + "00" + "00"
+
+    serialized_request = generate_serialized_request(modbus_request, new_tid, protocol, unit_address, state_manager)
+    return serialized_request
+
+
+def write_single_register_serialize(function_code, data, state_manager, dictionary):
+    state_manager.set_current_request_name("Write Single Register.")
+
+    new_tid, protocol, unit_address, start_add = \
+        get_tid_protocol_unitaddr_startaddr(dictionary, data, state_manager, function_code)
+
+    reg_val = data[1]
+    reg_val = str(hex(reg_val))[2:].rjust(4, '0')
+    modbus_request = function_code + ''
+    modbus_request = modbus_request + start_add + reg_val
+
+    serialized_request = generate_serialized_request(modbus_request, new_tid, protocol, unit_address, state_manager)
+    return serialized_request
+
+
+def get_tid_protocol_unitaddr_startaddr(dictionary, data, state_manager, function_code):
+    new_tid = dictionary.get("current_tid")
+    new_tid = str(new_tid).rjust(4, '0')
+    protocol = '0000'
+    unit_address = data[2]
     unit_address = str(unit_address).rjust(2, '0')
+    state_manager.set_current_unit_address(str(unit_address))
+    state_manager.set_current_function_code(str(function_code))
+    start_add = data[0]
+    start_add = start_add - 1
+    start_add = str(hex(start_add))[2:].rjust(4, '0')
+
+    return new_tid, protocol, unit_address, start_add
+
+
+def generate_serialized_request(modbus_request, new_tid, protocol, unit_address, state_manager):
+    length = len(bytes.fromhex(modbus_request)) + 1
+    length = str(length).rjust(4, '0')
 
     serialized_request = new_tid + protocol + length + unit_address + modbus_request
     serialized_request = bytes.fromhex(serialized_request)
 
     state_manager.set_current_request_serialized(serialized_request)
     return serialized_request
-    # return b'\x00\x01\x00\x00\x00\x06\x02\x01\x00"\x00\x16'    # test data

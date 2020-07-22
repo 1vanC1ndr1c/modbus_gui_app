@@ -56,7 +56,7 @@ class Gui:
                                           additional_options_stacked_widget.currentIndex(),
                                           additional_options_stacked_widget.currentWidget()))
 
-        right_side_response_init(self.right_side_layout, self.state_dict, True, self.parent_layout)
+        right_side_response_init(self.right_side_layout, self.state_dict, True)
         response_stacked_widget = QStackedWidget()
         select_operation_combo_box.activated[int].connect(response_stacked_widget.setCurrentIndex)
 
@@ -86,4 +86,4 @@ class Gui:
         elif current_request_is_valid is False:
             init_error_window(self.state_dict.get("current_request_from_gui_error_msg"))
 
-        right_side_response_init(self.right_side_layout, self.state_dict, False, self.parent_layout)
+        right_side_response_init(self.right_side_layout, self.state_dict, False)
