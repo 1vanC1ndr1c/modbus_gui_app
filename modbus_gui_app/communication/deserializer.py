@@ -1,13 +1,14 @@
-# TODO reformat, but first fix => it should probably be working in some encoding rather than pure hex format
+import re
+
+
 def deserialize(bytes_response, state_manager):
     deserialize_dict = {"current_response_serialized": bytes_response, "current_response_is_valid": True}
 
+    hex_response_array = re.findall('..', str(bytes_response.hex()))  # convert the byte response into string(hex)
+
     try:
-        if str(bytes_response).split('\\')[8].startswith('x8'):  # check for errors in the response
-            err_msg = str(bytes_response).split('\\')[9]
-            err_msg = err_msg.replace("\'", "")
-            err_msg = err_msg.replace("\"", "")
-            err_msg = err_msg.replace("x", "")
+        if hex_response_array[7].startswith('8'):
+            err_msg = str(hex_response_array[8])
             if err_msg == "01":
                 err_msg = "ERROR: Illegal function"
             elif err_msg == "02":
@@ -27,11 +28,8 @@ def deserialize(bytes_response, state_manager):
 
     function_code = state_manager.get_dict()["current_request_from_gui"][3]
 
-    # todo shouldnt transform to string
-    modbus_response = str(bytes_response).replace("x", "").split("\\")
-    modbus_response = modbus_response[10:]
+    modbus_response = hex_response_array[9:]
     start_add = state_manager.get_dict()["current_request_from_gui"][0]
-    print(modbus_response)
     start_add = int(str(start_add), 16)
     start_add = hex(start_add)
 
