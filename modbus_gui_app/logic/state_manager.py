@@ -38,14 +38,6 @@ class StateManager:
     def set_gui(self, gui):
         self.gui = gui
 
-    def set_current_tid(self):
-        tid = self.current_state_dict.get("current_tid")
-        if tid > 9999:
-            tid = 0
-        else:
-            tid = tid + 1
-        self.current_state_dict["current_tid"] = tid
-
     def set_current_request_serialized(self, current_request_serialized):
         self.current_state_dict["current_request_serialized"] = current_request_serialized
 
@@ -82,22 +74,22 @@ class StateManager:
 
         if is_valid is True:
             # send the validated data(in a dict) to COMM
-            self.set_current_tid()
+            #self.set_current_tid()
             self.current_state_dict["current_request_from_gui"] = validation_result
             self.current_state_dict["current_request_from_gui_is_valid"] = True
             self.current_state_dict["current_request_from_gui_error_msg"] = "-"
             self.current_state_dict["current_request_sent_time"] = datetime.now()
             self.modbus_request_queue.put(self.current_state_dict)
-        else:
-            # data is invalid, inform the GUI, set dict values
-            self.set_current_tid()
-            self.current_state_dict["current_request_from_gui"] = "-"
-            self.current_state_dict["current_request_from_gui_is_valid"] = False
-            self.current_state_dict["current_request_from_gui_error_msg"] = validation_result
-            self.current_state_dict["current_response_serialized"] = "-"
-            self.current_state_dict["current_request_sent_time"] = datetime.now()
-            self.set_current_request_serialized('/')
-            self.set_current_response_serialized('/')
+        # else:
+        #     # data is invalid, inform the GUI, set dict values
+        #     self.set_current_tid()
+        #     self.current_state_dict["current_request_from_gui"] = "-"
+        #     self.current_state_dict["current_request_from_gui_is_valid"] = False
+        #     self.current_state_dict["current_request_from_gui_error_msg"] = validation_result
+        #     self.current_state_dict["current_response_serialized"] = "-"
+        #     self.current_state_dict["current_request_sent_time"] = datetime.now()
+        #     self.set_current_request_serialized('/')
+        #     self.set_current_response_serialized('/')
 
     def get_response(self):
         try:

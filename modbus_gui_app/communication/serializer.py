@@ -1,7 +1,8 @@
-def serialize(dictionary, state_manager):
+def serialize(dictionary, state_manager, tid):
     data = dictionary.get("current_request_from_gui")
     function_code = data[3]
     function_code = str(hex(function_code))[2:].rjust(2, '0')
+    dictionary["current_tid"] = tid
 
     if function_code == "01":
         full_request = read_coils_serialize(function_code, data, state_manager, dictionary)

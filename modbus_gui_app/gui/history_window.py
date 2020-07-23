@@ -1,9 +1,8 @@
 from PySide2.QtWidgets import QDialog, QVBoxLayout, QTableView, QPushButton, QHeaderView, QAbstractItemView
-from PySide2.QtGui import QStandardItemModel, QStandardItem, QFont
+from PySide2.QtGui import QStandardItemModel, QStandardItem, QFont, QIcon
 from PySide2 import QtCore
 
 
-# TODO ADD MORE COLUMNS
 class HistoryWindow:
 
     def __init__(self, state_manager):
@@ -20,6 +19,7 @@ class HistoryWindow:
         self.last_ten_dicts = self.state_manager.get_last_ten_dicts()
 
         history_dlg_window = QDialog(None, QtCore.Qt.WindowCloseButtonHint)
+        history_dlg_window.setWindowIcon(QIcon("resources/history_icon.png"))
         history_dlg_window.setMinimumHeight(500)
         history_dlg_window.setMinimumWidth(1600)
         history_dlg_window.setWindowTitle("HISTORY")

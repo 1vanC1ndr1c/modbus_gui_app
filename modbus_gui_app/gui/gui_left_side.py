@@ -1,7 +1,9 @@
-from PySide2.QtWidgets import QHBoxLayout, QLabel, QComboBox, QStackedWidget, QWidget, QVBoxLayout, QLineEdit
+from PySide2 import QtCore
+from PySide2.QtWidgets import QHBoxLayout, QLabel, QComboBox, QStackedWidget, QWidget, QVBoxLayout, QLineEdit, QGroupBox
 
 
 def left_side_request_options_init(left_side_layout):
+    select_operation_box = QGroupBox()
     select_operation_layout = QHBoxLayout()
     select_operation_label = QLabel("Select an operation:")
     select_operation_layout.addWidget(select_operation_label)
@@ -13,7 +15,8 @@ def left_side_request_options_init(left_side_layout):
     select_operation_combo_box.addItem("Write Single Coil")
     select_operation_combo_box.addItem("Write Single Register")
     select_operation_layout.addWidget(select_operation_combo_box)
-    left_side_layout.addLayout(select_operation_layout)
+    select_operation_box.setLayout(select_operation_layout)
+    left_side_layout.addWidget(select_operation_box)
 
     # Create additional options based on the selected options in the drop down menu.
     additional_options_stacked_widget = QStackedWidget()

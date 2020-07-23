@@ -104,6 +104,7 @@ def read_holding_registers_deserialize(modbus_response, start_add, deserialize_d
             location_and_value.append([location, val])
     if len(location_and_value) == 0:
         location_and_value = "-"
+
     deserialize_dict["current_response_err_msg"] = "-"
     deserialize_dict["current_response_returned_values"] = location_and_value
     return deserialize_dict
@@ -131,6 +132,7 @@ def read_input_registers_deserialize(modbus_response, start_add, deserialize_dic
             location_and_value.append([location, val])
     if len(location_and_value) == 0:
         location_and_value = "-"
+
     deserialize_dict["current_response_err_msg"] = "-"
     deserialize_dict["current_response_returned_values"] = location_and_value
     return deserialize_dict

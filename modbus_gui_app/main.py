@@ -4,13 +4,14 @@ import queue
 import sys
 
 from modbus_gui_app.logic.state_manager import StateManager
-from modbus_communication import communicate_with_modbus
+from modbus_communication import ModbusCommunication
 from modbus_gui_app.database.db_handler import start_db
 from modbus_gui_app.gui.window import start_app
 
 
-def start_communication(req_queue, resp_queue, st_mngr):
-    asyncio.new_event_loop().run_until_complete(communicate_with_modbus(req_queue, resp_queue, st_mngr))
+def start_communication(req_queue, resp_queue, st_mngr, modbus_communicator):
+    asyncio.new_event_loop().run_until_complete(
+        modbus_communicator.communicate_with_modbus(req_queue, resp_queue, st_mngr))
 
 
 def main():
@@ -24,7 +25,10 @@ def main():
                                  db_read_queue_request, db_read_queue_response,
                                  db_write_queue)
 
-    com_thread = Thread(target=start_communication, args=(modbus_request_queue, modbus_response_queue, state_manager))
+    modbus_communicator = ModbusCommunication()
+
+    com_thread = Thread(target=start_communication,
+                        args=(modbus_request_queue, modbus_response_queue, state_manager, modbus_communicator))
     com_thread.start()
     db_thread = Thread(target=start_db, args=(db_write_queue, db_read_queue_request,
                                               db_read_queue_response, state_manager))
