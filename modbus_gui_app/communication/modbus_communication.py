@@ -33,7 +33,7 @@ class ModbusCommunication:
                 if isinstance(bytes_response.data, bytes):
                     check_bytes = str(bytes_response.data.hex())
                     if check_bytes.startswith("0000"):
-                        print("RESPONSE: received for the dummy request that keeps the connection alive.")
+                        print("RESPONSE: received the dummy request that keeps the connection alive.")
                     else:
                         print("RESPONSE: ", bytes_response.data)
                         deserialized_dict = deserialize(bytes_response.data, state_manager)
