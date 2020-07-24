@@ -112,8 +112,6 @@ class Gui:
 
         self.upper_layout.addStretch()
 
-
-
         self.parent_layout.addLayout(self.upper_layout)
         self.parent_layout.addWidget(lower_box)
         main_widget.setLayout(self.parent_layout)
