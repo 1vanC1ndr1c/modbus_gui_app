@@ -1,13 +1,13 @@
 import sqlite3
 
 
-def db_writer(db_write_queue):
+def db_writer(db_write_queue, conn):
     while True:
         dictionary = db_write_queue.get()
-        db_write(dictionary)
+        db_write(dictionary, conn)
 
 
-def db_write(dictionary):
+def db_write(dictionary, conn):
     conn = sqlite3.connect('req_and_resp.db')
     print("Writing: Connected to the DB.")
 

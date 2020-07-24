@@ -14,7 +14,7 @@ class StateManager:
         self.db_write_queue = db_write_queue
 
     gui = None
-    current_state_dict = {
+    current_req_resp_dict = {
         "current_tid": 0,
         "current_unit_address": "00",
         "current_function_code": "00",
@@ -34,31 +34,39 @@ class StateManager:
     db_current_index = 0
     db_dicts = {}
 
+    # TODO counts and addresses for the rest of the data(regs, inputs...)
+    current_state_window_dict = {
+        "current_coil_count": 50,
+        "current_coil_start_add": 1,
+        "coil_data": {}
+    }
+
     # setters
     def set_gui(self, gui):
         self.gui = gui
 
     def set_current_request_serialized(self, current_request_serialized):
-        self.current_state_dict["current_request_serialized"] = current_request_serialized
+        self.current_req_resp_dict["current_request_serialized"] = current_request_serialized
 
     def set_current_response_serialized(self, current_response_serialized):
-        self.current_state_dict["current_response_serialized"] = current_response_serialized
+        self.current_req_resp_dict["current_response_serialized"] = current_response_serialized
 
     def set_current_unit_address(self, unit_address):
-        self.current_state_dict["current_unit_address"] = unit_address
+        self.current_req_resp_dict["current_unit_address"] = unit_address
 
     def set_current_function_code(self, function_code):
-        self.current_state_dict["current_function_code"] = function_code
+        self.current_req_resp_dict["current_function_code"] = function_code
 
     def set_current_request_name(self, req_name):
-        self.current_state_dict["current_request_name"] = req_name
+        self.current_req_resp_dict["current_request_name"] = req_name
 
     def set_db_dicts(self, data):
         self.db_dicts = data
 
     # getters
-    def get_dict(self):
-        return self.current_state_dict
+    @property
+    def state(self):
+        return self.current_req_resp_dict
 
     def get_last_ten_dicts(self):
         return self.last_ten_dicts
@@ -67,29 +75,14 @@ class StateManager:
         self.state_manager_read_from_db()
         return self.db_dicts
 
-    # communication
-    def send_request(self, index, widget):
-        function_code = index + 1
-        is_valid, validation_result = get_validation_result(function_code, widget)  # validate gui request data
-
-        if is_valid is True:
-            # send the validated data(in a dict) to COMM
-            #self.set_current_tid()
-            self.current_state_dict["current_request_from_gui"] = validation_result
-            self.current_state_dict["current_request_from_gui_is_valid"] = True
-            self.current_state_dict["current_request_from_gui_error_msg"] = "-"
-            self.current_state_dict["current_request_sent_time"] = datetime.now()
-            self.modbus_request_queue.put(self.current_state_dict)
-        # else:
-        #     # data is invalid, inform the GUI, set dict values
-        #     self.set_current_tid()
-        #     self.current_state_dict["current_request_from_gui"] = "-"
-        #     self.current_state_dict["current_request_from_gui_is_valid"] = False
-        #     self.current_state_dict["current_request_from_gui_error_msg"] = validation_result
-        #     self.current_state_dict["current_response_serialized"] = "-"
-        #     self.current_state_dict["current_request_sent_time"] = datetime.now()
-        #     self.set_current_request_serialized('/')
-        #     self.set_current_response_serialized('/')
+    # user communication
+    def send_request(self, validation_result):
+        # send the validated data(in a dict) to COMM
+        self.current_req_resp_dict["current_request_from_gui"] = validation_result
+        self.current_req_resp_dict["current_request_from_gui_is_valid"] = True
+        self.current_req_resp_dict["current_request_from_gui_error_msg"] = "-"
+        self.current_req_resp_dict["current_request_sent_time"] = datetime.now()
+        self.modbus_request_queue.put(self.current_req_resp_dict)
 
     def get_response(self):
         try:
@@ -97,16 +90,38 @@ class StateManager:
             deserialized_dict = self.modbus_response_queue.get(block=True, timeout=5)
         except:
             deserialized_dict = "-"
-            self.current_state_dict["current_response_err_msg"] = "No Response Received."
-        self.current_state_dict["current_response_received_time"] = datetime.now()
+            self.current_req_resp_dict["current_response_err_msg"] = "No Response Received."
+        self.current_req_resp_dict["current_response_received_time"] = datetime.now()
         if deserialized_dict != "-":
             for key in deserialized_dict:
-                if key in self.current_state_dict:
-                    self.current_state_dict[key] = deserialized_dict[key]
+                if key in self.current_req_resp_dict:
+                    self.current_req_resp_dict[key] = deserialized_dict[key]
         # dictionary housekeeping
         self.update_history_last_ten()
         self.state_manager_write_to_db()
 
+    # not now
+    # # automatic communication
+    # def update_current_window(self, request_name_str, start_add, no_of_elements):
+    #     print("TODO: BASED ON REQUEST NAME VALIDATE OTHER TWO ARGS")
+    #     if request_name_str == "READ_COILS":
+    #         # TODO VALIDATE
+    #         # TODO UPDATE IF VALID
+    #         # TODO ELSE INFORM THE GUI THAT THE DATA IS WRONG
+    #         self.current_state_window_dict["current_coil_count"] = no_of_elements
+    #         self.current_state_window_dict["current_coil_start_add"] = start_add
+    #         print("YEEET")
+    #         print( self.current_state_window_dict.get("current_coil_count"))
+    #         print(self.current_state_window_dict.get("current_coil_start_add"))
+    #
+    # def current_window_more_data(self, request_name_str):
+    #     if request_name_str == "READ_COILS":
+    #         self.current_state_window_dict["current_coil_count"] = \
+    #             self.current_state_window_dict.get("current_coil_count") + 10
+    #         no_of_elements = self.current_state_window_dict.get("current_coil_count")
+    #         start_add = self.current_state_window_dict.get("current_coil_start_add")
+    #         self.update_current_window(request_name_str, start_add, no_of_elements)
+    #     # TODO REST.
     # internal data and database
 
     def update_history_last_ten(self):
@@ -115,16 +130,19 @@ class StateManager:
             min_key = min(self.last_ten_dicts.keys())
             self.last_ten_dicts.pop(min_key)
         # use deepcopy, otherwise, the older data will be overwritten
-        tid = deepcopy(self.current_state_dict["current_tid"])
-        self.last_ten_dicts[tid] = deepcopy(self.current_state_dict)
+        tid = deepcopy(self.current_req_resp_dict["current_tid"])
+        self.last_ten_dicts[tid] = deepcopy(self.current_req_resp_dict)
 
     def state_manager_write_to_db(self):
-        self.db_write_queue.put(self.current_state_dict)
+        self.db_write_queue.put(self.current_req_resp_dict)
         return
 
     def state_manager_read_from_db(self):
         self.db_read_queue_request.put(["READ FROM DB", self.db_current_index])
-        self.db_read_queue_response.get()  # wait for the response
+        try:
+            self.db_read_queue_response.get(block=True, timeout=5)  # wait for the response
+        except Exception as e:
+            print(e)
         self.db_current_index = self.db_current_index + 10
 
     def reset_db_dict(self):

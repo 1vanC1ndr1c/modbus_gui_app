@@ -1,15 +1,16 @@
 import sys
 
-from PySide2 import QtCore
-from PySide2.QtGui import QFont, QIcon
 from PySide2.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QStackedWidget, \
-    QHBoxLayout, QSizePolicy, QFrame, QMenu, QMainWindow, QAction, QStyleFactory, QGroupBox, QLayout
+    QHBoxLayout, QSizePolicy, QFrame, QMenu, QMainWindow, QAction
+from PySide2.QtGui import QFont, QIcon
+from PySide2 import QtCore
 
-from modbus_gui_app.gui.gui_middle import middle_response_init, init_error_window
 from modbus_gui_app.gui.gui_left_side import left_side_request_options_init
-from modbus_gui_app.gui.gui_right_side import right_side_init
+from modbus_gui_app.gui.gui_middle import middle_init, init_error_window
 from modbus_gui_app.gui.current_state_window import CurrentStateWindow
+from modbus_gui_app.gui.gui_right_side import right_side_init
 from modbus_gui_app.gui.history_window import HistoryWindow
+from modbus_gui_app.logic import validation
 
 
 def start_app(state_manager):
@@ -20,7 +21,7 @@ def start_app(state_manager):
 class Gui:
     def __init__(self, state_manager):
         self.state_manager = state_manager
-        self.state_dict = state_manager.get_dict()
+        self.state_dict = state_manager.current_req_resp_dict
         self.left_layout = QVBoxLayout()
         self.middle_layout = QVBoxLayout()
         self.right_layout = QVBoxLayout()
@@ -30,19 +31,11 @@ class Gui:
         self.current_state_window = CurrentStateWindow(state_manager)
 
     def init_gui(self):
-        app = QApplication(sys.argv)
-        app_icon = QIcon()
-        app_icon.addFile("resources/main_window_16px.png", QtCore.QSize(16, 16))
-        app_icon.addFile("resources/main_window_24px.png", QtCore.QSize(24, 24))
-        app_icon.addFile("resources/main_window_32px.png", QtCore.QSize(32, 32))
-        app_icon.addFile("resources/main_window_48px.png", QtCore.QSize(48, 48))
-        app_icon.addFile("resources/main_window_256px.png", QtCore.QSize(256, 256))
-        app.setWindowIcon(app_icon)
+        app = self.init_q_application()
 
-        app.setStyle("fusion")
-        app.setApplicationName("MODBUS")
         window = QMainWindow()
-        window.setGeometry(300, 300, 1200, 450)
+        window.setGeometry(100, 100, 1800, 900)
+
         main_widget = QWidget()
         font = QFont("Arial", 12)
         main_widget.setFont(font)
@@ -58,76 +51,79 @@ class Gui:
         history_menu.addAction(history_action)
         menu_bar.addMenu(history_menu)
 
-        additional_options_stacked_widget, select_operation_combo_box = \
+        left_side_parent_widget, left_side_options_stacked_widget, left_side_select_operation_box = \
             left_side_request_options_init(self.left_layout)
+        self.upper_layout.addWidget(left_side_parent_widget)
 
-        # Submit buttton and it's functionality
-        button_submit = QPushButton("Submit")
-        button_submit.setStyleSheet("background-color: green")
-        button_submit.setFont(font)
-        button_submit.sizeHint()
-        self.left_layout.addWidget(button_submit)
-
-        button_submit.clicked.connect(lambda c:
-                                      self.send_request_data_and_get_response(
-                                          additional_options_stacked_widget.currentIndex(),
-                                          additional_options_stacked_widget.currentWidget()))
-
-        middle_response_init(self.middle_layout, self.state_dict, True)
-        response_stacked_widget = QStackedWidget()
-        select_operation_combo_box.activated[int].connect(response_stacked_widget.setCurrentIndex)
-
-        left_vertical_line = QFrame()
-        left_vertical_line.setFixedWidth(20)
-        left_vertical_line.setFrameShape(QFrame.VLine)
-        left_vertical_line.setFrameShadow(QFrame.Sunken)
-        left_vertical_line.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
-        left_vertical_line.setMinimumHeight(300)
-
-        lower_box = self.current_state_window.init_current_state_window(font)
-
-        left_size_constraint_widget = QWidget()
-        left_size_constraint_widget.setMaximumWidth(600)
-        left_size_constraint_widget.setMaximumHeight(400)
-        left_size_constraint_widget.setLayout(self.left_layout)
-        self.upper_layout.addWidget(left_size_constraint_widget)
+        left_vertical_line = self.create_vertical_line()
         self.upper_layout.addWidget(left_vertical_line)
 
-        middle_size_constraint_widget = QWidget()
-        middle_size_constraint_widget.setMaximumWidth(600)
-        middle_size_constraint_widget.setMaximumHeight(400)
-        middle_size_constraint_widget.setLayout(self.middle_layout)
-        self.upper_layout.addWidget(middle_size_constraint_widget)
+        middle_init(self.middle_layout, self.state_dict, True)
+        response_stacked_widget = QStackedWidget()
+        left_side_select_operation_box.activated[int].connect(response_stacked_widget.setCurrentIndex)
+        middle_constraint_widget = QWidget()
+        middle_constraint_widget.setMaximumWidth(600)
+        middle_constraint_widget.setMaximumHeight(300)
+        middle_constraint_widget.setLayout(self.middle_layout)
+        self.upper_layout.addWidget(middle_constraint_widget)
 
-        right_vertical_line = QFrame()
-        right_vertical_line.setFixedWidth(20)
-        right_vertical_line.setFrameShape(QFrame.VLine)
-        right_vertical_line.setFrameShadow(QFrame.Sunken)
-        right_vertical_line.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
-        right_vertical_line.setMinimumHeight(300)
+        right_vertical_line = self.create_vertical_line()
         self.upper_layout.addWidget(right_vertical_line)
 
         right_side_init(self.right_layout)
         self.upper_layout.addLayout(self.right_layout)
 
-        self.upper_layout.addStretch()
+        button_submit = QPushButton("Submit")
+        button_submit.setStyleSheet("background-color: green")
+        button_submit.setFont(font)
+        button_submit.sizeHint()
+        button_submit.clicked.connect(lambda c:
+                                      self.button_send_request_data_and_get_response(
+                                          left_side_options_stacked_widget.currentIndex(),
+                                          left_side_options_stacked_widget.currentWidget()))
+        self.left_layout.addWidget(button_submit)
 
         self.parent_layout.addLayout(self.upper_layout)
+
+        lower_box = self.current_state_window.init_current_state_window(font)
         self.parent_layout.addWidget(lower_box)
+
         main_widget.setLayout(self.parent_layout)
         window.setCentralWidget(main_widget)
         window.show()
         app.exec_()
 
-    def send_request_data_and_get_response(self, index, stacked_widget):
-        self.state_manager.send_request(index, stacked_widget)
+    def button_send_request_data_and_get_response(self, index, stacked_widget):
+        function_code = index + 1
+        is_valid, validation_result = validation.get_validation_result(function_code, stacked_widget)
 
-        current_request_is_valid = self.state_dict.get("current_request_from_gui_is_valid")
-
-        if current_request_is_valid is True:
+        if is_valid is True:
+            self.state_manager.send_request(validation_result)
             self.state_manager.get_response()
 
-        elif current_request_is_valid is False:
-            init_error_window(self.state_dict.get("current_request_from_gui_error_msg"))
+        elif is_valid is False:
+            init_error_window(validation_result)
 
-        middle_response_init(self.middle_layout, self.state_dict, False)
+        middle_init(self.middle_layout, self.state_dict, False)
+
+    def init_q_application(self):
+        app = QApplication(sys.argv)
+        app_icon = QIcon()
+        app_icon.addFile("resources/main_window_16px.png", QtCore.QSize(16, 16))
+        app_icon.addFile("resources/main_window_24px.png", QtCore.QSize(24, 24))
+        app_icon.addFile("resources/main_window_32px.png", QtCore.QSize(32, 32))
+        app_icon.addFile("resources/main_window_48px.png", QtCore.QSize(48, 48))
+        app_icon.addFile("resources/main_window_256px.png", QtCore.QSize(256, 256))
+        app.setWindowIcon(app_icon)
+        app.setStyle("fusion")
+        app.setApplicationName("MODBUS")
+        return app
+
+    def create_vertical_line(self):
+        vertical_line = QFrame()
+        vertical_line.setFixedWidth(20)
+        vertical_line.setFrameShape(QFrame.VLine)
+        vertical_line.setFrameShadow(QFrame.Sunken)
+        vertical_line.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
+        vertical_line.setMinimumHeight(300)
+        return vertical_line

@@ -10,9 +10,9 @@ def deserialize(bytes_response, state_manager):
     if is_without_errors is False:
         return deserialize_dict
 
-    function_code = state_manager.get_dict()["current_request_from_gui"][3]
+    function_code = state_manager.current_req_resp_dict["current_request_from_gui"][3]
     modbus_response = hex_response_array[9:]  # relevant parts are after the first 10 bytes of header data
-    start_add = state_manager.get_dict()["current_request_from_gui"][0]
+    start_add = state_manager.current_req_resp_dict["current_request_from_gui"][0]
     start_add = int(str(start_add), 16)
     start_add = hex(start_add)
 

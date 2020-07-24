@@ -13,7 +13,7 @@ class ModbusCommunication:
         self.communication_dict = {}
         self.tid = 1
 
-    def set_current_tid(self):
+    def update_current_tid(self):
         if self.tid > 9999:
             self.tid = 1
         else:
@@ -45,7 +45,7 @@ class ModbusCommunication:
                     self.get_msg_from_queue, queue=request_queue))
                 request_serialized = serialize(dictionary, state_manager, self.tid)
                 print("REQUEST: ", request_serialized)
-                self.set_current_tid()
+                self.update_current_tid()
                 try:
                     await ws.send_bytes(request_serialized)
                 except Exception:

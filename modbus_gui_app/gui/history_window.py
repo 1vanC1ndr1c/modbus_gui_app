@@ -80,11 +80,6 @@ class HistoryWindow:
             req_f_code = QStandardItem(str(current_dict["current_function_code"]))
             req_byte = split_bytes_into_rows_of_three(current_dict["current_request_serialized"])
 
-            req_data_list = [req_time_stamp, tid_req, req_type, req_f_code_name, req_validity, req_err_msg,
-                             req_unit_address, req_f_code, req_byte]
-
-            self.rows.appendRow(req_data_list)
-
             resp_time_stamp = QStandardItem(str(current_dict["current_response_received_time"]))
             tid_resp = QStandardItem(str(current_dict["current_tid"]))
             resp_type = QStandardItem("Response.")
@@ -95,9 +90,11 @@ class HistoryWindow:
             resp_f_code = QStandardItem(str(current_dict["current_function_code"]))
             resp_byte = split_bytes_into_rows_of_three(current_dict["current_response_serialized"])
 
+            req_data_list = [req_time_stamp, tid_req, req_type, req_f_code_name, req_validity, req_err_msg,
+                             req_unit_address, req_f_code, req_byte]
             resp_data_list = [resp_time_stamp, tid_resp, resp_type, resp_f_code_name, resp_validity, resp_err_msg,
                               resp_unit_address, resp_f_code, resp_byte]
-
+            self.rows.appendRow(req_data_list)
             self.rows.appendRow(resp_data_list)
             self.table_view.resizeRowsToContents()
 

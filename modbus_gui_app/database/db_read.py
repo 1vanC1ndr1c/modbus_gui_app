@@ -1,13 +1,13 @@
 import sqlite3
 
 
-def db_reader(db_read_queue_request, db_read_queue_response, state_manager):
+def db_reader(db_read_queue_request, db_read_queue_response, state_manager, conn):
     while True:
         current_db_index = db_read_queue_request.get()[1]
-        db_read(state_manager, db_read_queue_response, current_db_index)
+        db_read(state_manager, db_read_queue_response, current_db_index, conn)
 
 
-def db_read(state_manager, db_read_queue_response, current_db_index):
+def db_read(state_manager, db_read_queue_response, current_db_index, conn):
     data = []
     conn = sqlite3.connect('req_and_resp.db')
     print("Reading: Connected to the DB.")

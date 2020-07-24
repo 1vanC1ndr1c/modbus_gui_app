@@ -3,10 +3,10 @@ from PySide2.QtGui import QFont
 from PySide2 import QtCore
 
 
-def middle_response_init(middle_layout, dictionary, first_init):
-    reset_layout(middle_layout)
+def middle_init(mid_layout, dictionary, first_init):
+    reset_layout(mid_layout)
 
-    middle_layout.setAlignment(QtCore.Qt.AlignTop)
+    mid_layout.setAlignment(QtCore.Qt.AlignTop)
 
     middle_header_box = QGroupBox()
     middle_header_box.setAlignment(QtCore.Qt.AlignTop)
@@ -18,15 +18,15 @@ def middle_response_init(middle_layout, dictionary, first_init):
     middle_header_layout.setAlignment(QtCore.Qt.AlignTop)
     middle_header_layout.addWidget(middle_label)
     middle_header_box.setLayout(middle_header_layout)
-    middle_layout.addWidget(middle_header_box)
+    mid_layout.addWidget(middle_header_box)
 
-    response_title_font = QFont("Arial", 12)
-    response_title_font.setUnderline(True)
+    u_font = QFont("Arial", 12)
+    u_font.setUnderline(True)
 
     request_is_valid = dictionary.get("current_request_from_gui_is_valid")
     if request_is_valid is False and first_init is False:
         invalid_data_label = QLabel("Invalid Data.")
-        middle_layout.addWidget(invalid_data_label)
+        mid_layout.addWidget(invalid_data_label)
         return
 
     if first_init is False:
@@ -34,134 +34,234 @@ def middle_response_init(middle_layout, dictionary, first_init):
     else:
         function_code = -1
 
-    response = dictionary.get("current_response_serialized")
-
-    is_valid_response = dictionary.get("current_response_is_valid")
+    resp = dictionary.get("current_response_serialized")
+    is_valid_resp = dictionary.get("current_response_is_valid")
     err_msg = dictionary.get("current_response_err_msg")
 
-    if function_code == 1 or function_code == 2:
-        response_box1 = QHBoxLayout()
-        if function_code == 1:
-            response_title_label = QLabel("Read coils response: ")
-        else:
-            response_title_label = QLabel("Read discrete inputs: ")
-        response_title_label.setFont(response_title_font)
+    if function_code == 1:
+        read_coils_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
+    elif function_code == 2:
+        read_discrete_inputs_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
+    elif function_code == 3:
+        read_holding_registers_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
+    elif function_code == 4:
+        read_input_registers_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
+    elif function_code == 5:
+        write_single_coil_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
+    elif function_code == 6:
+        write_single_register_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
+
+
+def read_coils_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
+    response_box1 = QHBoxLayout()
+    response_title_label = QLabel("Read coils response: ")
+    response_title_label.setFont(u_font)
+    response_scroll = QScrollArea()
+    response_scroll.setWidgetResizable(True)
+    response_scroll.setMaximumHeight(60)
+    result_label = QLabel(str(resp))
+    response_scroll.setWidget(result_label)
+    response_box1.addWidget(response_title_label)
+    response_box1.addWidget(response_scroll)
+    response_box1.setAlignment(QtCore.Qt.AlignTop)
+    mid_layout.addLayout(response_box1)
+    response_return_value = dictionary.get("current_response_returned_values")
+    response_box2 = QHBoxLayout()
+
+    if is_valid_resp is False:
+        response_result_label = QLabel(err_msg)
+        response_result_label.setStyleSheet("color: red")
+        response_result_label.setFont(u_font)
+        response_box2.addWidget(response_result_label)
+        mid_layout.addLayout(response_box2)
+    elif response_return_value == "-":
+        response_result_label = QLabel("No Coils Are Set.")
+        response_result_label.setFont(u_font)
+        response_box2.addWidget(response_result_label)
+        mid_layout.addLayout(response_box2)
+    else:
+        response_result_label = QLabel("Coils that are set: ")
+        response_result_label.setFont(u_font)
+        response_value_label = QLabel(str(response_return_value))
+        response_box2.addWidget(response_result_label)
+        response_box2.addWidget(response_value_label)
+        mid_layout.addLayout(response_box2)
+    mid_layout.addStretch()
+
+
+def read_discrete_inputs_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
+    response_box1 = QHBoxLayout()
+    response_title_label = QLabel("Read discrete inputs: ")
+    response_title_label.setFont(u_font)
+    response_scroll = QScrollArea()
+    response_scroll.setWidgetResizable(True)
+    response_scroll.setMaximumHeight(60)
+    result_label = QLabel(str(resp))
+    response_scroll.setWidget(result_label)
+    response_box1.addWidget(response_title_label)
+    response_box1.addWidget(response_scroll)
+    response_box1.setAlignment(QtCore.Qt.AlignTop)
+    mid_layout.addLayout(response_box1)
+    response_return_value = dictionary.get("current_response_returned_values")
+    response_box2 = QHBoxLayout()
+
+    if is_valid_resp is False:
+        response_result_label = QLabel(err_msg)
+        response_result_label.setStyleSheet("color: red")
+        response_result_label.setFont(u_font)
+        response_box2.addWidget(response_result_label)
+        mid_layout.addLayout(response_box2)
+    elif response_return_value == "-":
+        response_result_label = QLabel("No Inputs Are Set.")
+        response_result_label.setFont(u_font)
+        response_box2.addWidget(response_result_label)
+        mid_layout.addLayout(response_box2)
+    else:
+        response_result_label = QLabel("Inputs that are set: ")
+        response_result_label.setFont(u_font)
+        response_value_label = QLabel(str(response_return_value))
+        response_box2.addWidget(response_result_label)
+        response_box2.addWidget(response_value_label)
+        mid_layout.addLayout(response_box2)
+    mid_layout.addStretch()
+
+
+def read_holding_registers_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
+    response_box1 = QHBoxLayout()
+    response_title_label = QLabel("Read holding registers response: ")
+    response_title_label.setFont(u_font)
+    response_scroll = QScrollArea()
+    response_scroll.setWidgetResizable(True)
+    response_scroll.setMaximumHeight(60)
+    result_label = QLabel(str(resp))
+    response_scroll.setWidget(result_label)
+    response_box1.addWidget(response_title_label)
+    response_box1.addWidget(response_scroll)
+    response_box1.setAlignment(QtCore.Qt.AlignTop)
+    mid_layout.addLayout(response_box1)
+    response_return_value = dictionary.get("current_response_returned_values")
+
+    response_box2 = QHBoxLayout()
+    if is_valid_resp is False:
+        response_result_label = QLabel(err_msg)
+        response_result_label.setStyleSheet("color: red")
+        response_result_label.setFont(u_font)
+        response_box2.addWidget(response_result_label)
+        mid_layout.addLayout(response_box2)
+    elif response_return_value == "-":
+        response_result_label = QLabel("No Holding Registers Are Set.")
+        response_result_label.setFont(u_font)
+        response_box2.addWidget(response_result_label)
+        mid_layout.addLayout(response_box2)
+    else:
+        response_result_label = QLabel("Registers(location, value): ")
         response_scroll = QScrollArea()
         response_scroll.setWidgetResizable(True)
         response_scroll.setMaximumHeight(60)
-        result_label = QLabel(str(response))
-        response_scroll.setWidget(result_label)
-        response_box1.addWidget(response_title_label)
-        response_box1.addWidget(response_scroll)
-        response_box1.setAlignment(QtCore.Qt.AlignTop)
-        middle_layout.addLayout(response_box1)
-        response_return_value = dictionary.get("current_response_returned_values")
-        response_box2 = QHBoxLayout()
+        response_result_label.setFont(u_font)
+        response_value_label = QLabel(str(response_return_value))
+        response_scroll.setWidget(response_value_label)
+        response_box2.addWidget(response_result_label)
+        response_box2.addWidget(response_scroll)
+        mid_layout.addLayout(response_box2)
+    mid_layout.addStretch()
 
-        if is_valid_response is False:
-            response_result_label = QLabel(err_msg)
-            response_result_label.setStyleSheet("color: red")
-            response_result_label.setFont(response_title_font)
-            response_box2.addWidget(response_result_label)
-            middle_layout.addLayout(response_box2)
-        elif response_return_value == "-":
-            if function_code == 1:
-                response_result_label = QLabel("No Coils Are Set.")
-            else:
-                response_result_label = QLabel("No Inputs Are Set.")
-            response_result_label.setFont(response_title_font)
-            response_box2.addWidget(response_result_label)
-            middle_layout.addLayout(response_box2)
-        else:
-            if function_code == 1:
-                response_result_label = QLabel("Coils that are set: ")
-            else:
-                response_result_label = QLabel("Inputs that are set: ")
-            response_result_label.setFont(response_title_font)
-            response_value_label = QLabel(str(response_return_value))
-            response_box2.addWidget(response_result_label)
-            response_box2.addWidget(response_value_label)
-            middle_layout.addLayout(response_box2)
-        middle_layout.addStretch()
 
-    elif function_code == 3 or function_code == 4:
-        response_box1 = QHBoxLayout()
-        if function_code == 3:
-            response_title_label = QLabel("Read holding registers response: ")
-        else:
-            response_title_label = QLabel("Read input registers response: ")
-        response_title_label.setFont(response_title_font)
+def read_input_registers_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
+    response_box1 = QHBoxLayout()
+    response_title_label = QLabel("Read input registers response: ")
+    response_title_label.setFont(u_font)
+    response_scroll = QScrollArea()
+    response_scroll.setWidgetResizable(True)
+    response_scroll.setMaximumHeight(60)
+    result_label = QLabel(str(resp))
+    response_scroll.setWidget(result_label)
+    response_box1.addWidget(response_title_label)
+    response_box1.addWidget(response_scroll)
+    response_box1.setAlignment(QtCore.Qt.AlignTop)
+    mid_layout.addLayout(response_box1)
+    response_return_value = dictionary.get("current_response_returned_values")
+
+    response_box2 = QHBoxLayout()
+    if is_valid_resp is False:
+        response_result_label = QLabel(err_msg)
+        response_result_label.setStyleSheet("color: red")
+        response_result_label.setFont(u_font)
+        response_box2.addWidget(response_result_label)
+        mid_layout.addLayout(response_box2)
+    elif response_return_value == "-":
+        response_result_label = QLabel("No Input Registers Are Set.")
+        response_result_label.setFont(u_font)
+        response_box2.addWidget(response_result_label)
+        mid_layout.addLayout(response_box2)
+    else:
+        response_result_label = QLabel("Registers(location, value): ")
         response_scroll = QScrollArea()
         response_scroll.setWidgetResizable(True)
         response_scroll.setMaximumHeight(60)
-        result_label = QLabel(str(response))
-        response_scroll.setWidget(result_label)
-        response_box1.addWidget(response_title_label)
-        response_box1.addWidget(response_scroll)
-        response_box1.setAlignment(QtCore.Qt.AlignTop)
-        middle_layout.addLayout(response_box1)
-        response_return_value = dictionary.get("current_response_returned_values")
+        response_result_label.setFont(u_font)
+        response_value_label = QLabel(str(response_return_value))
+        response_scroll.setWidget(response_value_label)
+        response_box2.addWidget(response_result_label)
+        response_box2.addWidget(response_scroll)
+        mid_layout.addLayout(response_box2)
+    mid_layout.addStretch()
 
-        response_box2 = QHBoxLayout()
-        if is_valid_response is False:
-            response_result_label = QLabel(err_msg)
-            response_result_label.setStyleSheet("color: red")
-            response_result_label.setFont(response_title_font)
-            response_box2.addWidget(response_result_label)
-            middle_layout.addLayout(response_box2)
-        elif response_return_value == "-":
-            if function_code == 3:
-                response_result_label = QLabel("No Holding Registers Are Set.")
-            else:
-                response_result_label = QLabel("No Input Registers Are Set.")
-            response_result_label.setFont(response_title_font)
-            response_box2.addWidget(response_result_label)
-            middle_layout.addLayout(response_box2)
-        else:
-            response_result_label = QLabel("Registers(location, value): ")
-            response_scroll = QScrollArea()
-            response_scroll.setWidgetResizable(True)
-            response_scroll.setMaximumHeight(60)
-            response_result_label.setFont(response_title_font)
-            response_value_label = QLabel(str(response_return_value))
-            response_scroll.setWidget(response_value_label)
-            response_box2.addWidget(response_result_label)
-            response_box2.addWidget(response_scroll)
-            middle_layout.addLayout(response_box2)
-        middle_layout.addStretch()
 
-    elif function_code == 5 or function_code == 6:
-        response_box1 = QHBoxLayout()
-        if function_code == 5:
-            response_title_label = QLabel("Write single coil response: ")
-        else:
-            response_title_label = QLabel("Write register response: ")
-        response_title_label.setFont(response_title_font)
-        response_scroll = QScrollArea()
-        response_scroll.setWidgetResizable(True)
-        response_scroll.setMaximumHeight(60)
-        result_label = QLabel(str(response))
-        response_scroll.setWidget(result_label)
-        response_box1.addWidget(response_title_label)
-        response_box1.addWidget(response_scroll)
-        response_box1.setAlignment(QtCore.Qt.AlignTop)
-        middle_layout.addLayout(response_box1)
-        response_box2 = QHBoxLayout()
-        if is_valid_response is False:
-            response_result_label = QLabel(err_msg)
-            response_result_label.setStyleSheet("color: red")
-            response_result_label.setFont(response_title_font)
-            response_box2.addWidget(response_result_label)
-            middle_layout.addLayout(response_box2)
-        else:
-            if function_code == 5:
-                response_result_label = QLabel("Write single coil was successful")
-            else:
-                response_result_label = QLabel("Write register was successful")
-            response_result_label.setFont(response_title_font)
-            response_box2.addWidget(response_result_label)
-            middle_layout.addLayout(response_box2)
-        middle_layout.addStretch()
+def write_single_coil_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
+    response_box1 = QHBoxLayout()
+    response_title_label = QLabel("Write single coil response: ")
+    response_title_label.setFont(u_font)
+    response_scroll = QScrollArea()
+    response_scroll.setWidgetResizable(True)
+    response_scroll.setMaximumHeight(60)
+    result_label = QLabel(str(resp))
+    response_scroll.setWidget(result_label)
+    response_box1.addWidget(response_title_label)
+    response_box1.addWidget(response_scroll)
+    response_box1.setAlignment(QtCore.Qt.AlignTop)
+    mid_layout.addLayout(response_box1)
+    response_box2 = QHBoxLayout()
+    if is_valid_resp is False:
+        response_result_label = QLabel(err_msg)
+        response_result_label.setStyleSheet("color: red")
+        response_result_label.setFont(u_font)
+        response_box2.addWidget(response_result_label)
+        mid_layout.addLayout(response_box2)
+    else:
+        response_result_label = QLabel("Write single coil was successful")
+        response_result_label.setFont(u_font)
+        response_box2.addWidget(response_result_label)
+        mid_layout.addLayout(response_box2)
+    mid_layout.addStretch()
+
+
+def write_single_register_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
+    response_box1 = QHBoxLayout()
+    response_title_label = QLabel("Write register response: ")
+    response_title_label.setFont(u_font)
+    response_scroll = QScrollArea()
+    response_scroll.setWidgetResizable(True)
+    response_scroll.setMaximumHeight(60)
+    result_label = QLabel(str(resp))
+    response_scroll.setWidget(result_label)
+    response_box1.addWidget(response_title_label)
+    response_box1.addWidget(response_scroll)
+    response_box1.setAlignment(QtCore.Qt.AlignTop)
+    mid_layout.addLayout(response_box1)
+    response_box2 = QHBoxLayout()
+    if is_valid_resp is False:
+        response_result_label = QLabel(err_msg)
+        response_result_label.setStyleSheet("color: red")
+        response_result_label.setFont(u_font)
+        response_box2.addWidget(response_result_label)
+        mid_layout.addLayout(response_box2)
+    else:
+        response_result_label = QLabel("Write register was successful")
+        response_result_label.setFont(u_font)
+        response_box2.addWidget(response_result_label)
+        mid_layout.addLayout(response_box2)
+    mid_layout.addStretch()
 
 
 def reset_layout(layout):
