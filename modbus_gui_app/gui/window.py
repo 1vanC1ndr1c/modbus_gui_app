@@ -13,13 +13,13 @@ from modbus_gui_app.gui.history_window import HistoryWindow
 from modbus_gui_app.logic import validation
 
 
-def start_app(state_manager):
-    gui = Gui(state_manager)
+def start_app(state_manager, gui_request_queue):
+    gui = Gui(state_manager, gui_request_queue)
     gui.init_gui()
 
 
 class Gui:
-    def __init__(self, state_manager):
+    def __init__(self, state_manager, gui_request_queue):
         self.state_manager = state_manager
         self.state_dict = state_manager.current_req_resp_dict
         self.left_layout = QVBoxLayout()
@@ -29,12 +29,14 @@ class Gui:
         self.upper_layout = QHBoxLayout()
         self.history_window = HistoryWindow(state_manager)
         self.current_state_window = CurrentStateWindow(state_manager)
+        self.gui_request_queue = gui_request_queue
 
     def init_gui(self):
         app = self.init_q_application()
 
         window = QMainWindow()
-        window.setGeometry(100, 100, 1800, 900)
+        # window.setGeometry(100, 100, 1800, 900)
+        window.setGeometry(100, 100, 900, 400)
 
         main_widget = QWidget()
         font = QFont("Arial", 12)
@@ -85,8 +87,8 @@ class Gui:
 
         self.parent_layout.addLayout(self.upper_layout)
 
-        lower_box = self.current_state_window.init_current_state_window(font)
-        self.parent_layout.addWidget(lower_box)
+        # lower_box = self.current_state_window.init_current_state_window(font)
+        # self.parent_layout.addWidget(lower_box)
 
         main_widget.setLayout(self.parent_layout)
         window.setCentralWidget(main_widget)
@@ -98,8 +100,8 @@ class Gui:
         is_valid, validation_result = validation.get_validation_result(function_code, stacked_widget)
 
         if is_valid is True:
-            self.state_manager.send_request(validation_result)
-            self.state_manager.get_response()
+            self.gui_request_queue.put(validation_result)
+            # self.state_manager.get_response()
 
         elif is_valid is False:
             init_error_window(validation_result)
