@@ -1,22 +1,29 @@
 import asyncio
 import functools
 from concurrent.futures.thread import ThreadPoolExecutor
+from threading import Thread
 
-from modbus_gui_app.logic.validation import get_validation_result
+from PySide2.QtCore import Signal, QObject
+
+from modbus_gui_app.communication.modbus_connection import ModbusConnection
 from datetime import datetime
 from copy import deepcopy
 
 
+class SenderObject(QObject):
+    response_signal = Signal()
+
+
 class StateManager:
-    def __init__(self, modbus_request_queue, modbus_response_queue,
-                 db_read_queue_request, db_read_queue_response, db_write_queue, gui_request_queue):
-        self.modbus_request_queue = modbus_request_queue
-        self.modbus_response_queue = modbus_response_queue
+
+    def __init__(self, db_read_queue_request, db_read_queue_response, db_write_queue, gui_request_queue):
         self.last_ten_dicts = {}
         self.db_read_queue_request = db_read_queue_request
         self.db_read_queue_response = db_read_queue_response
         self.db_write_queue = db_write_queue
         self.gui_request_queue = gui_request_queue
+        self.modbus_connection = None
+        self.response_signal = SenderObject().response_signal
 
     gui = None
     current_req_resp_dict = {
@@ -80,6 +87,33 @@ class StateManager:
         self.state_manager_read_from_db()
         return self.db_dicts
 
+    # async part
+    def start_communications_thread(self):
+        print("STARTING THE  COMM THREAD")
+        communications_thread = Thread(
+            target=lambda: asyncio.new_event_loop().run_until_complete(self.start_readers_and_writers()))
+        communications_thread.start()
+
+    async def start_readers_and_writers(self):
+        self.modbus_connection = ModbusConnection()
+        self.modbus_connection.set_state_manager(self)
+        await self.modbus_connection.communicate_with_modbus()
+
+        # ws_keep_connection_alive_future = asyncio.ensure_future(self.modbus_connection.ws_keep_connection_alive())
+        ws_read_loop_future = asyncio.ensure_future(self.modbus_connection.ws_read_loop())
+        state_manager_to_modbus_write_future = asyncio.ensure_future(self.state_manager_to_modbus_write())
+
+        await asyncio.wait(
+            [ws_read_loop_future,
+             state_manager_to_modbus_write_future],
+            return_when=asyncio.FIRST_COMPLETED)
+
+        ws_read_loop_future.cancel()
+        state_manager_to_modbus_write_future.cancel()
+
+        await self.modbus_connection.ws.close()
+        await self.modbus_connection.session.close()
+
     # user communication
     async def state_manager_to_modbus_write(self):
         executor = ThreadPoolExecutor(1)
@@ -87,27 +121,24 @@ class StateManager:
             valid_gui_request = await asyncio.get_event_loop().run_in_executor(executor, functools.partial(
                 self.get_msg_from_queue))
             print(valid_gui_request)
-            self.send_request(valid_gui_request)
+            await self.send_request(valid_gui_request)
 
     def get_msg_from_queue(self):
         request = self.gui_request_queue.get()
         return request
 
-    def send_request(self, valid_gui_request):
+    async def send_request(self, valid_gui_request):
         # send the validated data(in a dict) to COMM
         self.current_req_resp_dict["current_request_from_gui"] = valid_gui_request
         self.current_req_resp_dict["current_request_from_gui_is_valid"] = True
         self.current_req_resp_dict["current_request_from_gui_error_msg"] = "-"
         self.current_req_resp_dict["current_request_sent_time"] = datetime.now()
-        self.modbus_request_queue.put(self.current_req_resp_dict)
+        # self.modbus_request_queue.put(self.current_req_resp_dict)
+        print("SENDING")
+        response = await self.modbus_connection.ws_write(self.current_req_resp_dict)
+        self.process_response(response)
 
-    def get_response(self):
-        try:
-            # TODO fix this somehow, don't like it
-            deserialized_dict = self.modbus_response_queue.get(block=True, timeout=5)
-        except:
-            deserialized_dict = "-"
-            self.current_req_resp_dict["current_response_err_msg"] = "No Response Received."
+    def process_response(self, deserialized_dict):
         self.current_req_resp_dict["current_response_received_time"] = datetime.now()
         if deserialized_dict != "-":
             for key in deserialized_dict:
@@ -116,7 +147,7 @@ class StateManager:
         # dictionary housekeeping
         self.update_history_last_ten()
         self.state_manager_write_to_db()
-
+        self.response_signal.emit()
 
     # not now
     # # automatic communication

@@ -4,7 +4,7 @@ import queue
 import sys
 
 from modbus_gui_app.logic.state_manager import StateManager
-from modbus_communication import ModbusCommunication
+from modbus_connection import ModbusConnection
 from modbus_gui_app.database.db_handler import Backend
 from modbus_gui_app.gui.window import start_app
 
@@ -27,17 +27,11 @@ def main():
     db_read_queue_response = queue.Queue()
     gui_request_queue = queue.Queue()
 
-    state_manager = StateManager(modbus_request_queue, modbus_response_queue,
-                                 db_read_queue_request, db_read_queue_response,
-                                 db_write_queue, gui_request_queue)
-    modbus_communicator = ModbusCommunication()
+    state_manager = StateManager(db_read_queue_request, db_read_queue_response, db_write_queue, gui_request_queue)
 
-    com_thread = Thread(target=start_communication,
-                        args=(modbus_request_queue, modbus_response_queue, state_manager, modbus_communicator))
-    com_thread.start()
-
-    state_manager_thread = Thread(target=start_state_manager_to_modbus_link, args=(state_manager,))
-    state_manager_thread.start()
+    # state_manager_thread = Thread(target=start_state_manager_to_modbus_link, args=(state_manager,))
+    # state_manager_thread.start()
+    state_manager.start_communications_thread()
 
     # database = Backend()
     # db_thread = Thread(target=database.start_db,

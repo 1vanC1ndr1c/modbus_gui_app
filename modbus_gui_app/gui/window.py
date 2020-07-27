@@ -32,6 +32,7 @@ class Gui:
         self.gui_request_queue = gui_request_queue
 
     def init_gui(self):
+
         app = self.init_q_application()
 
         window = QMainWindow()
@@ -80,7 +81,7 @@ class Gui:
         button_submit.setFont(font)
         button_submit.sizeHint()
         button_submit.clicked.connect(lambda c:
-                                      self.button_send_request_data_and_get_response(
+                                      self.button_send_request_data(
                                           left_side_options_stacked_widget.currentIndex(),
                                           left_side_options_stacked_widget.currentWidget()))
         self.left_layout.addWidget(button_submit)
@@ -95,18 +96,21 @@ class Gui:
         window.show()
         app.exec_()
 
-    def button_send_request_data_and_get_response(self, index, stacked_widget):
+    def button_send_request_data(self, index, stacked_widget):
         function_code = index + 1
         is_valid, validation_result = validation.get_validation_result(function_code, stacked_widget)
 
         if is_valid is True:
             self.gui_request_queue.put(validation_result)
-            self.state_manager.get_response()
 
         elif is_valid is False:
             init_error_window(validation_result)
 
         middle_init(self.middle_layout, self.state_dict, False)
+
+    def update_response(self):
+        return
+    # self.state_manager.response_signal.connect(self.update_response())
 
     def init_q_application(self):
         app = QApplication(sys.argv)
