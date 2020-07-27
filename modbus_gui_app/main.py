@@ -14,29 +14,37 @@ def start_communication(req_queue, resp_queue, st_mngr, modbus_communicator):
         modbus_communicator.communicate_with_modbus(req_queue, resp_queue, st_mngr))
 
 
+def start_state_manager_to_modbus_link(state_manager):
+    asyncio.new_event_loop().run_until_complete(
+        state_manager.state_manager_to_modbus_write())
+
+
 def main():
     modbus_request_queue = queue.Queue()
     modbus_response_queue = queue.Queue()
     db_write_queue = queue.Queue()
     db_read_queue_request = queue.Queue()
     db_read_queue_response = queue.Queue()
+    gui_request_queue = queue.Queue()
 
     state_manager = StateManager(modbus_request_queue, modbus_response_queue,
                                  db_read_queue_request, db_read_queue_response,
-                                 db_write_queue)
+                                 db_write_queue, gui_request_queue)
     modbus_communicator = ModbusCommunication()
-
-    database = Backend()
 
     com_thread = Thread(target=start_communication,
                         args=(modbus_request_queue, modbus_response_queue, state_manager, modbus_communicator))
     com_thread.start()
 
-    db_thread = Thread(target=database.start_db,
-                       args=(db_write_queue, db_read_queue_request, db_read_queue_response, state_manager))
-    db_thread.start()
+    state_manager_thread = Thread(target=start_state_manager_to_modbus_link, args=(state_manager,))
+    state_manager_thread.start()
 
-    gui_thread = Thread(target=start_app, args=(state_manager,))
+    # database = Backend()
+    # db_thread = Thread(target=database.start_db,
+    #                    args=(db_write_queue, db_read_queue_request, db_read_queue_response, state_manager))
+    # db_thread.start()
+
+    gui_thread = Thread(target=start_app, args=(state_manager, gui_request_queue))
     gui_thread.start()
 
 

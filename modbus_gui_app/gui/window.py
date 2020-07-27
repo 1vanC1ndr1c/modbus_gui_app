@@ -101,7 +101,7 @@ class Gui:
 
         if is_valid is True:
             self.gui_request_queue.put(validation_result)
-            # self.state_manager.get_response()
+            self.state_manager.get_response()
 
         elif is_valid is False:
             init_error_window(validation_result)

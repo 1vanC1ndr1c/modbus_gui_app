@@ -1,3 +1,7 @@
+import asyncio
+import functools
+from concurrent.futures.thread import ThreadPoolExecutor
+
 from modbus_gui_app.logic.validation import get_validation_result
 from datetime import datetime
 from copy import deepcopy
@@ -5,13 +9,14 @@ from copy import deepcopy
 
 class StateManager:
     def __init__(self, modbus_request_queue, modbus_response_queue,
-                 db_read_queue_request, db_read_queue_response, db_write_queue):
+                 db_read_queue_request, db_read_queue_response, db_write_queue, gui_request_queue):
         self.modbus_request_queue = modbus_request_queue
         self.modbus_response_queue = modbus_response_queue
         self.last_ten_dicts = {}
         self.db_read_queue_request = db_read_queue_request
         self.db_read_queue_response = db_read_queue_response
         self.db_write_queue = db_write_queue
+        self.gui_request_queue = gui_request_queue
 
     gui = None
     current_req_resp_dict = {
@@ -76,9 +81,21 @@ class StateManager:
         return self.db_dicts
 
     # user communication
-    def send_request(self, validation_result):
+    async def state_manager_to_modbus_write(self):
+        executor = ThreadPoolExecutor(1)
+        while True:
+            valid_gui_request = await asyncio.get_event_loop().run_in_executor(executor, functools.partial(
+                self.get_msg_from_queue))
+            print(valid_gui_request)
+            self.send_request(valid_gui_request)
+
+    def get_msg_from_queue(self):
+        request = self.gui_request_queue.get()
+        return request
+
+    def send_request(self, valid_gui_request):
         # send the validated data(in a dict) to COMM
-        self.current_req_resp_dict["current_request_from_gui"] = validation_result
+        self.current_req_resp_dict["current_request_from_gui"] = valid_gui_request
         self.current_req_resp_dict["current_request_from_gui_is_valid"] = True
         self.current_req_resp_dict["current_request_from_gui_error_msg"] = "-"
         self.current_req_resp_dict["current_request_sent_time"] = datetime.now()
@@ -99,6 +116,7 @@ class StateManager:
         # dictionary housekeeping
         self.update_history_last_ten()
         self.state_manager_write_to_db()
+
 
     # not now
     # # automatic communication
