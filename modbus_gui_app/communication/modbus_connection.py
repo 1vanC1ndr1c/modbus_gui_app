@@ -40,7 +40,7 @@ class ModbusConnection:
         self._pending_responses[self.get_current_tid()] = pending_response
         return await pending_response
 
-    async def ws_keep_connection_alive(self):
+    async def ws_periodic_read(self):
         while True:
             await asyncio.sleep(50)
             dummy_data = b'\x00\x00\x00\x00\x00\x06\x01\x01\x00\x00\x00\x01'

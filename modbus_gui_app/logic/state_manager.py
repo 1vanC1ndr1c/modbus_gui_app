@@ -40,13 +40,6 @@ class StateManager(QObject):
     db_current_index = 0
     db_dicts = {}
 
-    # TODO counts and addresses for the rest of the data(regs, inputs...)
-    current_state_window_dict = {
-        "current_coil_count": 50,
-        "current_coil_start_add": 1,
-        "coil_data": {}
-    }
-
     # setters
     def set_gui(self, gui):
         self.gui = gui
@@ -92,18 +85,18 @@ class StateManager(QObject):
         self.modbus_connection.set_state_manager(self)
         await self.modbus_connection.connect_with_modbus()
 
-        ws_keep_connection_alive_future = asyncio.ensure_future(self.modbus_connection.ws_keep_connection_alive())
+        ws_periodic_read_future = asyncio.ensure_future(self.modbus_connection.ws_periodic_read())
         ws_read_loop_future = asyncio.ensure_future(self.modbus_connection.ws_read_loop())
         state_manager_to_modbus_write_future = asyncio.ensure_future(self.state_manager_to_modbus_write())
 
         await asyncio.wait(
-            [ws_read_loop_future, ws_keep_connection_alive_future,
+            [ws_read_loop_future, ws_periodic_read_future,
              state_manager_to_modbus_write_future],
             return_when=asyncio.FIRST_COMPLETED)
 
         ws_read_loop_future.cancel()
         state_manager_to_modbus_write_future.cancel()
-        ws_keep_connection_alive_future.cancel()
+        ws_periodic_read_future.cancel()
 
         await self.modbus_connection.ws.close()
         await self.modbus_connection.session.close()
@@ -140,28 +133,6 @@ class StateManager(QObject):
         self.state_manager_write_to_db()
         self.update.emit(False)  # signal the gui and process the change
 
-    # not now
-    # # automatic communication
-    # def update_current_window(self, request_name_str, start_add, no_of_elements):
-    #     print("TODO: BASED ON REQUEST NAME VALIDATE OTHER TWO ARGS")
-    #     if request_name_str == "READ_COILS":
-    #         # TODO VALIDATE
-    #         # TODO UPDATE IF VALID
-    #         # TODO ELSE INFORM THE GUI THAT THE DATA IS WRONG
-    #         self.current_state_window_dict["current_coil_count"] = no_of_elements
-    #         self.current_state_window_dict["current_coil_start_add"] = start_add
-    #         print("YEEET")
-    #         print( self.current_state_window_dict.get("current_coil_count"))
-    #         print(self.current_state_window_dict.get("current_coil_start_add"))
-    #
-    # def current_window_more_data(self, request_name_str):
-    #     if request_name_str == "READ_COILS":
-    #         self.current_state_window_dict["current_coil_count"] = \
-    #             self.current_state_window_dict.get("current_coil_count") + 10
-    #         no_of_elements = self.current_state_window_dict.get("current_coil_count")
-    #         start_add = self.current_state_window_dict.get("current_coil_start_add")
-    #         self.update_current_window(request_name_str, start_add, no_of_elements)
-    #     # TODO REST.
     # internal data and database
 
     def update_history_last_ten(self):

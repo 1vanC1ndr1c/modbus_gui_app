@@ -6,10 +6,13 @@ from PySide2.QtGui import QFont, QIcon
 from PySide2 import QtCore
 
 from modbus_gui_app.gui.gui_left_side import left_side_request_options_init
-from modbus_gui_app.gui.gui_middle import middle_init, init_error_window
+
 from modbus_gui_app.gui.current_state_window import CurrentStateWindow
 from modbus_gui_app.gui.gui_right_side import right_side_init
+from modbus_gui_app.gui.error_window import init_error_window
 from modbus_gui_app.gui.history_window import HistoryWindow
+from modbus_gui_app.gui.gui_middle import middle_init
+
 from modbus_gui_app.logic import validation
 
 
@@ -62,8 +65,8 @@ class Gui(QMainWindow):
         self.upper_layout.addWidget(self.left_vertical_line)
 
         middle_init(self.middle_layout, self.state_dict, True)
-        self.response_stacked_widget = QStackedWidget()
-        self.left_side_select_operation_box.activated[int].connect(self.response_stacked_widget.setCurrentIndex)
+        # self.response_stacked_widget = QStackedWidget()
+        # self.left_side_select_operation_box.activated[int].connect(self.response_stacked_widget.setCurrentIndex)
         self.middle_constraint_widget = QWidget()
         self.middle_constraint_widget.setMaximumWidth(600)
         self.middle_constraint_widget.setMaximumHeight(300)
@@ -81,22 +84,26 @@ class Gui(QMainWindow):
         self.button_submit.setFont(self.font)
         self.button_submit.sizeHint()
         self.button_submit.clicked.connect(lambda c:
-                                      self.button_send_request_data(
-                                          self.left_side_options_stacked_widget.currentIndex(),
-                                          self.left_side_options_stacked_widget.currentWidget()))
+                                           self.button_send_request_data(
+                                               self.left_side_options_stacked_widget.currentIndex(),
+                                               self.left_side_options_stacked_widget.currentWidget()))
         self.left_layout.addWidget(self.button_submit)
 
         self.parent_layout.addLayout(self.upper_layout)
 
-        # lower_box = self.current_state_window.init_current_state_window(font)
-        # self.parent_layout.addWidget(lower_box)
+        self.lower_box = self.current_state_window.init_current_state_window(self.font,
+                                                                             self.left_side_select_operation_box)
+
+
+
+        self.parent_layout.addWidget(self.lower_box)
 
         self.main_widget.setLayout(self.parent_layout)
         self.setCentralWidget(self.main_widget)
 
     def button_send_request_data(self, index, stacked_widget):
         function_code = index + 1
-        is_valid, validation_result = validation.get_validation_result(function_code, stacked_widget)
+        is_valid, validation_result = validation.get_request_validation_result(function_code, stacked_widget)
 
         if is_valid is True:
             self.gui_request_queue.put(validation_result)

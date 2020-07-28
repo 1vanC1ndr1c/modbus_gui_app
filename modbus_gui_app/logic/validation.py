@@ -1,7 +1,7 @@
 from PySide2.QtWidgets import QLineEdit, QComboBox
 
 
-def get_validation_result(function_code, stacked_widget):
+def get_request_validation_result(function_code, stacked_widget):
     if function_code == 1:
         return validate_read_coils(function_code, stacked_widget)
     elif function_code == 2:
@@ -198,3 +198,17 @@ def validate_unit_address(unit_address):
     except:
         return False, "Unit address needs to be a base 10 number.", None
     return True, "-", unit_address
+
+
+def validate_current_state_data(function_name, input_data):
+    if function_name == "READ_COILS":
+        if len(input_data) == 0:
+            return False, "Insert the coil address."
+        try:
+            input_data = int(str(input_data), 16)
+            if input_data < 0000 or input_data > 2000:
+                return False, "Coil address needs to be [0000, 2000]"
+        except:
+            return False, "Coil address needs to be in hexadecimal format."
+
+        return True, input_data
