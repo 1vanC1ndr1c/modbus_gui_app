@@ -1,17 +1,4 @@
-import sqlite3
-
-
-def db_writer(db_write_queue, conn):
-    while True:
-        dictionary = db_write_queue.get()
-        db_write(dictionary, conn)
-
-
-def db_write(dictionary, conn):
-    conn = sqlite3.connect('req_and_resp.db')
-    print("Writing: Connected to the DB.")
-
-    apostrophe = "\'"
+def db_writer(dictionary, conn):
     req_time_stamp = dictionary["current_request_sent_time"]
     tid = dictionary["current_tid"]
     req_type = "Request."
@@ -46,17 +33,14 @@ def db_write(dictionary, conn):
               "RESP_VALID, " \
               "RESP_ERR_MSG, " \
               "RESP_RET_VAL) "
-
     try:
         conn.execute(str_ins + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                      (req_time_stamp, tid, req_type, unit_address, f_code,
                       req_f_code_name, req_from_gui, req_validity, req_err_msg,
                       req_byte, resp_time_stamp, resp_type, resp_byte, resp_validity,
                       resp_err_msg, resp_return_value))
-
         conn.commit()
         print("Writing: Records created successfully.")
-        conn.close()
 
     except Exception as e:
         print("Writing: Error! = ", e)

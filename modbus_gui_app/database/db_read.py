@@ -1,15 +1,5 @@
-import sqlite3
-
-
-def db_reader(db_read_queue_request, db_read_queue_response, state_manager, conn):
-    while True:
-        current_db_index = db_read_queue_request.get()[1]
-        db_read(state_manager, db_read_queue_response, current_db_index, conn)
-
-
-def db_read(state_manager, db_read_queue_response, current_db_index, conn):
+def db_reader(state_manager, current_db_index, conn):
     data = []
-    conn = sqlite3.connect('req_and_resp.db')
     print("Reading: Connected to the DB.")
     cursor = conn.cursor()
 
@@ -27,7 +17,6 @@ def db_read(state_manager, db_read_queue_response, current_db_index, conn):
         db_dict = {"READ ERROR"}
 
     state_manager.set_db_dicts(db_dict)
-    db_read_queue_response.put("READ DONE")
 
 
 def convert_data_into_dict(data):
@@ -76,5 +65,4 @@ def convert_data_into_dict(data):
                 "current_response_returned_values": response_return_value,
             }
             dicts[request_time_stamp] = single_dict
-
     return dicts

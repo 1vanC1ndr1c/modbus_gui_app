@@ -24,12 +24,11 @@ class ModbusConnection:
     def get_current_tid(self):
         return self.tid
 
-    async def communicate_with_modbus(self):
+    async def connect_with_modbus(self):
         self.session = aiohttp.ClientSession()
         self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
 
     async def ws_write(self, validated_request):
-        print("WRITING")
         self.update_current_tid()
         request_serialized = serialize(validated_request, self.state_manager, self.tid)
         print("REQUEST: ", request_serialized)

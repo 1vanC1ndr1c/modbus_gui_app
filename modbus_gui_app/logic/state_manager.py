@@ -1,28 +1,21 @@
-import asyncio
-import functools
 from concurrent.futures.thread import ThreadPoolExecutor
-from threading import Thread
-
 from PySide2.QtCore import Signal, QObject
+from datetime import datetime
+from threading import Thread
+from copy import deepcopy
+import functools
+import asyncio
 
 from modbus_gui_app.communication.modbus_connection import ModbusConnection
-from datetime import datetime
-from copy import deepcopy
-
-
-class SenderObject(QObject):
-    response_signal = Signal()
 
 
 class StateManager(QObject):
     update = Signal(dict)
 
-    def __init__(self, db_read_queue_request, db_read_queue_response, db_write_queue, gui_request_queue):
+    def __init__(self, gui_request_queue, database):
         super().__init__()
         self.last_ten_dicts = {}
-        self.db_read_queue_request = db_read_queue_request
-        self.db_read_queue_response = db_read_queue_response
-        self.db_write_queue = db_write_queue
+        self.database = database
         self.gui_request_queue = gui_request_queue
         self.modbus_connection = None
 
@@ -97,14 +90,14 @@ class StateManager(QObject):
     async def start_readers_and_writers(self):
         self.modbus_connection = ModbusConnection()
         self.modbus_connection.set_state_manager(self)
-        await self.modbus_connection.communicate_with_modbus()
+        await self.modbus_connection.connect_with_modbus()
 
         ws_keep_connection_alive_future = asyncio.ensure_future(self.modbus_connection.ws_keep_connection_alive())
         ws_read_loop_future = asyncio.ensure_future(self.modbus_connection.ws_read_loop())
         state_manager_to_modbus_write_future = asyncio.ensure_future(self.state_manager_to_modbus_write())
 
         await asyncio.wait(
-            [ws_read_loop_future,ws_keep_connection_alive_future,
+            [ws_read_loop_future, ws_keep_connection_alive_future,
              state_manager_to_modbus_write_future],
             return_when=asyncio.FIRST_COMPLETED)
 
@@ -181,17 +174,11 @@ class StateManager(QObject):
         self.last_ten_dicts[tid] = deepcopy(self.current_req_resp_dict)
 
     def state_manager_write_to_db(self):
-        self.db_write_queue.put(self.current_req_resp_dict)
-        return
+        self.database.db_write(self.current_req_resp_dict)
 
     def state_manager_read_from_db(self):
-        self.db_read_queue_request.put(["READ FROM DB", self.db_current_index])
-        try:
-            self.db_read_queue_response.get(block=True, timeout=5)  # wait for the response
-        except Exception as e:
-            print(e)
+        self.database.db_read(self.db_current_index)
         self.db_current_index = self.db_current_index + 10
-        return
 
     def reset_db_dict(self):
         self.db_dicts = {}

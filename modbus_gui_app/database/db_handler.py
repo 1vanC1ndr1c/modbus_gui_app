@@ -1,4 +1,3 @@
-from threading import Thread
 import sqlite3
 
 from modbus_gui_app.database.db_write import db_writer
@@ -7,18 +6,14 @@ from modbus_gui_app.database.db_read import db_reader
 
 class Backend:
     def __init__(self):
-        self.conn = None
-
-    def start_db(self, db_write_queue, db_read_queue_request, db_read_queue_response, state_manager):
+        self.state_manager = None
+        self.conn = sqlite3.connect('req_and_resp.db', check_same_thread=False)
         self.db_init()
-        db_read_thread = Thread(target=db_reader,
-                                args=(db_read_queue_request, db_read_queue_response, state_manager, self.conn))
-        db_read_thread.start()
-        db_write_thread = Thread(target=db_writer, args=(db_write_queue,self.conn))
-        db_write_thread.start()
+
+    def set_st_manager(self, state_manager):
+        self.state_manager = state_manager
 
     def db_init(self):
-        self.conn = sqlite3.connect('req_and_resp.db')
         self.conn.execute('''CREATE TABLE IF NOT EXISTS REQ_AND_RESP(
                 REQ_SENT_TIME   TIMESTAMP PRIMARY KEY   NOT NULL,
                 TID             INT     NOT NULL,
@@ -37,3 +32,12 @@ class Backend:
                 RESP_ERR_MSG    TEXT    NOT NULL,
                 RESP_RET_VAL    TEXT    NOT NULL);''')
         print("Opened (or created) database successfully.")
+
+    def db_read(self, current_db_index):
+        return db_reader(self.state_manager, current_db_index, self.conn)
+
+    def db_write(self, dictionary):
+        db_writer(dictionary, self.conn)
+
+    def db_close(self):
+        self.conn.close()
