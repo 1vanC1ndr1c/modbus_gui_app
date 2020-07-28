@@ -26,70 +26,73 @@ class Gui(QMainWindow):
     def __init__(self, state_manager, gui_request_queue):
         super().__init__()
         self.state_manager = state_manager
-        self.state_manager.response_signal.connect(self.update_response_layout)
+        self.state_manager.update.connect(self.update_response_layout)
         self.state_dict = state_manager.current_req_resp_dict
+        self.gui_request_queue = gui_request_queue
+
+        self.main_widget = QWidget()
+        self.parent_layout = QVBoxLayout()
+        self.upper_layout = QHBoxLayout()
         self.left_layout = QVBoxLayout()
         self.middle_layout = QVBoxLayout()
         self.right_layout = QVBoxLayout()
-        self.parent_layout = QVBoxLayout()
-        self.upper_layout = QHBoxLayout()
         self.history_window = HistoryWindow(state_manager)
         self.current_state_window = CurrentStateWindow(state_manager)
-        self.gui_request_queue = gui_request_queue
-        main_widget = QWidget()
-        font = QFont("Arial", 12)
-        main_widget.setFont(font)
+
+        self.font = QFont("Arial", 12)
+        self.main_widget.setFont(self.font)
         self.parent_layout.setStretchFactor(self.left_layout, 0)
         self.parent_layout.setAlignment(QtCore.Qt.AlignLeft)
 
-        menu_bar = self.menuBar()
-        history_menu = QMenu("History")
-        history_action = QAction("Open History")
-        history_action.setShortcut("Ctrl+H")
-        history_action.setStatusTip("See the history of requests and responses")
-        history_action.triggered.connect(lambda l: self.history_window.init_history_window())
-        history_menu.addAction(history_action)
-        menu_bar.addMenu(history_menu)
+        self.menu_bar = self.menuBar()
+        self.history_menu = QMenu("History")
+        self.history_action = QAction("Open History")
+        self.history_action.setShortcut("Ctrl+H")
+        self.history_action.setStatusTip("See the history of requests and responses")
+        self.history_action.triggered.connect(lambda l: self.history_window.init_history_window())
+        self.history_menu.addAction(self.history_action)
 
-        left_side_parent_widget, left_side_options_stacked_widget, left_side_select_operation_box = \
+        self.menu_bar.addMenu(self.history_menu)
+
+        self.left_side_parent_widget, self.left_side_options_stacked_widget, self.left_side_select_operation_box = \
             left_side_request_options_init(self.left_layout)
-        self.upper_layout.addWidget(left_side_parent_widget)
+        self.upper_layout.addWidget(self.left_side_parent_widget)
 
-        left_vertical_line = self.create_vertical_line()
-        self.upper_layout.addWidget(left_vertical_line)
+        self.left_vertical_line = self.create_vertical_line()
+        self.upper_layout.addWidget(self.left_vertical_line)
 
         middle_init(self.middle_layout, self.state_dict, True)
-        response_stacked_widget = QStackedWidget()
-        left_side_select_operation_box.activated[int].connect(response_stacked_widget.setCurrentIndex)
+        self.response_stacked_widget = QStackedWidget()
+        self.left_side_select_operation_box.activated[int].connect(self.response_stacked_widget.setCurrentIndex)
         self.middle_constraint_widget = QWidget()
         self.middle_constraint_widget.setMaximumWidth(600)
         self.middle_constraint_widget.setMaximumHeight(300)
         self.middle_constraint_widget.setLayout(self.middle_layout)
         self.upper_layout.addWidget(self.middle_constraint_widget)
 
-        right_vertical_line = self.create_vertical_line()
-        self.upper_layout.addWidget(right_vertical_line)
+        self.right_vertical_line = self.create_vertical_line()
+        self.upper_layout.addWidget(self.right_vertical_line)
 
         right_side_init(self.right_layout)
         self.upper_layout.addLayout(self.right_layout)
 
-        button_submit = QPushButton("Submit")
-        button_submit.setStyleSheet("background-color: green")
-        button_submit.setFont(font)
-        button_submit.sizeHint()
-        button_submit.clicked.connect(lambda c:
+        self.button_submit = QPushButton("Submit")
+        self.button_submit.setStyleSheet("background-color: green")
+        self.button_submit.setFont(self.font)
+        self.button_submit.sizeHint()
+        self.button_submit.clicked.connect(lambda c:
                                       self.button_send_request_data(
-                                          left_side_options_stacked_widget.currentIndex(),
-                                          left_side_options_stacked_widget.currentWidget()))
-        self.left_layout.addWidget(button_submit)
+                                          self.left_side_options_stacked_widget.currentIndex(),
+                                          self.left_side_options_stacked_widget.currentWidget()))
+        self.left_layout.addWidget(self.button_submit)
 
         self.parent_layout.addLayout(self.upper_layout)
 
         # lower_box = self.current_state_window.init_current_state_window(font)
         # self.parent_layout.addWidget(lower_box)
 
-        main_widget.setLayout(self.parent_layout)
-        self.setCentralWidget(main_widget)
+        self.main_widget.setLayout(self.parent_layout)
+        self.setCentralWidget(self.main_widget)
 
     def button_send_request_data(self, index, stacked_widget):
         function_code = index + 1

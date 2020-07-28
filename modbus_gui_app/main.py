@@ -27,12 +27,12 @@ def main():
     state_manager = StateManager(db_read_queue_request, db_read_queue_response, db_write_queue, gui_request_queue)
     state_manager.start_communications_thread()
 
-    start_app(state_manager, gui_request_queue)
+    database = Backend()
+    db_thread = Thread(target=database.start_db,
+                       args=(db_write_queue, db_read_queue_request, db_read_queue_response, state_manager))
+    db_thread.start()
 
-    # database = Backend()
-    # db_thread = Thread(target=database.start_db,
-    #                    args=(db_write_queue, db_read_queue_request, db_read_queue_response, state_manager))
-    # db_thread.start()
+    start_app(state_manager, gui_request_queue)
 
 
 if __name__ == '__main__':

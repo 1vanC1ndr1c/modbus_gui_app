@@ -15,7 +15,7 @@ class SenderObject(QObject):
 
 
 class StateManager(QObject):
-    response_signal = Signal()
+    update = Signal(dict)
 
     def __init__(self, db_read_queue_request, db_read_queue_response, db_write_queue, gui_request_queue):
         super().__init__()
@@ -104,7 +104,7 @@ class StateManager(QObject):
         state_manager_to_modbus_write_future = asyncio.ensure_future(self.state_manager_to_modbus_write())
 
         await asyncio.wait(
-            [ws_read_loop_future, ws_keep_connection_alive_future,
+            [ws_read_loop_future,ws_keep_connection_alive_future,
              state_manager_to_modbus_write_future],
             return_when=asyncio.FIRST_COMPLETED)
 
@@ -145,7 +145,7 @@ class StateManager(QObject):
         # dictionary housekeeping
         self.update_history_last_ten()
         self.state_manager_write_to_db()
-        self.response_signal.emit(False)  # signal the gui and process the change
+        self.update.emit(False)  # signal the gui and process the change
 
     # not now
     # # automatic communication
@@ -185,12 +185,12 @@ class StateManager(QObject):
         return
 
     def state_manager_read_from_db(self):
-        # self.db_read_queue_request.put(["READ FROM DB", self.db_current_index])
-        # try:
-        #     self.db_read_queue_response.get(block=True, timeout=5)  # wait for the response
-        # except Exception as e:
-        #     print(e)
-        # self.db_current_index = self.db_current_index + 10
+        self.db_read_queue_request.put(["READ FROM DB", self.db_current_index])
+        try:
+            self.db_read_queue_response.get(block=True, timeout=5)  # wait for the response
+        except Exception as e:
+            print(e)
+        self.db_current_index = self.db_current_index + 10
         return
 
     def reset_db_dict(self):
