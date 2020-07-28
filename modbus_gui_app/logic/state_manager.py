@@ -14,16 +14,17 @@ class SenderObject(QObject):
     response_signal = Signal()
 
 
-class StateManager:
+class StateManager(QObject):
+    response_signal = Signal()
 
     def __init__(self, db_read_queue_request, db_read_queue_response, db_write_queue, gui_request_queue):
+        super().__init__()
         self.last_ten_dicts = {}
         self.db_read_queue_request = db_read_queue_request
         self.db_read_queue_response = db_read_queue_response
         self.db_write_queue = db_write_queue
         self.gui_request_queue = gui_request_queue
         self.modbus_connection = None
-        self.response_signal = SenderObject().response_signal
 
     gui = None
     current_req_resp_dict = {
@@ -89,7 +90,6 @@ class StateManager:
 
     # async part
     def start_communications_thread(self):
-        print("STARTING THE  COMM THREAD")
         communications_thread = Thread(
             target=lambda: asyncio.new_event_loop().run_until_complete(self.start_readers_and_writers()))
         communications_thread.start()
@@ -99,17 +99,18 @@ class StateManager:
         self.modbus_connection.set_state_manager(self)
         await self.modbus_connection.communicate_with_modbus()
 
-        # ws_keep_connection_alive_future = asyncio.ensure_future(self.modbus_connection.ws_keep_connection_alive())
+        ws_keep_connection_alive_future = asyncio.ensure_future(self.modbus_connection.ws_keep_connection_alive())
         ws_read_loop_future = asyncio.ensure_future(self.modbus_connection.ws_read_loop())
         state_manager_to_modbus_write_future = asyncio.ensure_future(self.state_manager_to_modbus_write())
 
         await asyncio.wait(
-            [ws_read_loop_future,
+            [ws_read_loop_future, ws_keep_connection_alive_future,
              state_manager_to_modbus_write_future],
             return_when=asyncio.FIRST_COMPLETED)
 
         ws_read_loop_future.cancel()
         state_manager_to_modbus_write_future.cancel()
+        ws_keep_connection_alive_future.cancel()
 
         await self.modbus_connection.ws.close()
         await self.modbus_connection.session.close()
@@ -120,7 +121,6 @@ class StateManager:
         while True:
             valid_gui_request = await asyncio.get_event_loop().run_in_executor(executor, functools.partial(
                 self.get_msg_from_queue))
-            print(valid_gui_request)
             await self.send_request(valid_gui_request)
 
     def get_msg_from_queue(self):
@@ -133,8 +133,6 @@ class StateManager:
         self.current_req_resp_dict["current_request_from_gui_is_valid"] = True
         self.current_req_resp_dict["current_request_from_gui_error_msg"] = "-"
         self.current_req_resp_dict["current_request_sent_time"] = datetime.now()
-        # self.modbus_request_queue.put(self.current_req_resp_dict)
-        print("SENDING")
         response = await self.modbus_connection.ws_write(self.current_req_resp_dict)
         self.process_response(response)
 
@@ -147,7 +145,7 @@ class StateManager:
         # dictionary housekeeping
         self.update_history_last_ten()
         self.state_manager_write_to_db()
-        self.response_signal.emit()
+        self.response_signal.emit(False)  # signal the gui and process the change
 
     # not now
     # # automatic communication
@@ -187,12 +185,13 @@ class StateManager:
         return
 
     def state_manager_read_from_db(self):
-        self.db_read_queue_request.put(["READ FROM DB", self.db_current_index])
-        try:
-            self.db_read_queue_response.get(block=True, timeout=5)  # wait for the response
-        except Exception as e:
-            print(e)
-        self.db_current_index = self.db_current_index + 10
+        # self.db_read_queue_request.put(["READ FROM DB", self.db_current_index])
+        # try:
+        #     self.db_read_queue_response.get(block=True, timeout=5)  # wait for the response
+        # except Exception as e:
+        #     print(e)
+        # self.db_current_index = self.db_current_index + 10
+        return
 
     def reset_db_dict(self):
         self.db_dicts = {}

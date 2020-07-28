@@ -13,14 +13,20 @@ from modbus_gui_app.gui.history_window import HistoryWindow
 from modbus_gui_app.logic import validation
 
 
-def start_app(state_manager, gui_request_queue):
+def run_gui(state_manager, gui_request_queue):
+    app = init_q_application()
     gui = Gui(state_manager, gui_request_queue)
-    gui.init_gui()
+    gui.setGeometry(100, 100, 900, 400)
+    gui.show()
+    sys.exit(app.exec_())
 
 
-class Gui:
+class Gui(QMainWindow):
+
     def __init__(self, state_manager, gui_request_queue):
+        super().__init__()
         self.state_manager = state_manager
+        self.state_manager.response_signal.connect(self.update_response_layout)
         self.state_dict = state_manager.current_req_resp_dict
         self.left_layout = QVBoxLayout()
         self.middle_layout = QVBoxLayout()
@@ -30,22 +36,13 @@ class Gui:
         self.history_window = HistoryWindow(state_manager)
         self.current_state_window = CurrentStateWindow(state_manager)
         self.gui_request_queue = gui_request_queue
-
-    def init_gui(self):
-
-        app = self.init_q_application()
-
-        window = QMainWindow()
-        # window.setGeometry(100, 100, 1800, 900)
-        window.setGeometry(100, 100, 900, 400)
-
         main_widget = QWidget()
         font = QFont("Arial", 12)
         main_widget.setFont(font)
         self.parent_layout.setStretchFactor(self.left_layout, 0)
         self.parent_layout.setAlignment(QtCore.Qt.AlignLeft)
 
-        menu_bar = window.menuBar()
+        menu_bar = self.menuBar()
         history_menu = QMenu("History")
         history_action = QAction("Open History")
         history_action.setShortcut("Ctrl+H")
@@ -64,11 +61,11 @@ class Gui:
         middle_init(self.middle_layout, self.state_dict, True)
         response_stacked_widget = QStackedWidget()
         left_side_select_operation_box.activated[int].connect(response_stacked_widget.setCurrentIndex)
-        middle_constraint_widget = QWidget()
-        middle_constraint_widget.setMaximumWidth(600)
-        middle_constraint_widget.setMaximumHeight(300)
-        middle_constraint_widget.setLayout(self.middle_layout)
-        self.upper_layout.addWidget(middle_constraint_widget)
+        self.middle_constraint_widget = QWidget()
+        self.middle_constraint_widget.setMaximumWidth(600)
+        self.middle_constraint_widget.setMaximumHeight(300)
+        self.middle_constraint_widget.setLayout(self.middle_layout)
+        self.upper_layout.addWidget(self.middle_constraint_widget)
 
         right_vertical_line = self.create_vertical_line()
         self.upper_layout.addWidget(right_vertical_line)
@@ -92,9 +89,7 @@ class Gui:
         # self.parent_layout.addWidget(lower_box)
 
         main_widget.setLayout(self.parent_layout)
-        window.setCentralWidget(main_widget)
-        window.show()
-        app.exec_()
+        self.setCentralWidget(main_widget)
 
     def button_send_request_data(self, index, stacked_widget):
         function_code = index + 1
@@ -106,24 +101,8 @@ class Gui:
         elif is_valid is False:
             init_error_window(validation_result)
 
-        middle_init(self.middle_layout, self.state_dict, False)
-
-    def update_response(self):
-        return
-    # self.state_manager.response_signal.connect(self.update_response())
-
-    def init_q_application(self):
-        app = QApplication(sys.argv)
-        app_icon = QIcon()
-        app_icon.addFile("resources/main_window_16px.png", QtCore.QSize(16, 16))
-        app_icon.addFile("resources/main_window_24px.png", QtCore.QSize(24, 24))
-        app_icon.addFile("resources/main_window_32px.png", QtCore.QSize(32, 32))
-        app_icon.addFile("resources/main_window_48px.png", QtCore.QSize(48, 48))
-        app_icon.addFile("resources/main_window_256px.png", QtCore.QSize(256, 256))
-        app.setWindowIcon(app_icon)
-        app.setStyle("fusion")
-        app.setApplicationName("MODBUS")
-        return app
+    def update_response_layout(self, flag):
+        middle_init(self.middle_layout, self.state_dict, flag)
 
     def create_vertical_line(self):
         vertical_line = QFrame()
@@ -133,3 +112,17 @@ class Gui:
         vertical_line.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
         vertical_line.setMinimumHeight(300)
         return vertical_line
+
+
+def init_q_application():
+    app = QApplication(sys.argv)
+    app_icon = QIcon()
+    app_icon.addFile("resources/main_window_16px.png", QtCore.QSize(16, 16))
+    app_icon.addFile("resources/main_window_24px.png", QtCore.QSize(24, 24))
+    app_icon.addFile("resources/main_window_32px.png", QtCore.QSize(32, 32))
+    app_icon.addFile("resources/main_window_48px.png", QtCore.QSize(48, 48))
+    app_icon.addFile("resources/main_window_256px.png", QtCore.QSize(256, 256))
+    app.setWindowIcon(app_icon)
+    app.setStyle("fusion")
+    app.setApplicationName("MODBUS")
+    return app

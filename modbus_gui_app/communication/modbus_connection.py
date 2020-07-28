@@ -1,5 +1,3 @@
-from concurrent.futures.thread import ThreadPoolExecutor
-import functools
 import asyncio
 import aiohttp
 
@@ -43,6 +41,13 @@ class ModbusConnection:
         self._pending_responses[self.get_current_tid()] = pending_response
         return await pending_response
 
+    async def ws_keep_connection_alive(self):
+        while True:
+            await asyncio.sleep(50)
+            dummy_data = b'\x00\x00\x00\x00\x00\x06\x01\x01\x00\x00\x00\x01'
+            await self.ws.send_bytes(dummy_data)
+            print("REQUEST: send the dummy request that keeps the connection alive.")
+
     async def ws_read_loop(self):
         while True:
             bytes_response = await self.ws.receive()
@@ -54,11 +59,3 @@ class ModbusConnection:
                     print("RESPONSE: ", bytes_response.data)
                     deserialized_dict = deserialize(bytes_response.data, self.state_manager)
                     self._pending_responses[self.get_current_tid()].set_result(deserialized_dict)
-
-    # async def ws_keep_connection_alive(self):
-    #     return
-        # while True:
-        #     await asyncio.sleep(50)
-        #     dummy_data = b'\x00\x00\x00\x00\x00\x06\x01\x01\x00\x00\x00\x01'
-        #     await self.ws.send_bytes(dummy_data)
-        #     print("REQUEST: send the dummy request that keeps the connection alive.")
