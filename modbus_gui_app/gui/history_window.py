@@ -104,7 +104,7 @@ class HistoryWindow:
             state_manager.reset_db_dict()
             self.rows.removeRow(0)
 
-        self.more_data = state_manager.get_db_dicts()
+        self.more_data = state_manager.get_historian_db_dicts()
         self.set_history_data(self.more_data)
 
 

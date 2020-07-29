@@ -1,8 +1,10 @@
 import asyncio
 import aiohttp
 
-from modbus_gui_app.communication.deserializer import deserialize
-from modbus_gui_app.communication.serializer import serialize
+from modbus_gui_app.communication.user_response_deserializer import user_response_deserialize
+from modbus_gui_app.communication.user_request_serializer import user_request_serialize
+
+from modbus_gui_app.communication.automatic_request_serializer import automatic_request_serialize
 
 
 class ModbusConnection:
@@ -16,7 +18,7 @@ class ModbusConnection:
         self.state_manager = state_manager
 
     def update_current_tid(self):
-        if self.tid > 9999:
+        if self.tid > 9900:
             self.tid = 1
         else:
             self.tid = self.tid + 1
@@ -30,7 +32,7 @@ class ModbusConnection:
 
     async def ws_write(self, validated_request):
         self.update_current_tid()
-        request_serialized = serialize(validated_request, self.state_manager, self.tid)
+        request_serialized = user_request_serialize(validated_request, self.state_manager, self.tid)
         print("REQUEST: ", request_serialized)
         try:
             await self.ws.send_bytes(request_serialized)
@@ -40,12 +42,18 @@ class ModbusConnection:
         self._pending_responses[self.get_current_tid()] = pending_response
         return await pending_response
 
-    async def ws_periodic_read(self):
-        while True:
-            await asyncio.sleep(50)
-            dummy_data = b'\x00\x00\x00\x00\x00\x06\x01\x01\x00\x00\x00\x01'
-            await self.ws.send_bytes(dummy_data)
-            print("REQUEST: send the dummy request that keeps the connection alive.")
+    async def ws_refresh(self):
+        print("REGUEST: Refresh GUI")
+        # TODO get the old request from the dictionary
+        automatic_request_serialize(self.state_manager)
+        # TODO form the new request
+        refresh_request = "NEW REQUEST"
+        # await self.ws.send_bytes(refresh_request)
+        # TODO get the request from the dictionary
+        temp_data = b'\x00\x00\x00\x00\x00\x06\x01\x01\x00\x00\x00\x01'
+        await self.ws.send_bytes(temp_data)
+        current_refresh_function = "GET FROM DICT"
+        # print("REQUEST: refresh the current state which is {}.".format(current_refresh_function))
 
     async def ws_read_loop(self):
         while True:
@@ -53,8 +61,8 @@ class ModbusConnection:
             if isinstance(bytes_response.data, bytes):
                 check_bytes = str(bytes_response.data.hex())
                 if check_bytes.startswith("0000"):
-                    print("RESPONSE: received the dummy request that keeps the connection alive.")
+                    print("RESPONSE: Refresh GUI.")
                 else:
                     print("RESPONSE: ", bytes_response.data)
-                    deserialized_dict = deserialize(bytes_response.data, self.state_manager)
+                    deserialized_dict = user_response_deserialize(bytes_response.data, self.state_manager)
                     self._pending_responses[self.get_current_tid()].set_result(deserialized_dict)

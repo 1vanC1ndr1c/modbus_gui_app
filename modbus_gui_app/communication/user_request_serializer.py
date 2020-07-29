@@ -1,4 +1,4 @@
-def serialize(dictionary, state_manager, tid):
+def user_request_serialize(dictionary, state_manager, tid):
     data = dictionary.get("current_request_from_gui")
     function_code = data[3]
     function_code = str(hex(function_code))[2:].rjust(2, '0')

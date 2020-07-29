@@ -1,7 +1,7 @@
 import sys
 
 from PySide2.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QStackedWidget, \
-    QHBoxLayout, QSizePolicy, QFrame, QMenu, QMainWindow, QAction
+    QHBoxLayout, QSizePolicy, QFrame, QMenu, QMainWindow, QAction, QLabel
 from PySide2.QtGui import QFont, QIcon
 from PySide2 import QtCore
 
@@ -29,9 +29,10 @@ class Gui(QMainWindow):
     def __init__(self, state_manager, gui_request_queue):
         super().__init__()
         self.state_manager = state_manager
-        self.state_manager.update.connect(self.update_response_layout)
-        self.state_dict = state_manager.current_req_resp_dict
+        self.state_manager.response_signal.connect(self.update_response_layout)
+        self.state_dict = state_manager.current_request_and_response_dictionary
         self.gui_request_queue = gui_request_queue
+        self.state_manager.set_gui(self)
 
         self.main_widget = QWidget()
         self.parent_layout = QVBoxLayout()
@@ -49,7 +50,7 @@ class Gui(QMainWindow):
 
         self.menu_bar = self.menuBar()
         self.history_menu = QMenu("History")
-        self.history_action = QAction("Open History")
+        self.history_action = QAction("Open Request and Response History")
         self.history_action.setShortcut("Ctrl+H")
         self.history_action.setStatusTip("See the history of requests and responses")
         self.history_action.triggered.connect(lambda l: self.history_window.init_history_window())
@@ -65,8 +66,6 @@ class Gui(QMainWindow):
         self.upper_layout.addWidget(self.left_vertical_line)
 
         middle_init(self.middle_layout, self.state_dict, True)
-        # self.response_stacked_widget = QStackedWidget()
-        # self.left_side_select_operation_box.activated[int].connect(self.response_stacked_widget.setCurrentIndex)
         self.middle_constraint_widget = QWidget()
         self.middle_constraint_widget.setMaximumWidth(600)
         self.middle_constraint_widget.setMaximumHeight(300)
@@ -91,10 +90,7 @@ class Gui(QMainWindow):
 
         self.parent_layout.addLayout(self.upper_layout)
 
-        self.lower_box = self.current_state_window.init_current_state_window(self.font,
-                                                                             self.left_side_select_operation_box)
-
-
+        self.lower_box = self.update_current_state_window()
 
         self.parent_layout.addWidget(self.lower_box)
 
@@ -113,6 +109,10 @@ class Gui(QMainWindow):
 
     def update_response_layout(self, flag):
         middle_init(self.middle_layout, self.state_dict, flag)
+        self.update_current_state_window()
+
+    def update_current_state_window(self):
+        return self.current_state_window.init_current_state_window(self.font, self.left_side_select_operation_box)
 
     def create_vertical_line(self):
         vertical_line = QFrame()

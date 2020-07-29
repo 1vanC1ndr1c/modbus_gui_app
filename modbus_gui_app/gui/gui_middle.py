@@ -271,5 +271,3 @@ def reset_layout(layout):
             child.widget().deleteLater()
         elif child.layout() is not None:
             reset_layout(child.layout())
-
-

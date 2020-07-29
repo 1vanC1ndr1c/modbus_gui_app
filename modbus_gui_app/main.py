@@ -1,7 +1,7 @@
 import queue
 import sys
 
-from modbus_gui_app.logic.state_manager import StateManager
+from state_manager import StateManager
 from modbus_gui_app.database.db_handler import Backend
 from modbus_gui_app.gui import window
 
