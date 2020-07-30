@@ -5,6 +5,7 @@ from modbus_gui_app.logic.state_manager import state_manager_functions
 
 class StateManager(QObject):
     response_signal = Signal(bool)
+    periodic_update_signal = Signal(bool)
 
     def __init__(self, gui_request_queue, database):
         super().__init__()
@@ -83,8 +84,8 @@ class StateManager(QObject):
     async def current_state_periodic_refresh(self):
         await state_manager_functions.current_state_periodic_refresh(self)
 
-    def set_currently_selected_function(self):
-        state_manager_functions.set_currently_selected_function(self)
+    def set_currently_selected_function(self, source):
+        state_manager_functions.set_currently_selected_automatic_request(self, source)
 
-    def update_current_coils_state(self):
-        state_manager_functions.update_current_coils_state(self)
+    def update_current_coils_state(self, source):
+        state_manager_functions.update_current_coils_state(self, source)

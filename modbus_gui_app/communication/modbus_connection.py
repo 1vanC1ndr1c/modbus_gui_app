@@ -5,6 +5,7 @@ from modbus_gui_app.communication.user_response_deserializer import user_respons
 from modbus_gui_app.communication.user_request_serializer import user_request_serialize
 
 from modbus_gui_app.communication.automatic_request_serializer import automatic_request_serialize
+from modbus_gui_app.communication.automatic_response_deserializer import automatic_response_deserialize
 
 
 class ModbusConnection:
@@ -18,7 +19,7 @@ class ModbusConnection:
         self.state_manager = state_manager
 
     def update_current_tid(self):
-        if self.tid > 9900:
+        if self.tid >= 9900:
             self.tid = 1
         else:
             self.tid = self.tid + 1
@@ -43,17 +44,17 @@ class ModbusConnection:
         return await pending_response
 
     async def ws_refresh(self):
-        print("REGUEST: Refresh GUI")
-        # TODO get the old request from the dictionary
+        # print("REQUEST: Refresh GUI")
         automatic_request_serialize(self.state_manager)
-        # TODO form the new request
-        refresh_request = "NEW REQUEST"
-        # await self.ws.send_bytes(refresh_request)
-        # TODO get the request from the dictionary
-        temp_data = b'\x00\x00\x00\x00\x00\x06\x01\x01\x00\x00\x00\x01'
-        await self.ws.send_bytes(temp_data)
-        current_refresh_function = "GET FROM DICT"
-        # print("REQUEST: refresh the current state which is {}.".format(current_refresh_function))
+        automatic_request = self.state_manager.current_coil_input_reg_states["current_request"]
+        try:
+            await self.ws.send_bytes(automatic_request)
+        except Exception as e:
+            print("AUTOMATIC REFRESH REQUEST ERROR: ", e)
+        automatic_refresh_pending_response = asyncio.Future()
+        automatic_request_tid = self.state_manager.current_coil_input_reg_states["current_tid"]
+        self._pending_responses[automatic_request_tid] = automatic_refresh_pending_response
+        await automatic_refresh_pending_response
 
     async def ws_read_loop(self):
         while True:
@@ -61,7 +62,13 @@ class ModbusConnection:
             if isinstance(bytes_response.data, bytes):
                 check_bytes = str(bytes_response.data.hex())
                 if check_bytes.startswith("0000"):
-                    print("RESPONSE: Refresh GUI.")
+                    automatic_request_tid = self.state_manager.current_coil_input_reg_states["current_tid"]
+                    self._pending_responses[automatic_request_tid].set_result("Done.")
+                elif check_bytes.startswith("99"):
+                    automatic_response_deserialize(self.state_manager, bytes_response.data)
+                    automatic_request_tid = self.state_manager.current_coil_input_reg_states["current_tid"]
+                    # print("RESPONSE: Gui Refreshed.")
+                    self._pending_responses[automatic_request_tid].set_result("Done.")
                 else:
                     print("RESPONSE: ", bytes_response.data)
                     deserialized_dict = user_response_deserialize(bytes_response.data, self.state_manager)

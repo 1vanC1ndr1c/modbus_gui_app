@@ -25,6 +25,7 @@ def init_state():
         "current_response_err_msg": "-",
         "current_response_returned_values": "-",
     }
+
     return current_request_and_response_dictionary
 
 
@@ -90,9 +91,8 @@ def process_modbus_response(state_manager, deserialized_dict):
     state_manager.update_history_last_ten()
     state_manager.state_manager_write_to_db()
     state_manager.response_signal.emit(False)  # signal the gui and process the change
-
-    # update lower window=======================================================
-    set_currently_selected_function(state_manager)
+    state_manager.periodic_update_signal.emit(False)
+    set_currently_selected_automatic_request(state_manager, "user")
 
 
 # internal data and database
@@ -122,43 +122,63 @@ def reset_db_dict(state_manager):
 # functions that deal with updating the current status in the lower part of the GUI.
 async def current_state_periodic_refresh(state_manager):
     while True:
-        await asyncio.sleep(5)
-        set_currently_selected_function(state_manager)
+        set_currently_selected_automatic_request(state_manager, "automatic")
         await state_manager.modbus_connection.ws_refresh()
+
+        if state_manager.current_coil_input_reg_states["currently_selected_function"] == "01":
+            state_manager.periodic_update_signal.emit(False)
+        else:
+            pass
+        await asyncio.sleep(5)
 
 
 def init_current_states():
+    current_read_coils = {
+        'current_tid': 1,
+        'current_unit_address': '01',
+        'current_function_code': '01',
+        'current_request_name': 'Read Coils.',
+        'current_request_from_gui': [1, 20, 1, 1],
+        'current_request_from_gui_is_valid': True,
+        'current_request_from_gui_error_msg': '-',
+        'current_request_serialized': b'\x00\x01\x00\x00\x00\x06\x01\x01\x00\x00\x00\x14',
+        'current_request_sent_time': datetime.now(),
+        'current_response_received_time': datetime.now(),
+        'current_response_serialized': b'\x00\x01\x00\x00\x00\x06\x01\x01\x03\x00\x00\x00',
+        'current_response_is_valid': True, 'current_response_err_msg': '-',
+        'current_response_returned_values': '-'
+    }
+
     current_coil_input_reg_states = {
-        "currently_selected_function": "00",
-        "current_read_coils": dict(),
+        "current_request": b'0',
+        "current_tid": 9901,
+        "currently_selected_function": "01",
+        "current_read_coils": current_read_coils,
         "read_coils_tid": 9901
     }
     return current_coil_input_reg_states
 
 
-def set_currently_selected_function(state_manager):
+def set_currently_selected_automatic_request(state_manager, source):
     current_function_code = state_manager.gui.left_side_select_operation_box.currentIndex() + 1
-    current_function_code = str(hex(current_function_code))[2:].rjust(2, '0')
-    state_manager.current_coil_input_reg_states["currently_selected_function"] = current_function_code
 
-    if current_function_code == "01":
-        update_current_coils_state(state_manager)
+    if current_function_code == 1 or current_function_code == 2 \
+            or current_function_code == 3 or current_function_code == 4:
+
+        current_function_code = str(hex(current_function_code))[2:].rjust(2, '0')
+        state_manager.current_coil_input_reg_states["currently_selected_function"] = current_function_code
+
+        if current_function_code == "01":
+            update_current_coils_state(state_manager, source)
 
 
-# TODO update in another thread
-def update_current_coils_state(state_manager):
-    curr_dict = state_manager.current_request_and_response_dictionary
-    state_manager.current_coil_input_reg_states["current_read_coils"] = curr_dict
-    print("UPDATE CURRENT COILS DISPLAY===========")
-    # TODO with continous writer resend the request and for a dictionary only used here
 
-    # algorithm:
-    # 1. in the continuous writer, check the currently selected function
-    # 2. form a request and the dict (separate from the user generated ones)
-    #   2.1. change the tid to 9001 (unreachable by user requests)
-    # 3. get the response, update the aforementioned dict and save the changes into state manger
-    # 4. repeat forever
-    current_state = state_manager.current_request_and_response_dictionary
-    state_manager.current_coil_input_reg_states["current_read_coils"] = current_state
-
-    # state_manager.current_coil_state
+def update_current_coils_state(state_manager, source):
+    if source == "user":
+        current_state = state_manager.current_request_and_response_dictionary
+        state_manager.current_coil_input_reg_states["current_read_coils"] = current_state
+    elif source == "automatic":
+        current_tid = state_manager.current_coil_input_reg_states["read_coils_tid"]
+        new_dict = state_manager.current_coil_input_reg_states["current_read_coils"]
+        new_dict["current_tid"] = current_tid
+        state_manager.current_coil_input_reg_states["current_read_coils"] = new_dict

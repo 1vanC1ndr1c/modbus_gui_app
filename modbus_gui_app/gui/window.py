@@ -1,7 +1,7 @@
 import sys
 
 from PySide2.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QStackedWidget, \
-    QHBoxLayout, QSizePolicy, QFrame, QMenu, QMainWindow, QAction, QLabel
+    QHBoxLayout, QSizePolicy, QFrame, QMenu, QMainWindow, QAction, QLabel, QGroupBox
 from PySide2.QtGui import QFont, QIcon
 from PySide2 import QtCore
 
@@ -30,6 +30,7 @@ class Gui(QMainWindow):
         super().__init__()
         self.state_manager = state_manager
         self.state_manager.response_signal.connect(self.update_response_layout)
+        self.state_manager.periodic_update_signal.connect(self.update_current_state_window)
         self.state_dict = state_manager.current_request_and_response_dictionary
         self.gui_request_queue = gui_request_queue
         self.state_manager.set_gui(self)
@@ -41,7 +42,7 @@ class Gui(QMainWindow):
         self.middle_layout = QVBoxLayout()
         self.right_layout = QVBoxLayout()
         self.history_window = HistoryWindow(state_manager)
-        self.current_state_window = CurrentStateWindow(state_manager)
+        self.current_state_window = CurrentStateWindow(self, state_manager)
 
         self.font = QFont("Arial", 12)
         self.main_widget.setFont(self.font)
@@ -90,8 +91,8 @@ class Gui(QMainWindow):
 
         self.parent_layout.addLayout(self.upper_layout)
 
-        self.lower_box = self.update_current_state_window()
-
+        self.lower_box = QGroupBox()
+        self.update_current_state_window(True)
         self.parent_layout.addWidget(self.lower_box)
 
         self.main_widget.setLayout(self.parent_layout)
@@ -109,10 +110,10 @@ class Gui(QMainWindow):
 
     def update_response_layout(self, flag):
         middle_init(self.middle_layout, self.state_dict, flag)
-        self.update_current_state_window()
 
-    def update_current_state_window(self):
-        return self.current_state_window.init_current_state_window(self.font, self.left_side_select_operation_box)
+    def update_current_state_window(self, is_first):
+        self.current_state_window.init_current_state_window(self.font, self.left_side_select_operation_box,
+                                                            self.lower_box, is_first)
 
     def create_vertical_line(self):
         vertical_line = QFrame()
@@ -122,7 +123,6 @@ class Gui(QMainWindow):
         vertical_line.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
         vertical_line.setMinimumHeight(300)
         return vertical_line
-
 
 def init_q_application():
     app = QApplication(sys.argv)
