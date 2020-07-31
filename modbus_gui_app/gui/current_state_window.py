@@ -1,11 +1,7 @@
-from PySide2 import QtCore
+from PySide2.QtWidgets import QGroupBox, QVBoxLayout, QLabel, QStackedWidget, QTableView, QAbstractItemView, \
+    QHeaderView, QWidget
 from PySide2.QtGui import QFont, QStandardItemModel, QMovie, QStandardItem
-from PySide2.QtWidgets import QGroupBox, QVBoxLayout, QLabel, QFrame, QSizePolicy, QHBoxLayout, QComboBox, QLineEdit, \
-    QPushButton, QScrollArea, QStackedWidget, QTableView, QAbstractItemView, QHeaderView, QWidget
-
-from modbus_gui_app.logic.validation import validate_current_state_data
-from modbus_gui_app.gui.gui_middle import reset_layout
-from modbus_gui_app.gui.error_window import init_error_window
+from PySide2 import QtCore
 
 
 class CurrentStateWindow:
@@ -22,6 +18,12 @@ class CurrentStateWindow:
         self.current_coils_parent_widget = QWidget()
         self.coils_table_view = QTableView()
         self.coils_table_rows = QStandardItemModel()
+        self.current_discrete_inputs_parent_widget = QWidget()
+        self.discrete_inputs_table_view = QTableView()
+        self.discrete_inputs_table_rows = QStandardItemModel()
+        self.current_holding_registers_parent_widget = QWidget()
+        self.holding_registers_table_view = QTableView()
+        self.holding_registers_table_rows = QStandardItemModel()
 
     def init_current_state_window(self):
         self.underline_font = QFont("Arial", 12)
@@ -43,10 +45,13 @@ class CurrentStateWindow:
 
         self.set_coils_current_state()
         self.lower_stacked_widget.addWidget(self.current_coils_parent_widget)
-        ph2 = QLabel("PLACEHOLDER2")
-        self.lower_stacked_widget.addWidget(ph2)
-        ph3 = QLabel("PLACEHOLDER3")
-        self.lower_stacked_widget.addWidget(ph3)
+
+        self.set_discrete_inputs_current_state()
+        self.lower_stacked_widget.addWidget(self.current_discrete_inputs_parent_widget)
+
+        self.set_holding_registers_current_state()
+        self.lower_stacked_widget.addWidget(self.current_holding_registers_parent_widget)
+
         ph4 = QLabel("PLACEHOLDER4")
         self.lower_stacked_widget.addWidget(ph4)
         ph5 = QLabel("PLACEHOLDER5")
@@ -61,9 +66,7 @@ class CurrentStateWindow:
             current_function = self.gui.left_side_select_operation_box.currentIndex() + 1
             self.lower_stacked_widget.setCurrentIndex(current_function)
             current_function = str(hex(current_function))[2:].rjust(2, '0')
-            #print("GUI update", current_function)
             self.update_table(current_function)
-            # TODO TRIGGER A table change HERE (ON TAB CHANGE)
 
     def signal_current_state_window_from_state_manager(self, is_first):
         if self.is_first is True:
@@ -71,22 +74,15 @@ class CurrentStateWindow:
             self.signal_current_state_window_from_gui()
 
         current_function = self.state_manager.current_coil_input_reg_states["currently_selected_function"]
-        #print("backend update", is_first, current_function)
         self.update_table(current_function)
-
-        # TODO UPDATE THE RIGHT TABLE
-        # print("UPDATE")
-        # if is_first is False:
-        #     current_index = self.gui.left_side_select_operation_box.currentIndex() + 1
-        #     self.current_window_stacked_widget.setCurrentIndex(current_index)
-        #
-        #     # current_operation = self.state_manager.current_coil_input_reg_states["currently_selected_function"]
-        #     # # TODO 4 and up is wrongly calculated
-        #     # # print(current_index, current_operation)
 
     def update_table(self, current_function):
         if current_function == "01":
             self.update_coils_current_state()
+        elif current_function == "02":
+            self.update_discrete_inputs_current_state()
+        elif current_function == "03":
+            self.update_holding_registers_current_state()
 
     def set_coils_current_state(self):
         coils_parent_layout = QVBoxLayout()
@@ -127,3 +123,92 @@ class CurrentStateWindow:
             current_unit_address = QStandardItem(str(current_unit_address))
             self.coils_table_rows.appendRow([current_unit_address, current_address, current_coil_value])
         self.coils_table_view.setModel(self.coils_table_rows)
+
+    def set_discrete_inputs_current_state(self):
+        discrete_inputs_parent_layout = QVBoxLayout()
+
+        discrete_inputs_label = QLabel("Current state in the discrete inputs:")
+        discrete_inputs_label.setFont(self.underline_font)
+        discrete_inputs_parent_layout.addWidget(discrete_inputs_label)
+
+        self.discrete_inputs_table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.discrete_inputs_table_view.horizontalHeader().setStretchLastSection(True)
+        self.discrete_inputs_table_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.discrete_inputs_table_rows.setHorizontalHeaderLabels(["UNIT ADDRESS", "DISCRETE INPUT ADDRESS", "VALUE"])
+        self.discrete_inputs_table_view.setStyleSheet("QHeaderView::section { background-color:lightgray }")
+
+        self.update_discrete_inputs_current_state()
+
+        discrete_inputs_parent_layout.addWidget(self.discrete_inputs_table_view)
+        self.current_discrete_inputs_parent_widget.setLayout(discrete_inputs_parent_layout)
+
+    def update_discrete_inputs_current_state(self):
+
+        self.discrete_inputs_table_rows.removeRows(0, self.discrete_inputs_table_rows.rowCount())
+
+        current_discrete_inputs_dict = \
+            self.state_manager.current_coil_input_reg_states["current_read_discrete_inputs"]
+
+        unit_address = current_discrete_inputs_dict["current_unit_address"]
+        start_address = hex(current_discrete_inputs_dict["current_request_from_gui"][0])
+        no_of_discrete_inputs = current_discrete_inputs_dict["current_request_from_gui"][1]
+        active_discrete_inputs = current_discrete_inputs_dict["current_response_returned_values"]
+
+        start_address = int(start_address, 16)
+        for i in range(0, no_of_discrete_inputs):
+            current_discrete_inputs_value = 0
+            current_address = hex(start_address + i)
+            current_unit_address = unit_address
+            if current_address in active_discrete_inputs:
+                current_discrete_inputs_value = 1
+            current_discrete_inputs_value = QStandardItem(str(current_discrete_inputs_value))
+            current_address = QStandardItem(str(current_address))
+            current_unit_address = QStandardItem(str(current_unit_address))
+            self.discrete_inputs_table_rows.appendRow(
+                [current_unit_address, current_address, current_discrete_inputs_value])
+        self.discrete_inputs_table_view.setModel(self.discrete_inputs_table_rows)
+
+    def set_holding_registers_current_state(self):
+        holding_registers_parent_layout = QVBoxLayout()
+
+        holding_registers_label = QLabel("Current state in the holding registers:")
+        holding_registers_label.setFont(self.underline_font)
+        holding_registers_parent_layout.addWidget(holding_registers_label)
+
+        self.holding_registers_table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.holding_registers_table_view.horizontalHeader().setStretchLastSection(True)
+        self.holding_registers_table_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.holding_registers_table_rows.setHorizontalHeaderLabels(
+            ["UNIT ADDRESS", "HOLDING REGISTER ADDRESS", "VALUE"])
+        self.holding_registers_table_view.setStyleSheet("QHeaderView::section { background-color:lightgray }")
+
+        self.update_holding_registers_current_state()
+
+        holding_registers_parent_layout.addWidget(self.holding_registers_table_view)
+        self.current_holding_registers_parent_widget.setLayout(holding_registers_parent_layout)
+
+    def update_holding_registers_current_state(self):
+
+        self.holding_registers_table_rows.removeRows(0, self.holding_registers_table_rows.rowCount())
+
+        current_holding_registers_dict = \
+            self.state_manager.current_coil_input_reg_states["current_read_holding_registers"]
+
+        unit_address = current_holding_registers_dict["current_unit_address"]
+        start_address = hex(current_holding_registers_dict["current_request_from_gui"][0])
+        no_of_holding_registers = current_holding_registers_dict["current_request_from_gui"][1]
+        active_holding_registers = current_holding_registers_dict["current_response_returned_values"]
+
+        start_address = int(start_address, 16)
+        for i in range(0, no_of_holding_registers):
+            current_holding_registers_value = 0
+            current_address = hex(start_address + i)
+            current_unit_address = unit_address
+            if current_address in active_holding_registers:
+                current_holding_registers_value = 1
+            current_holding_registers_value = QStandardItem(str(current_holding_registers_value))
+            current_address = QStandardItem(str(current_address))
+            current_unit_address = QStandardItem(str(current_unit_address))
+            self.holding_registers_table_rows.appendRow(
+                [current_unit_address, current_address, current_holding_registers_value])
+        self.holding_registers_table_view.setModel(self.holding_registers_table_rows)

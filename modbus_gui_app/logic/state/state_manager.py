@@ -1,6 +1,7 @@
 from PySide2.QtCore import Signal, QObject
 
-from modbus_gui_app.logic.state_manager import state_manager_functions
+from modbus_gui_app.logic.state import state_manager_functions
+from modbus_gui_app.logic.state import state_manager_live_update
 
 
 class StateManager(QObject):
@@ -17,7 +18,7 @@ class StateManager(QObject):
         self.gui = None
         self.historian_db_current_index = 0
         self.historian_db_dicts = dict()
-        self.current_coil_input_reg_states = state_manager_functions.init_current_states()
+        self.current_coil_input_reg_states = state_manager_live_update.init_live_update_states()
 
     # getters
     @property
@@ -82,10 +83,10 @@ class StateManager(QObject):
 
     # functions that deal with updating the current status in the lower part of the GUI.
     async def current_state_periodic_refresh(self):
-        await state_manager_functions.current_state_periodic_refresh(self)
+        await state_manager_live_update.current_state_periodic_refresh(self)
 
     def set_currently_selected_function(self, source):
-        state_manager_functions.set_currently_selected_automatic_request(self, source)
+        state_manager_live_update.set_currently_selected_automatic_request(self, source)
 
     def update_current_coils_state(self, source):
-        state_manager_functions.update_current_coils_state(self, source)
+        state_manager_live_update.update_current_coils_state(self, source)
