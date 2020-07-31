@@ -18,9 +18,8 @@ def automatic_response_deserialize(state_manager, bytes_response):
             start_add = state_manager.current_coil_input_reg_states["current_read_coils"]["current_request_from_gui"][0]
             start_add = int(str(start_add), 16)
             start_add = hex(start_add)
-            deserialize_dict["current_response_received_time"] = datetime.now()
             deserialize_dict = read_coils_deserialize(modbus_response, start_add, deserialize_dict)
+            deserialize_dict["current_response_received_time"] = datetime.now()
             for key in deserialize_dict:
                 if key in state_manager.current_coil_input_reg_states["current_read_coils"]:
-                    state_manager.current_request_and_response_dictionary[key] = deserialize_dict[key]
-            return
+                    state_manager.current_coil_input_reg_states["current_read_coils"][key] = deserialize_dict[key]

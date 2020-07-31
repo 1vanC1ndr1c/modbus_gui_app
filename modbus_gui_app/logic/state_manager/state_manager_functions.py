@@ -129,7 +129,7 @@ async def current_state_periodic_refresh(state_manager):
             state_manager.periodic_update_signal.emit(False)
         else:
             pass
-        await asyncio.sleep(5)
+        await asyncio.sleep(1)
 
 
 def init_current_states():
@@ -162,23 +162,23 @@ def init_current_states():
 def set_currently_selected_automatic_request(state_manager, source):
     current_function_code = state_manager.gui.left_side_select_operation_box.currentIndex() + 1
 
-    if current_function_code == 1 or current_function_code == 2 \
-            or current_function_code == 3 or current_function_code == 4:
-
+    if current_function_code == 1:
         current_function_code = str(hex(current_function_code))[2:].rjust(2, '0')
         state_manager.current_coil_input_reg_states["currently_selected_function"] = current_function_code
-
-        if current_function_code == "01":
-            update_current_coils_state(state_manager, source)
-
+        update_current_coils_state(state_manager, source)
 
 
 def update_current_coils_state(state_manager, source):
+    state_manager.current_coil_input_reg_states["current_tid"] = 9901
+    state_manager.current_coil_input_reg_states["currently_selected_function"] = "01"
     if source == "user":
         current_state = state_manager.current_request_and_response_dictionary
-        state_manager.current_coil_input_reg_states["current_read_coils"] = current_state
+        state_manager.current_coil_input_reg_states["current_read_coils"] = current_state.copy()
+        state_manager.current_coil_input_reg_states["current_request"] = current_state["current_request_serialized"]
     elif source == "automatic":
         current_tid = state_manager.current_coil_input_reg_states["read_coils_tid"]
         new_dict = state_manager.current_coil_input_reg_states["current_read_coils"]
         new_dict["current_tid"] = current_tid
+        new_dict["current_request_from_gui_is_valid"] = True
         state_manager.current_coil_input_reg_states["current_read_coils"] = new_dict
+

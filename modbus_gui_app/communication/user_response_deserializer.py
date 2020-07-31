@@ -52,7 +52,6 @@ def read_coils_deserialize(modbus_response, start_add, deserialize_dict):
             indices.append(res)
     if len(indices) == 0:
         indices = "-"
-
     deserialize_dict["current_response_returned_values"] = indices
     deserialize_dict["current_response_err_msg"] = "-"
     return deserialize_dict

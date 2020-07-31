@@ -61,6 +61,7 @@ class Gui(QMainWindow):
 
         self.left_side_parent_widget, self.left_side_options_stacked_widget, self.left_side_select_operation_box = \
             left_side_request_options_init(self.left_layout)
+
         self.upper_layout.addWidget(self.left_side_parent_widget)
 
         self.left_vertical_line = self.create_vertical_line()
@@ -88,11 +89,12 @@ class Gui(QMainWindow):
                                                self.left_side_options_stacked_widget.currentIndex(),
                                                self.left_side_options_stacked_widget.currentWidget()))
         self.left_layout.addWidget(self.button_submit)
-
         self.parent_layout.addLayout(self.upper_layout)
 
         self.lower_box = QGroupBox()
-        self.update_current_state_window(True)
+        self.current_state_window.init_current_state_window()
+        self.left_side_select_operation_box.currentIndexChanged.connect(
+            self.current_state_window.signal_current_state_window_from_gui)
         self.parent_layout.addWidget(self.lower_box)
 
         self.main_widget.setLayout(self.parent_layout)
@@ -112,8 +114,7 @@ class Gui(QMainWindow):
         middle_init(self.middle_layout, self.state_dict, flag)
 
     def update_current_state_window(self, is_first):
-        self.current_state_window.init_current_state_window(self.font, self.left_side_select_operation_box,
-                                                            self.lower_box, is_first)
+        self.current_state_window.signal_current_state_window_from_state_manager(is_first)
 
     def create_vertical_line(self):
         vertical_line = QFrame()
@@ -123,6 +124,7 @@ class Gui(QMainWindow):
         vertical_line.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
         vertical_line.setMinimumHeight(300)
         return vertical_line
+
 
 def init_q_application():
     app = QApplication(sys.argv)
