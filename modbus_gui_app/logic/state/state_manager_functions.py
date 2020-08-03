@@ -26,6 +26,7 @@ async def start_readers_and_writers(state_manager):
     state_manager.modbus_connection = ModbusConnection()
     state_manager.modbus_connection.set_state_manager(state_manager)
     await state_manager.modbus_connection.connect_with_modbus()
+    state_manager.connection_info_signal.emit(0)
 
     current_state_periodic_refresh_future = asyncio.ensure_future(state_manager.current_state_periodic_refresh())
     ws_read_loop_future = asyncio.ensure_future(state_manager.modbus_connection.ws_read_loop())

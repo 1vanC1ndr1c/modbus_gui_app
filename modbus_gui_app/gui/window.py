@@ -8,7 +8,7 @@ from PySide2 import QtCore
 from modbus_gui_app.gui.gui_left_side import left_side_request_options_init
 
 from modbus_gui_app.gui.current_state_window import CurrentStateWindow
-from modbus_gui_app.gui.gui_right_side import right_side_init
+from modbus_gui_app.gui.gui_right_side import ConnectionInfo
 from modbus_gui_app.gui.error_window import init_error_window
 from modbus_gui_app.gui.history_window import HistoryWindow
 from modbus_gui_app.gui.gui_middle import middle_init
@@ -46,8 +46,6 @@ class Gui(QMainWindow):
 
         self.font = QFont("Arial", 12)
         self.main_widget.setFont(self.font)
-        self.parent_layout.setStretchFactor(self.left_layout, 0)
-        self.parent_layout.setAlignment(QtCore.Qt.AlignLeft)
 
         self.menu_bar = self.menuBar()
         self.history_menu = QMenu("History")
@@ -62,7 +60,7 @@ class Gui(QMainWindow):
         self.left_side_parent_widget, self.left_side_options_stacked_widget, self.left_side_select_operation_box = \
             left_side_request_options_init(self.left_layout)
 
-        self.upper_layout.addWidget(self.left_side_parent_widget)
+        self.upper_layout.addWidget(self.left_side_parent_widget, 0, QtCore.Qt.AlignTop)
 
         self.left_vertical_line = self.create_vertical_line()
         self.upper_layout.addWidget(self.left_vertical_line)
@@ -72,12 +70,14 @@ class Gui(QMainWindow):
         self.middle_constraint_widget.setMaximumWidth(600)
         self.middle_constraint_widget.setMaximumHeight(300)
         self.middle_constraint_widget.setLayout(self.middle_layout)
-        self.upper_layout.addWidget(self.middle_constraint_widget)
+        self.upper_layout.addWidget(self.middle_constraint_widget, 0, QtCore.Qt.AlignTop)
 
         self.right_vertical_line = self.create_vertical_line()
         self.upper_layout.addWidget(self.right_vertical_line)
 
-        right_side_init(self.right_layout)
+        self.connection_info = ConnectionInfo(self, self.state_manager)
+        self.connection_info.right_side_init(self.right_layout)
+        self.state_manager.connection_info_signal.connect(self.connection_info.connection_established)
         self.upper_layout.addLayout(self.right_layout)
 
         self.button_submit = QPushButton("Submit")
@@ -89,6 +89,7 @@ class Gui(QMainWindow):
                                                self.left_side_options_stacked_widget.currentIndex(),
                                                self.left_side_options_stacked_widget.currentWidget()))
         self.left_layout.addWidget(self.button_submit)
+        self.left_layout.addStretch()
         self.parent_layout.addLayout(self.upper_layout)
 
         self.lower_box = QGroupBox()

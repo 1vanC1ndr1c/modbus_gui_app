@@ -111,3 +111,10 @@ def init_current_coil_input_reg_states():
         "read_input_registers_tid": 9904
     }
     return current_coil_input_reg_states
+
+
+def init_connection_info():
+    connection_info_state = {
+        "connection_established": datetime.now()
+    }
+    return connection_info_state

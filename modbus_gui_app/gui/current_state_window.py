@@ -204,20 +204,20 @@ class CurrentStateWindow:
         unit_address = current_holding_registers_dict["current_unit_address"]
         start_address = hex(current_holding_registers_dict["current_request_from_gui"][0])
         no_of_holding_registers = current_holding_registers_dict["current_request_from_gui"][1]
-        active_holding_registers = current_holding_registers_dict["current_response_returned_values"]
+        holding_registers = current_holding_registers_dict["current_response_returned_values"]
         start_address = int(start_address, 16)
-        active_input_registers = {}
-        for returned_value in active_holding_registers:
+        active_holding_registers = {}
+        for returned_value in holding_registers:
             adr = returned_value[0]
             if adr != "-":
                 val = returned_value[1]
-                active_input_registers[adr] = val
+                active_holding_registers[adr] = val
         for i in range(0, no_of_holding_registers):
             current_holding_registers_value = 0
             current_address = hex(start_address + i)
             current_unit_address = unit_address
-            if current_address in active_input_registers.keys():
-                current_holding_registers_value = active_input_registers[current_address]
+            if current_address in active_holding_registers.keys():
+                current_holding_registers_value = active_holding_registers[current_address]
             current_holding_registers_value = QStandardItem(str(current_holding_registers_value))
             current_address = QStandardItem(str(current_address))
             current_unit_address = QStandardItem(str(current_unit_address))

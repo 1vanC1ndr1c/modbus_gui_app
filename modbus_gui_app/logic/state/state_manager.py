@@ -7,6 +7,7 @@ from modbus_gui_app.logic.state import state_manager_live_update
 class StateManager(QObject):
     response_signal = Signal(bool)
     periodic_update_signal = Signal(bool)
+    connection_info_signal = Signal(int)
 
     def __init__(self, gui_request_queue, database):
         super().__init__()

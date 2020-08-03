@@ -51,6 +51,7 @@ def set_currently_selected_automatic_request(state_manager, source):
         req = state_manager.current_coil_input_reg_states["current_read_coils"]["current_request_serialized"]
         state_manager.current_coil_input_reg_states["current_request"] = req
         update_current_coils_state(state_manager, "automatic")
+    state_manager.connection_info_signal.emit(1)
 
 
 def update_current_coils_state(state_manager, source):

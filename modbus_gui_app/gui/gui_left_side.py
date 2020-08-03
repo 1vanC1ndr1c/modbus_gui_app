@@ -1,9 +1,11 @@
+from PySide2 import QtCore
 from PySide2.QtWidgets import QHBoxLayout, QLabel, QComboBox, QStackedWidget, QWidget, QVBoxLayout, QLineEdit, QGroupBox
 
 
 def left_side_request_options_init(left_side_layout):
     select_operation_box = QGroupBox()
     select_operation_layout = QHBoxLayout()
+    select_operation_layout.setAlignment(QtCore.Qt.AlignTop)
     select_operation_label = QLabel("Select an operation:")
     select_operation_layout.addWidget(select_operation_label)
     select_operation_combo_box = QComboBox()
@@ -37,7 +39,7 @@ def left_side_request_options_init(left_side_layout):
     write_single_register_option_parent_widget = create_write_single_register_section()
     additional_options_stacked_widget.addWidget(write_single_register_option_parent_widget)
 
-    left_side_layout.addWidget(additional_options_stacked_widget)
+    left_side_layout.addWidget(additional_options_stacked_widget, 0, QtCore.Qt.AlignTop)
     select_operation_combo_box.activated[int].connect(additional_options_stacked_widget.setCurrentIndex)
 
     left_size_constraint_widget = QWidget()
