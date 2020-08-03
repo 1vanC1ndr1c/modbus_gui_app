@@ -10,13 +10,14 @@ def automatic_response_deserialize(state_manager, bytes_response):
 
     if is_without_errors is True:
         function_code = int(state_manager.current_coil_input_reg_states["currently_selected_function"])
-
         if function_code == 1:
             read_coils_automatic_request_deserialize(state_manager, hex_response_array, deserialize_dict)
         elif function_code == 2:
             read_discrete_inputs_automatic_request_deserialize(state_manager, hex_response_array, deserialize_dict)
-        elif function_code == 2:
+        elif function_code == 3:
             read_holding_registers_automatic_request_deserialize(state_manager, hex_response_array, deserialize_dict)
+        elif function_code == 4:
+            read_input_registers_automatic_request_deserialize(state_manager, hex_response_array, deserialize_dict)
 
 
 def read_coils_automatic_request_deserialize(state_manager, hex_response_array, deserialize_dict):
@@ -56,4 +57,18 @@ def read_holding_registers_automatic_request_deserialize(state_manager, hex_resp
     for key in deserialize_dict:
         if key in state_manager.current_coil_input_reg_states["current_read_holding_registers"]:
             state_manager.current_coil_input_reg_states["current_read_holding_registers"][key] = \
+                deserialize_dict[key]
+
+
+def read_input_registers_automatic_request_deserialize(state_manager, hex_response_array, deserialize_dict):
+    modbus_response = hex_response_array[9:]
+    start_add = state_manager.current_coil_input_reg_states \
+        ["current_read_input_registers"]["current_request_from_gui"][0]
+    start_add = int(str(start_add), 16)
+    start_add = hex(start_add)
+    deserialize_dict = read_input_registers_deserialize(modbus_response, start_add, deserialize_dict)
+    deserialize_dict["current_response_received_time"] = datetime.now()
+    for key in deserialize_dict:
+        if key in state_manager.current_coil_input_reg_states["current_read_input_registers"]:
+            state_manager.current_coil_input_reg_states["current_read_input_registers"][key] = \
                 deserialize_dict[key]

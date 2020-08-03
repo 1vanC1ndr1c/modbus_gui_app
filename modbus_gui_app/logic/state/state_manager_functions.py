@@ -79,7 +79,6 @@ def process_modbus_response(state_manager, deserialized_dict):
     state_manager.response_signal.emit(False)  # signal the gui and process the change
     state_manager.periodic_update_signal.emit(False)
     set_currently_selected_automatic_request(state_manager, "user")
-    # print(state_manager.current_request_and_response_dictionary)
 
 
 # internal data and database
