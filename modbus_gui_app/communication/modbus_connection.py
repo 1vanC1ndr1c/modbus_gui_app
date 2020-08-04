@@ -1,10 +1,11 @@
 import asyncio
+
 import aiohttp
 
-from modbus_gui_app.communication.automatic_response_deserializer import automatic_response_deserialize
 from modbus_gui_app.communication.automatic_request_serializer import automatic_request_serialize
-from modbus_gui_app.communication.user_response_deserializer import user_response_deserialize
+from modbus_gui_app.communication.automatic_response_deserializer import automatic_response_deserialize
 from modbus_gui_app.communication.user_request_serializer import user_request_serialize
+from modbus_gui_app.communication.user_response_deserializer import user_response_deserialize
 
 
 class ModbusConnection:
@@ -13,6 +14,9 @@ class ModbusConnection:
         self.communication_dict = {}
         self.tid = 0
         self._pending_responses = dict()
+        self.state_manager = None
+        self.session = None
+        self.ws = None
 
     def set_state_manager(self, state_manager):
         self.state_manager = state_manager
@@ -46,7 +50,6 @@ class ModbusConnection:
         return await pending_response
 
     async def ws_refresh(self):
-        # print("REQUEST: Refresh GUI")
         automatic_request_serialize(self.state_manager)
         automatic_request = self.state_manager.current_coil_input_reg_states["current_request"]
         try:
@@ -69,7 +72,6 @@ class ModbusConnection:
                 elif check_bytes.startswith("99"):
                     automatic_response_deserialize(self.state_manager, bytes_response.data)
                     automatic_request_tid = self.state_manager.current_coil_input_reg_states["current_tid"]
-                    # print("RESPONSE: Gui Refreshed.")
                     self._pending_responses[automatic_request_tid].set_result("Done.")
                 else:
                     print("RESPONSE: ", bytes_response.data)

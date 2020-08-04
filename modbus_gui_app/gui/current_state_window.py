@@ -1,7 +1,7 @@
+from PySide2 import QtCore
+from PySide2.QtGui import QFont, QStandardItemModel, QMovie, QStandardItem
 from PySide2.QtWidgets import QGroupBox, QVBoxLayout, QLabel, QStackedWidget, QTableView, QAbstractItemView, \
     QHeaderView, QWidget
-from PySide2.QtGui import QFont, QStandardItemModel, QMovie, QStandardItem
-from PySide2 import QtCore
 
 
 class CurrentStateWindow:

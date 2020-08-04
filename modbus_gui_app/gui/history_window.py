@@ -1,6 +1,6 @@
-from PySide2.QtWidgets import QDialog, QVBoxLayout, QTableView, QPushButton, QHeaderView, QAbstractItemView
-from PySide2.QtGui import QStandardItemModel, QStandardItem, QFont, QIcon
 from PySide2 import QtCore
+from PySide2.QtGui import QStandardItemModel, QStandardItem, QFont, QIcon
+from PySide2.QtWidgets import QDialog, QVBoxLayout, QTableView, QPushButton, QHeaderView, QAbstractItemView
 
 
 class HistoryWindow:

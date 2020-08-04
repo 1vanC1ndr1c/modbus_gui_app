@@ -8,8 +8,6 @@ from modbus_gui_app.communication.modbus_connection import ModbusConnection
 from modbus_gui_app.logic.state.state_manager_data_structures import *
 from modbus_gui_app.logic.state.state_manager_live_update import set_currently_selected_automatic_request
 
-from modbus_gui_app.gui.error_window import init_error_window
-
 
 def init_state():
     current_request_and_response_dictionary = init_current_request_and_response_dictionary()

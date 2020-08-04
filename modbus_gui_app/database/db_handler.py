@@ -1,7 +1,7 @@
 import sqlite3
 
-from modbus_gui_app.database.db_write import db_writer
 from modbus_gui_app.database.db_read import db_reader
+from modbus_gui_app.database.db_write import db_writer
 
 
 class Backend:

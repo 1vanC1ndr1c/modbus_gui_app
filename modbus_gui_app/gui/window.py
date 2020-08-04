@@ -1,18 +1,16 @@
 import sys
 
+from PySide2 import QtCore
+from PySide2.QtGui import QFont, QIcon, Qt, QCloseEvent
 from PySide2.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, \
     QHBoxLayout, QSizePolicy, QFrame, QMenu, QMainWindow, QAction, QGroupBox
-from PySide2.QtGui import QFont, QIcon, Qt, QCloseEvent
-from PySide2 import QtCore
-
-from modbus_gui_app.gui.gui_left_side import left_side_request_options_init
 
 from modbus_gui_app.gui.current_state_window import CurrentStateWindow
-from modbus_gui_app.gui.gui_right_side import ConnectionInfo
 from modbus_gui_app.gui.error_window import init_error_window
-from modbus_gui_app.gui.history_window import HistoryWindow
+from modbus_gui_app.gui.gui_left_side import left_side_request_options_init
 from modbus_gui_app.gui.gui_middle import middle_init
-
+from modbus_gui_app.gui.gui_right_side import ConnectionInfo
+from modbus_gui_app.gui.history_window import HistoryWindow
 from modbus_gui_app.logic import validation
 
 

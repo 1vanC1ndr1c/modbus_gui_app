@@ -1,8 +1,9 @@
+from datetime import datetime
+
 from PySide2 import QtCore
-from PySide2.QtGui import QFont, QPalette, Qt
+from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QLabel, QGroupBox, QVBoxLayout, QScrollArea
 
-from datetime import datetime
 from modbus_gui_app.gui.gui_middle import reset_layout
 
 

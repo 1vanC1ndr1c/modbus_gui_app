@@ -1,8 +1,8 @@
 import asyncio
-import aiohttp.web
 import contextlib
-import json
 import sys
+
+import aiohttp.web
 
 conf = {
     'ws': {

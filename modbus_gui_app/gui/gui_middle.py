@@ -1,6 +1,6 @@
-from PySide2.QtWidgets import QLabel, QHBoxLayout, QScrollArea, QDialog, QVBoxLayout, QGroupBox
-from PySide2.QtGui import QFont
 from PySide2 import QtCore
+from PySide2.QtGui import QFont
+from PySide2.QtWidgets import QLabel, QHBoxLayout, QScrollArea, QVBoxLayout, QGroupBox
 
 
 def middle_init(mid_layout, dictionary, first_init):
