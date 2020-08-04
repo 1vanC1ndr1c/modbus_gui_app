@@ -16,9 +16,11 @@ def init_state():
 
 # connect to modbus
 def start_communications_thread(state_manager):
-    communications_thread = Thread(
-        target=lambda: asyncio.new_event_loop().run_until_complete(start_readers_and_writers(state_manager)))
+    communications_thread = Thread(daemon=True,
+                                   target=lambda: asyncio.new_event_loop().run_until_complete(
+                                       start_readers_and_writers(state_manager)))
     communications_thread.start()
+    state_manager.communications_thread = communications_thread
 
 
 async def start_readers_and_writers(state_manager):
@@ -28,17 +30,17 @@ async def start_readers_and_writers(state_manager):
     state_manager.connection_info_signal.emit("Connection Established")
 
     current_state_periodic_refresh_future = asyncio.ensure_future(state_manager.current_state_periodic_refresh())
-    state_manager.current_state_periodic_refresh_future = current_state_periodic_refresh_future
     ws_read_loop_future = asyncio.ensure_future(state_manager.modbus_connection.ws_read_loop())
+    state_manager.ws_read_loop_future = ws_read_loop_future
     state_manager_to_modbus_write_future = asyncio.ensure_future(gui_to_state_manager_write(state_manager))
 
     await asyncio.wait(
         [ws_read_loop_future, current_state_periodic_refresh_future, state_manager_to_modbus_write_future],
         return_when=asyncio.FIRST_COMPLETED)
 
-    ws_read_loop_future.cancel()
     state_manager_to_modbus_write_future.cancel()
     current_state_periodic_refresh_future.cancel()
+    ws_read_loop_future.cancel()
     try:
         await state_manager.modbus_connection.ws.close()
     except Exception as conn_error:
@@ -48,13 +50,14 @@ async def start_readers_and_writers(state_manager):
 
     await state_manager.modbus_connection.session.close()
 
-
 # user communication
 async def gui_to_state_manager_write(state_manager):
     executor = ThreadPoolExecutor(1)
     while True:
         valid_gui_request = await asyncio.get_event_loop().run_in_executor(executor, functools.partial(
             get_msg_from_gui_queue, state_manager))
+        if valid_gui_request == "End.":
+            break
         await send_request_to_modbus(state_manager, valid_gui_request)
 
 

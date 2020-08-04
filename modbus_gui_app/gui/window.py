@@ -20,7 +20,7 @@ def run_gui(state_manager, gui_request_queue):
     gui.setGeometry(100, 100, 900, 400)
     gui.setWindowFlags(Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint | Qt.WindowCloseButtonHint)
     gui.showMaximized()
-    sys.exit(app.exec_())
+    app.exec_()
 
 
 class Gui(QMainWindow):
@@ -131,9 +131,14 @@ class Gui(QMainWindow):
 
     def closeEvent(self, event: QCloseEvent):
         try:
-            self.state_manager.current_state_periodic_refresh_future.cancel()
+            self.state_manager.ws_read_loop_future.cancel()
         except Exception as close_exception:
             print("WINDOW: Error When Closing The App: ", close_exception)
+        try:
+            self.state_manager.database.db_close()
+        except Exception as close_exception:
+            print("WINDOW: Error When Closing The App: ", close_exception)
+        self.state_manager.gui_request_queue.put("End.")
         event.accept()
 
 

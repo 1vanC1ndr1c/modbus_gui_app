@@ -41,3 +41,4 @@ class Backend:
 
     def db_close(self):
         self.conn.close()
+        print("Closed database successfully.")
