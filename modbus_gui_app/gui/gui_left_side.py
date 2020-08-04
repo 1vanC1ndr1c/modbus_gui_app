@@ -187,9 +187,9 @@ def create_write_single_coil_option_section():
     write_single_coil_option_parent_layout = QVBoxLayout()
 
     write_single_coil_option_first_row_layout = QHBoxLayout()
-    write_single_coil_option_first_row_text = QLabel("First coil address(hex):")
+    write_single_coil_option_first_row_text = QLabel("Coil address(hex):")
     write_single_coil_option_first_row_input = QLineEdit()
-    write_single_coil_option_first_row_input.setPlaceholderText("Insert the first coil address...")
+    write_single_coil_option_first_row_input.setPlaceholderText("Insert the coil address...")
     write_single_coil_option_first_row_input.setMinimumWidth(300)
     write_single_coil_option_first_row_layout.addWidget(write_single_coil_option_first_row_text)
     write_single_coil_option_first_row_layout.addWidget(write_single_coil_option_first_row_input)
@@ -221,9 +221,9 @@ def create_write_single_register_section():
     write_single_register_option_parent_layout = QVBoxLayout()
 
     write_single_register_option_first_row_layout = QHBoxLayout()
-    write_single_register_option_first_row_text = QLabel("First coil address(hex):")
+    write_single_register_option_first_row_text = QLabel("Register address(hex):")
     write_single_register_option_first_row_input = QLineEdit()
-    write_single_register_option_first_row_input.setPlaceholderText("Insert the first coil address...")
+    write_single_register_option_first_row_input.setPlaceholderText("Insert the register address...")
     write_single_register_option_first_row_input.setMinimumWidth(300)
     write_single_register_option_first_row_layout.addWidget(write_single_register_option_first_row_text)
     write_single_register_option_first_row_layout.addWidget(write_single_register_option_first_row_input)

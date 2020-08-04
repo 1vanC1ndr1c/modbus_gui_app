@@ -7,7 +7,8 @@ from modbus_gui_app.logic.state import state_manager_live_update
 class StateManager(QObject):
     response_signal = Signal(bool)
     periodic_update_signal = Signal(bool)
-    connection_info_signal = Signal(int)
+    connection_info_signal = Signal(str)
+    invalid_connection_signal = Signal(str)
 
     def __init__(self, gui_request_queue, database):
         super().__init__()
@@ -20,6 +21,7 @@ class StateManager(QObject):
         self.historian_db_current_index = 0
         self.historian_db_dicts = dict()
         self.current_coil_input_reg_states = state_manager_live_update.init_live_update_states()
+        self.current_state_periodic_refresh_future = None
 
     # getters
     @property

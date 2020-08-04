@@ -13,7 +13,7 @@ def db_reader(state_manager, current_db_index, conn):
 
         db_dict = convert_data_into_dict(data)
     except Exception as e:
-        print("READING: Error!= ", e)
+        print("BR_READ: Database Read Error: ", e)
         db_dict = {"READ ERROR"}
 
     state_manager.set_db_dicts(db_dict)

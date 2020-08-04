@@ -7,8 +7,10 @@ from modbus_gui_app.logic.state.state_manager_data_structures import init_curren
 async def current_state_periodic_refresh(state_manager):
     while True:
         set_currently_selected_automatic_request(state_manager, "automatic")
+        state_manager.connection_info_signal.emit("Automatic Request Sent.")
         await state_manager.modbus_connection.ws_refresh()
         state_manager.periodic_update_signal.emit(False)
+        state_manager.connection_info_signal.emit("Automatic Request Received.")
         await asyncio.sleep(1)
 
 
@@ -51,7 +53,13 @@ def set_currently_selected_automatic_request(state_manager, source):
         req = state_manager.current_coil_input_reg_states["current_read_coils"]["current_request_serialized"]
         state_manager.current_coil_input_reg_states["current_request"] = req
         update_current_coils_state(state_manager, "automatic")
-    state_manager.connection_info_signal.emit(1)
+    elif current_function_code == 6:
+        f_code = 4
+        f_code = str(hex(f_code))[2:].rjust(2, '0')
+        state_manager.current_coil_input_reg_states["currently_selected_function"] = f_code
+        req = state_manager.current_coil_input_reg_states["current_read_input_registers"]["current_request_serialized"]
+        state_manager.current_coil_input_reg_states["current_request"] = req
+        update_current_input_registers_state(state_manager, "automatic")
 
 
 def update_current_coils_state(state_manager, source):

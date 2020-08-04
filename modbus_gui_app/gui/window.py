@@ -1,8 +1,8 @@
 import sys
 
-from PySide2.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QStackedWidget, \
-    QHBoxLayout, QSizePolicy, QFrame, QMenu, QMainWindow, QAction, QLabel, QGroupBox
-from PySide2.QtGui import QFont, QIcon
+from PySide2.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, \
+    QHBoxLayout, QSizePolicy, QFrame, QMenu, QMainWindow, QAction, QGroupBox
+from PySide2.QtGui import QFont, QIcon, Qt, QCloseEvent
 from PySide2 import QtCore
 
 from modbus_gui_app.gui.gui_left_side import left_side_request_options_init
@@ -20,7 +20,8 @@ def run_gui(state_manager, gui_request_queue):
     app = init_q_application()
     gui = Gui(state_manager, gui_request_queue)
     gui.setGeometry(100, 100, 900, 400)
-    gui.show()
+    gui.setWindowFlags(Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint | Qt.WindowCloseButtonHint)
+    gui.showMaximized()
     sys.exit(app.exec_())
 
 
@@ -31,6 +32,7 @@ class Gui(QMainWindow):
         self.state_manager = state_manager
         self.state_manager.response_signal.connect(self.update_response_layout)
         self.state_manager.periodic_update_signal.connect(self.update_current_state_window)
+        self.state_manager.invalid_connection_signal.connect(self.generate_invalid_connection_error)
         self.state_dict = state_manager.current_request_and_response_dictionary
         self.gui_request_queue = gui_request_queue
         self.state_manager.set_gui(self)
@@ -77,7 +79,7 @@ class Gui(QMainWindow):
 
         self.connection_info = ConnectionInfo(self, self.state_manager)
         self.connection_info.right_side_init(self.right_layout)
-        self.state_manager.connection_info_signal.connect(self.connection_info.connection_established)
+        self.state_manager.connection_info_signal.connect(self.connection_info.generate_connection_info)
         self.upper_layout.addLayout(self.right_layout)
 
         self.button_submit = QPushButton("Submit")
@@ -125,6 +127,16 @@ class Gui(QMainWindow):
         vertical_line.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
         vertical_line.setMinimumHeight(300)
         return vertical_line
+
+    def generate_invalid_connection_error(self):
+        init_error_window("No Connection Established.")
+
+    def closeEvent(self, event: QCloseEvent):
+        try:
+            self.state_manager.current_state_periodic_refresh_future.cancel()
+        except Exception as close_exception:
+            print("WINDOW: Error When Closing The App: ", close_exception)
+        event.accept()
 
 
 def init_q_application():

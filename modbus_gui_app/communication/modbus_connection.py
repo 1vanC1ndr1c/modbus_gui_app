@@ -1,11 +1,10 @@
 import asyncio
 import aiohttp
 
+from modbus_gui_app.communication.automatic_response_deserializer import automatic_response_deserialize
+from modbus_gui_app.communication.automatic_request_serializer import automatic_request_serialize
 from modbus_gui_app.communication.user_response_deserializer import user_response_deserialize
 from modbus_gui_app.communication.user_request_serializer import user_request_serialize
-
-from modbus_gui_app.communication.automatic_request_serializer import automatic_request_serialize
-from modbus_gui_app.communication.automatic_response_deserializer import automatic_response_deserialize
 
 
 class ModbusConnection:
@@ -29,7 +28,10 @@ class ModbusConnection:
 
     async def connect_with_modbus(self):
         self.session = aiohttp.ClientSession()
-        self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
+        try:
+            self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
+        except Exception as conn_error:
+            print("MODBUS CONNECTION: Cannot connect: ", conn_error)
 
     async def ws_write(self, validated_request):
         self.update_current_tid()
@@ -38,7 +40,7 @@ class ModbusConnection:
         try:
             await self.ws.send_bytes(request_serialized)
         except Exception as e:
-            print("REQUEST ERROR: ", e)
+            print("MODBUS_CONNECTION: Request Error: ", e)
         pending_response = asyncio.Future()
         self._pending_responses[self.get_current_tid()] = pending_response
         return await pending_response
@@ -50,7 +52,7 @@ class ModbusConnection:
         try:
             await self.ws.send_bytes(automatic_request)
         except Exception as e:
-            print("AUTOMATIC REFRESH REQUEST ERROR: ", e)
+            print("MODBUS CONNECTION: Automatic Refresh Request Error: ", e)
         automatic_refresh_pending_response = asyncio.Future()
         automatic_request_tid = self.state_manager.current_coil_input_reg_states["current_tid"]
         self._pending_responses[automatic_request_tid] = automatic_refresh_pending_response

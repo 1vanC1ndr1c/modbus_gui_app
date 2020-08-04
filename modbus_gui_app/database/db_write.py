@@ -43,4 +43,4 @@ def db_writer(dictionary, conn):
         print("Writing: Records created successfully.")
 
     except Exception as e:
-        print("Writing: Error! = ", e)
+        print("DB_WRITE: Database Writing Error:", e)

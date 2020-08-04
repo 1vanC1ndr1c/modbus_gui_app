@@ -87,7 +87,7 @@ def read_holding_registers_deserialize(modbus_response, start_add, deserialize_d
         try:
             values.append((modbus_response[i] + modbus_response[i + 1]).replace("\'", ""))
         except Exception as e:
-            print("DESERIALIZE ERROR:", e)
+            print("USER RESPONSE DESERIALIZER: Deserialization Error: ", e)
             pass
     if len(values) == 0:
         values = "-"
@@ -115,7 +115,7 @@ def read_input_registers_deserialize(modbus_response, start_add, deserialize_dic
         try:
             values.append((modbus_response[i] + modbus_response[i + 1]).replace("\'", ""))
         except Exception as e:
-            print("DESERIALIZE ERROR", e)
+            print("AUTOMATIC RESPONSE DESERIALIZER: Deserialization Error: ", e)
             pass
     if len(values) == 0:
         values = "-"

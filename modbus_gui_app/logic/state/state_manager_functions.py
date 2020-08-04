@@ -3,11 +3,12 @@ import functools
 from concurrent.futures.thread import ThreadPoolExecutor
 from copy import deepcopy
 from threading import Thread
-from datetime import datetime
 
 from modbus_gui_app.communication.modbus_connection import ModbusConnection
 from modbus_gui_app.logic.state.state_manager_data_structures import *
 from modbus_gui_app.logic.state.state_manager_live_update import set_currently_selected_automatic_request
+
+from modbus_gui_app.gui.error_window import init_error_window
 
 
 def init_state():
@@ -26,9 +27,10 @@ async def start_readers_and_writers(state_manager):
     state_manager.modbus_connection = ModbusConnection()
     state_manager.modbus_connection.set_state_manager(state_manager)
     await state_manager.modbus_connection.connect_with_modbus()
-    state_manager.connection_info_signal.emit(0)
+    state_manager.connection_info_signal.emit("Connection Established")
 
     current_state_periodic_refresh_future = asyncio.ensure_future(state_manager.current_state_periodic_refresh())
+    state_manager.current_state_periodic_refresh_future = current_state_periodic_refresh_future
     ws_read_loop_future = asyncio.ensure_future(state_manager.modbus_connection.ws_read_loop())
     state_manager_to_modbus_write_future = asyncio.ensure_future(gui_to_state_manager_write(state_manager))
 
@@ -39,8 +41,13 @@ async def start_readers_and_writers(state_manager):
     ws_read_loop_future.cancel()
     state_manager_to_modbus_write_future.cancel()
     current_state_periodic_refresh_future.cancel()
+    try:
+        await state_manager.modbus_connection.ws.close()
+    except Exception as conn_error:
+        print("STATE MANAGER FUNCTIONS: Error When Connecting, No Connection. ", conn_error)
+        state_manager.invalid_connection_signal.emit("No Connection.")
+        state_manager.connection_info_signal.emit("No Connection.")
 
-    await state_manager.modbus_connection.ws.close()
     await state_manager.modbus_connection.session.close()
 
 
@@ -64,6 +71,7 @@ async def send_request_to_modbus(state_manager, valid_gui_request):
     state_manager.current_request_and_response_dictionary["current_request_from_gui_is_valid"] = True
     state_manager.current_request_and_response_dictionary["current_request_from_gui_error_msg"] = "-"
     state_manager.current_request_and_response_dictionary["current_request_sent_time"] = datetime.now()
+    state_manager.connection_info_signal.emit("User Request Sent.")
     response = await state_manager.modbus_connection.ws_write(state_manager.current_request_and_response_dictionary)
     process_modbus_response(state_manager, response)
 
@@ -80,6 +88,7 @@ def process_modbus_response(state_manager, deserialized_dict):
     state_manager.response_signal.emit(False)  # signal the gui and process the change
     state_manager.periodic_update_signal.emit(False)
     set_currently_selected_automatic_request(state_manager, "user")
+    state_manager.connection_info_signal.emit("User Response Received.")
 
 
 # internal data and database
