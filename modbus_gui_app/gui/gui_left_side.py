@@ -18,7 +18,6 @@ def left_side_request_options_init(left_side_layout):
     select_operation_layout.addWidget(select_operation_combo_box)
     select_operation_box.setLayout(select_operation_layout)
     left_side_layout.addWidget(select_operation_box)
-
     additional_options_stacked_widget = QStackedWidget()
 
     read_coils_option_parent_widget = create_read_coils_section()
