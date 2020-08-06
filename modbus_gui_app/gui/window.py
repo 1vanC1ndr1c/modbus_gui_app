@@ -14,9 +14,9 @@ from modbus_gui_app.gui.history_window import HistoryWindow
 from modbus_gui_app.logic import validation
 
 
-def run_gui(state_manager, gui_request_queue):
+def run_gui(state_manager):
     app = init_q_application()
-    gui = Gui(state_manager, gui_request_queue)
+    gui = Gui(state_manager)
     gui.setGeometry(100, 100, 900, 400)
     gui.setWindowFlags(Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint | Qt.WindowCloseButtonHint)
     gui.showMaximized()
@@ -25,15 +25,15 @@ def run_gui(state_manager, gui_request_queue):
 
 class Gui(QMainWindow):
 
-    def __init__(self, state_manager, gui_request_queue):
+    def __init__(self, state_manager):
         super().__init__()
         self._state_manager = state_manager
         self._state_manager.response_signal.connect(self._update_response_layout)
         self._state_manager.periodic_update_signal.connect(self._update_current_state_window)
         self._state_manager.invalid_connection_signal.connect(self._generate_invalid_connection_error)
         self._state_dict = state_manager.user_action_state
-        self.gui_request_queue = gui_request_queue
-        self._state_manager.set_gui(self)
+        self.gui_request_queue = state_manager.gui_request_queue
+        self._state_manager.gui = self
         self._main_widget = QWidget()
         self._parent_layout = QVBoxLayout()
         self._upper_layout = QHBoxLayout()

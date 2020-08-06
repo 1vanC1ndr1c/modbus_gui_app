@@ -2,6 +2,9 @@ from PySide2.QtCore import Signal, QObject
 
 from modbus_gui_app.logic.state import state_manager_functions
 from modbus_gui_app.logic.state import state_manager_live_update
+from modbus_gui_app.database.db_handler import Backend
+
+import queue
 
 
 class StateManager(QObject):
@@ -10,11 +13,12 @@ class StateManager(QObject):
     connection_info_signal = Signal(str)
     invalid_connection_signal = Signal(str)
 
-    def __init__(self, gui_request_queue, database):
+    def __init__(self):
         super().__init__()
         self.last_ten_dicts = {}
-        self.database = database
-        self.gui_request_queue = gui_request_queue
+        self.database = Backend()
+        self.database.set_st_manager(self)
+        self.gui_request_queue = queue.Queue()
         self.modbus_connection = None
         self.user_action_state = state_manager_functions.init_state()
         self.gui = None
@@ -23,39 +27,10 @@ class StateManager(QObject):
         self.live_update_states = state_manager_live_update.init_live_update_states()
         self.current_state_periodic_refresh_future = None
 
-    # getters
-    @property
-    def request_and_response_state(self):
-        return self.user_action_state
-
-    def get_last_ten_dicts(self):
-        return self.last_ten_dicts
-
     def get_historian_db_dicts(self):
         self.state_manager_read_from_db()
         return self.historian_db_dicts
 
-    # setters
-    def set_gui(self, gui):
-        self.gui = gui
-
-    def set_current_request_serialized(self, current_request_serialized):
-        self.user_action_state["current_request_serialized"] = current_request_serialized
-
-    def set_current_response_serialized(self, current_response_serialized):
-        self.user_action_state["current_response_serialized"] = current_response_serialized
-
-    def set_current_unit_address(self, unit_address):
-        self.user_action_state["current_unit_address"] = unit_address
-
-    def set_current_function_code(self, function_code):
-        self.user_action_state["current_function_code"] = function_code
-
-    def set_current_request_name(self, req_name):
-        self.user_action_state["current_request_name"] = req_name
-
-    def set_db_dicts(self, data):
-        self.historian_db_dicts = data
 
     # connect to modbus
     def start_communications_thread(self):

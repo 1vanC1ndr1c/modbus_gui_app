@@ -16,7 +16,7 @@ class HistoryWindow:
     def init_history_window(self):
         self._rows = QStandardItemModel()
         self._is_first = True
-        self._last_ten_dicts = self._state_manager.get_last_ten_dicts()
+        self._last_ten_dicts = self._state_manager.last_ten_dicts
 
         history_dlg_window = QDialog(None, QtCore.Qt.WindowCloseButtonHint)
         history_dlg_window.setWindowIcon(QIcon("resources/history_icon.png"))

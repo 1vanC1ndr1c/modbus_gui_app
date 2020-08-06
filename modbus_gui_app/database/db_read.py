@@ -13,7 +13,7 @@ def _db_reader(state_manager, current_db_index, conn):
         print("BR_READ: Database Read Error: ", e)
         db_dict = {"READ ERROR"}
 
-    state_manager.set_db_dicts(db_dict)
+    state_manager.historian_db_dicts = db_dict
 
 
 def _convert_data_into_dict(db_data):

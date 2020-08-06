@@ -23,12 +23,12 @@ def _user_request_serialize(state_dict, state_manager, tid):
         bytes_req = _write_single_register_serialize(func_code, req_dict, state_manager, state_dict)
         return bytes_req
     else:
-        state_manager.set_current_request_name("Unknown Request.")
+        state_manager.user_action_state["current_request_name"] = "Unknown Request."
         return b'0'
 
 
 def _read_coils_serialize(func_code, req_dict, state_manager, state_dict):
-    state_manager.set_current_request_name("Read Coils.")
+    state_manager.user_action_state["current_request_name"] = "Read Coils."
 
     new_tid, protocol, unit_addr, start_addr = _get_tid_prot_uddr_saddr(state_dict, req_dict, state_manager, func_code)
     no_of_coils = str(hex(req_dict[1]))[2:].rjust(4, '0')
@@ -40,7 +40,7 @@ def _read_coils_serialize(func_code, req_dict, state_manager, state_dict):
 
 
 def _read_discrete_inputs_serialize(func_code, req_dict, state_manager, state_dict):
-    state_manager.set_current_request_name("Read Discrete Inputs .")
+    state_manager.user_action_state["current_request_name"] = "Read Discrete Inputs ."
 
     new_tid, protocol, unit_addr, start_addr = _get_tid_prot_uddr_saddr(state_dict, req_dict, state_manager, func_code)
     no_of_discrete_inputs = str(hex(req_dict[1]))[2:].rjust(4, '0')
@@ -52,7 +52,7 @@ def _read_discrete_inputs_serialize(func_code, req_dict, state_manager, state_di
 
 
 def _read_holding_registers_serialize(func_code, req_dict, state_manager, state_dict):
-    state_manager.set_current_request_name("Read Holding Registers.")
+    state_manager.user_action_state["current_request_name"] = "Read Holding Registers."
 
     new_tid, protocol, unit_addr, start_addr = _get_tid_prot_uddr_saddr(state_dict, req_dict, state_manager, func_code)
     no_of_holding_registers = str(hex(req_dict[1]))[2:].rjust(4, '0')
@@ -64,7 +64,7 @@ def _read_holding_registers_serialize(func_code, req_dict, state_manager, state_
 
 
 def _read_input_registers_serialize(func_code, req_dict, state_manager, state_dict):
-    state_manager.set_current_request_name("Read Input Registers.")
+    state_manager.user_action_state["current_request_name"] = "Read Input Registers."
 
     new_tid, protocol, unit_addr, start_addr = _get_tid_prot_uddr_saddr(state_dict, req_dict, state_manager, func_code)
     no_of_input_registers = str(hex(req_dict[1]))[2:].rjust(4, '0')
@@ -76,7 +76,7 @@ def _read_input_registers_serialize(func_code, req_dict, state_manager, state_di
 
 
 def _write_single_coil_serialize(func_code, req_dict, state_manager, state_dict):
-    state_manager.set_current_request_name("Write Single Coil.")
+    state_manager.user_action_state["current_request_name"] = "Write Single Coil."
 
     new_tid, protocol, unit_addr, start_addr = _get_tid_prot_uddr_saddr(state_dict, req_dict, state_manager, func_code)
     modbus_request = func_code + ''
@@ -91,7 +91,7 @@ def _write_single_coil_serialize(func_code, req_dict, state_manager, state_dict)
 
 
 def _write_single_register_serialize(func_code, req_dict, state_manager, state_dict):
-    state_manager.set_current_request_name("Write Single Register.")
+    state_manager.user_action_state["current_request_name"] = "Write Single Register."
 
     new_tid, protocol, unit_addr, start_addr = _get_tid_prot_uddr_saddr(state_dict, req_dict, state_manager, func_code)
     reg_val = req_dict[1]
@@ -109,8 +109,8 @@ def _get_tid_prot_uddr_saddr(state_dict, req_dict, state_manager, function_code)
     protocol = '0000'
     unit_address = req_dict[2]
     unit_address = str(unit_address).rjust(2, '0')
-    state_manager.set_current_unit_address(str(unit_address))
-    state_manager.set_current_function_code(str(function_code))
+    state_manager.user_action_state["current_unit_address"] = str(unit_address)
+    state_manager.user_action_state["current_function_code"] = str(function_code)
     start_add = req_dict[0]
     start_add = start_add - 1
     start_add = str(hex(start_add))[2:].rjust(4, '0')
@@ -125,5 +125,5 @@ def _generate_serialized_request(modbus_request, new_tid, protocol, unit_address
     bytes_req = new_tid + protocol + length + unit_address + modbus_request
     bytes_req = bytes.fromhex(bytes_req)
 
-    state_manager.set_current_request_serialized(bytes_req)
+    state_manager.user_action_state["current_request_serialized"] = bytes_req
     return bytes_req
