@@ -74,8 +74,8 @@ class ConnectionInfo:
 
     def auto_request_msg_show(self, time):
         auto_request_type = "Unknown Request."
-        auto_bytes_req = self.state_manager.current_coil_input_reg_states["current_request"]
-        tid = self.state_manager.current_coil_input_reg_states["current_tid"]
+        auto_bytes_req = self.state_manager.live_update_states["current_request"]
+        tid = self.state_manager.live_update_states["current_tid"]
         if tid == 9901:
             auto_request_type = "Automatic Read Coils Request:"
         elif tid == 9902:
@@ -90,31 +90,31 @@ class ConnectionInfo:
     def auto_response_msg_show(self, time):
         auto_response_type = "Unknown Response."
         auto_bytes_resp = b'0'
-        tid = self.state_manager.current_coil_input_reg_states["current_tid"]
+        tid = self.state_manager.live_update_states["current_tid"]
         if tid == 9901:
             auto_response_type = "Automatic Read Coils Response:"
-            auto_bytes_resp = self.state_manager.current_coil_input_reg_states["current_read_coils"]
+            auto_bytes_resp = self.state_manager.live_update_states["current_read_coils"]
             auto_bytes_resp = auto_bytes_resp["current_response_serialized"]
         elif tid == 9902:
             auto_response_type = "Automatic Read Discrete Inputs Response:"
-            auto_bytes_resp = self.state_manager.current_coil_input_reg_states["current_read_discrete_inputs"]
+            auto_bytes_resp = self.state_manager.live_update_states["current_read_discrete_inputs"]
             auto_bytes_resp = auto_bytes_resp["current_response_serialized"]
         elif tid == 9903:
             auto_response_type = "Automatic Read Holding Registers Response:"
-            auto_bytes_resp = self.state_manager.current_coil_input_reg_states["current_read_holding_registers"]
+            auto_bytes_resp = self.state_manager.live_update_states["current_read_holding_registers"]
             auto_bytes_resp = auto_bytes_resp["current_response_serialized"]
         elif tid == 9904:
             auto_response_type = "Automatic Read Input Registers Response:"
-            auto_bytes_resp = self.state_manager.current_coil_input_reg_states["current_read_input_registers"]
+            auto_bytes_resp = self.state_manager.live_update_states["current_read_input_registers"]
             auto_bytes_resp = auto_bytes_resp["current_response_serialized"]
 
         auto_response = time + auto_response_type + " " + str(auto_bytes_resp) + "\n" + get_str_separator()
         self.auto_response_label.setText(auto_response)
 
     def user_request_msg_show(self, time):
-        f_code = self.state_manager.current_request_and_response_dictionary["current_function_code"]
+        f_code = self.state_manager.user_action_state["current_function_code"]
         user_request_type = "Unknown Request."
-        user_bytes_req = self.state_manager.current_request_and_response_dictionary
+        user_bytes_req = self.state_manager.user_action_state
         user_bytes_req = user_bytes_req["current_request_serialized"]
         if f_code == "01":
             user_request_type = "User Read Coils Request:"
@@ -134,9 +134,9 @@ class ConnectionInfo:
         self.right_box_layout.insertWidget(self.right_box_layout.count() - 1, user_request_label)
 
     def user_response_msg_show(self, time):
-        f_code = self.state_manager.current_request_and_response_dictionary["current_function_code"]
+        f_code = self.state_manager.user_action_state["current_function_code"]
         user_response_type = "Unknown Response."
-        user_bytes_resp = self.state_manager.current_request_and_response_dictionary
+        user_bytes_resp = self.state_manager.user_action_state
         user_bytes_resp = user_bytes_resp["current_response_serialized"]
         if f_code == "01":
             user_response_type = "User Read Coils Response:"

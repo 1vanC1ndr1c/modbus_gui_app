@@ -16,17 +16,17 @@ class StateManager(QObject):
         self.database = database
         self.gui_request_queue = gui_request_queue
         self.modbus_connection = None
-        self.current_request_and_response_dictionary = state_manager_functions.init_state()
+        self.user_action_state = state_manager_functions.init_state()
         self.gui = None
         self.historian_db_current_index = 0
         self.historian_db_dicts = dict()
-        self.current_coil_input_reg_states = state_manager_live_update.init_live_update_states()
+        self.live_update_states = state_manager_live_update.init_live_update_states()
         self.current_state_periodic_refresh_future = None
 
     # getters
     @property
     def request_and_response_state(self):
-        return self.current_request_and_response_dictionary
+        return self.user_action_state
 
     def get_last_ten_dicts(self):
         return self.last_ten_dicts
@@ -40,19 +40,19 @@ class StateManager(QObject):
         self.gui = gui
 
     def set_current_request_serialized(self, current_request_serialized):
-        self.current_request_and_response_dictionary["current_request_serialized"] = current_request_serialized
+        self.user_action_state["current_request_serialized"] = current_request_serialized
 
     def set_current_response_serialized(self, current_response_serialized):
-        self.current_request_and_response_dictionary["current_response_serialized"] = current_response_serialized
+        self.user_action_state["current_response_serialized"] = current_response_serialized
 
     def set_current_unit_address(self, unit_address):
-        self.current_request_and_response_dictionary["current_unit_address"] = unit_address
+        self.user_action_state["current_unit_address"] = unit_address
 
     def set_current_function_code(self, function_code):
-        self.current_request_and_response_dictionary["current_function_code"] = function_code
+        self.user_action_state["current_function_code"] = function_code
 
     def set_current_request_name(self, req_name):
-        self.current_request_and_response_dictionary["current_request_name"] = req_name
+        self.user_action_state["current_request_name"] = req_name
 
     def set_db_dicts(self, data):
         self.historian_db_dicts = data

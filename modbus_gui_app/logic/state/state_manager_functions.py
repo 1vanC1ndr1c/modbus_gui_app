@@ -26,7 +26,7 @@ def start_communications_thread(state_manager):
 async def start_readers_and_writers(state_manager):
     state_manager.modbus_connection = ModbusConnection()
     state_manager.modbus_connection.set_state_manager(state_manager)
-    await state_manager.modbus_connection.connect_with_modbus()
+    await state_manager.modbus_connection.open_session()
     state_manager.connection_info_signal.emit("Connection Established")
 
     current_state_periodic_refresh_future = asyncio.ensure_future(state_manager.current_state_periodic_refresh())
@@ -68,21 +68,21 @@ def get_msg_from_gui_queue(state_manager):
 
 async def send_request_to_modbus(state_manager, valid_gui_request):
     # send the validated data(in a dict) to COMM
-    state_manager.current_request_and_response_dictionary["current_request_from_gui"] = valid_gui_request
-    state_manager.current_request_and_response_dictionary["current_request_from_gui_is_valid"] = True
-    state_manager.current_request_and_response_dictionary["current_request_from_gui_error_msg"] = "-"
-    state_manager.current_request_and_response_dictionary["current_request_sent_time"] = datetime.now()
+    state_manager.user_action_state["current_request_from_gui"] = valid_gui_request
+    state_manager.user_action_state["current_request_from_gui_is_valid"] = True
+    state_manager.user_action_state["current_request_from_gui_error_msg"] = "-"
+    state_manager.user_action_state["current_request_sent_time"] = datetime.now()
     state_manager.connection_info_signal.emit("User Request Sent.")
-    response = await state_manager.modbus_connection.ws_write(state_manager.current_request_and_response_dictionary)
+    response = await state_manager.modbus_connection.ws_write(state_manager.user_action_state)
     process_modbus_response(state_manager, response)
 
 
 def process_modbus_response(state_manager, deserialized_dict):
-    state_manager.current_request_and_response_dictionary["current_response_received_time"] = datetime.now()
+    state_manager.user_action_state["current_response_received_time"] = datetime.now()
     if deserialized_dict != "-":
         for key in deserialized_dict:
-            if key in state_manager.current_request_and_response_dictionary:
-                state_manager.current_request_and_response_dictionary[key] = deserialized_dict[key]
+            if key in state_manager.user_action_state:
+                state_manager.user_action_state[key] = deserialized_dict[key]
     # dictionary housekeeping
     state_manager.update_history_last_ten()
     state_manager.state_manager_write_to_db()
@@ -98,12 +98,12 @@ def update_history_last_ten(state_manager):
         min_key = min(state_manager.last_ten_dicts.keys())
         state_manager.last_ten_dicts.pop(min_key)
     # use deepcopy, otherwise, the older data will be overwritten
-    tid = deepcopy(state_manager.current_request_and_response_dictionary["current_tid"])
-    state_manager.last_ten_dicts[tid] = deepcopy(state_manager.current_request_and_response_dictionary)
+    tid = deepcopy(state_manager.user_action_state["current_tid"])
+    state_manager.last_ten_dicts[tid] = deepcopy(state_manager.user_action_state)
 
 
 def state_manager_write_to_db(state_manager):
-    state_manager.database.db_write(state_manager.current_request_and_response_dictionary)
+    state_manager.database.db_write(state_manager.user_action_state)
 
 
 def state_manager_read_from_db(state_manager):

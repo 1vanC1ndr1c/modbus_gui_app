@@ -31,7 +31,7 @@ class Gui(QMainWindow):
         self.state_manager.response_signal.connect(self.update_response_layout)
         self.state_manager.periodic_update_signal.connect(self.update_current_state_window)
         self.state_manager.invalid_connection_signal.connect(self.generate_invalid_connection_error)
-        self.state_dict = state_manager.current_request_and_response_dictionary
+        self.state_dict = state_manager.user_action_state
         self.gui_request_queue = gui_request_queue
         self.state_manager.set_gui(self)
 

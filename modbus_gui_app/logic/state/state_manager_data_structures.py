@@ -21,7 +21,7 @@ def init_current_request_and_response_dictionary():
     return current_request_and_response_dictionary
 
 
-def init_current_coil_input_reg_states():
+def init_live_update_states():
     time_stamp = datetime.now()
 
     current_read_coils = {
@@ -97,7 +97,7 @@ def init_current_coil_input_reg_states():
         'current_response_returned_values': '-'
     }
 
-    current_coil_input_reg_states = {
+    live_update_states = {
         "current_request": b'0',
         "current_tid": 9901,
         "currently_selected_function": "01",
@@ -110,7 +110,7 @@ def init_current_coil_input_reg_states():
         "read_holding_registers_tid": 9903,
         "read_input_registers_tid": 9904
     }
-    return current_coil_input_reg_states
+    return live_update_states
 
 
 def init_connection_info():

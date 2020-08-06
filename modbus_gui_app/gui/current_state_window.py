@@ -80,7 +80,7 @@ class CurrentStateWindow:
         if self.is_first is True:
             self.is_first = is_first
             self.signal_current_state_window_from_gui()
-        current_function = self.state_manager.current_coil_input_reg_states["currently_selected_function"]
+        current_function = self.state_manager.live_update_states["currently_selected_function"]
         self.update_table(current_function)
 
     def update_table(self, current_function):
@@ -115,13 +115,13 @@ class CurrentStateWindow:
         self.update_coils_write_current_state()
         self.coils_table_rows.setHorizontalHeaderLabels(["UNIT ADDRESS", "COIL ADDRESS", "VALUE"])
         self.coils_table_rows.removeRows(0, self.coils_table_rows.rowCount())
-        err = self.state_manager.current_coil_input_reg_states["current_read_coils"]["current_response_err_msg"]
+        err = self.state_manager.live_update_states["current_read_coils"]["current_response_err_msg"]
         if err != "-" and len(err) != 0:
             self.coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
             error = QStandardItem(str(err))
             self.coils_table_rows.appendRow([error])
             return
-        current_coils_dict = self.state_manager.current_coil_input_reg_states["current_read_coils"]
+        current_coils_dict = self.state_manager.live_update_states["current_read_coils"]
         unit_address = current_coils_dict["current_unit_address"]
         start_address = hex(current_coils_dict["current_request_from_gui"][0])
         no_of_coils = current_coils_dict["current_request_from_gui"][1]
@@ -155,7 +155,7 @@ class CurrentStateWindow:
 
     def update_discrete_inputs_current_state(self):
         self.discrete_inputs_table_rows.removeRows(0, self.discrete_inputs_table_rows.rowCount())
-        err = self.state_manager.current_coil_input_reg_states["current_read_discrete_inputs"]
+        err = self.state_manager.live_update_states["current_read_discrete_inputs"]
         err = err["current_response_err_msg"]
         if err != "-" and len(err) != 0:
             self.coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
@@ -163,7 +163,7 @@ class CurrentStateWindow:
             self.coils_table_rows.appendRow([error])
             return
         current_discrete_inputs_dict = \
-            self.state_manager.current_coil_input_reg_states["current_read_discrete_inputs"]
+            self.state_manager.live_update_states["current_read_discrete_inputs"]
         unit_address = current_discrete_inputs_dict["current_unit_address"]
         start_address = hex(current_discrete_inputs_dict["current_request_from_gui"][0])
         no_of_discrete_inputs = current_discrete_inputs_dict["current_request_from_gui"][1]
@@ -199,7 +199,7 @@ class CurrentStateWindow:
 
     def update_holding_registers_current_state(self):
         self.holding_registers_table_rows.removeRows(0, self.holding_registers_table_rows.rowCount())
-        err = self.state_manager.current_coil_input_reg_states["current_read_holding_registers"]
+        err = self.state_manager.live_update_states["current_read_holding_registers"]
         err = err["current_response_err_msg"]
         if err != "-" and len(err) != 0:
             self.coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
@@ -207,7 +207,7 @@ class CurrentStateWindow:
             self.coils_table_rows.appendRow([error])
             return
         current_holding_registers_dict = \
-            self.state_manager.current_coil_input_reg_states["current_read_holding_registers"]
+            self.state_manager.live_update_states["current_read_holding_registers"]
         unit_address = current_holding_registers_dict["current_unit_address"]
         start_address = hex(current_holding_registers_dict["current_request_from_gui"][0])
         no_of_holding_registers = current_holding_registers_dict["current_request_from_gui"][1]
@@ -249,7 +249,7 @@ class CurrentStateWindow:
 
     def update_input_registers_current_state(self):
         self.input_registers_table_rows.removeRows(0, self.input_registers_table_rows.rowCount())
-        err = self.state_manager.current_coil_input_reg_states["current_read_input_registers"]
+        err = self.state_manager.live_update_states["current_read_input_registers"]
         err = err["current_response_err_msg"]
         if err != "-" and len(err) != 0:
             self.coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
@@ -257,7 +257,7 @@ class CurrentStateWindow:
             self.coils_table_rows.appendRow([error])
             return
         current_input_registers_dict = \
-            self.state_manager.current_coil_input_reg_states["current_read_input_registers"]
+            self.state_manager.live_update_states["current_read_input_registers"]
         unit_address = current_input_registers_dict["current_unit_address"]
         start_address = hex(current_input_registers_dict["current_request_from_gui"][0])
         no_of_input_registers = current_input_registers_dict["current_request_from_gui"][1]
@@ -299,13 +299,13 @@ class CurrentStateWindow:
     def update_coils_write_current_state(self):
         self.coils_write_table_rows.setHorizontalHeaderLabels(["UNIT ADDRESS", "COIL ADDRESS", "VALUE"])
         self.coils_write_table_rows.removeRows(0, self.coils_write_table_rows.rowCount())
-        err = self.state_manager.current_coil_input_reg_states["current_read_coils"]["current_response_err_msg"]
+        err = self.state_manager.live_update_states["current_read_coils"]["current_response_err_msg"]
         if err != "-" and len(err) != 0:
             self.coils_write_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
             error = QStandardItem(str(err))
             self.coils_write_table_rows.appendRow([error])
             return
-        current_coils_write_dict = self.state_manager.current_coil_input_reg_states["current_read_coils"]
+        current_coils_write_dict = self.state_manager.live_update_states["current_read_coils"]
         unit_address = current_coils_write_dict["current_unit_address"]
         start_address = hex(current_coils_write_dict["current_request_from_gui"][0])
         no_of_coils = current_coils_write_dict["current_request_from_gui"][1]
@@ -340,7 +340,7 @@ class CurrentStateWindow:
 
     def update_write_input_registers_current_state(self):
         self.write_input_registers_table_rows.removeRows(0, self.write_input_registers_table_rows.rowCount())
-        err = self.state_manager.current_coil_input_reg_states["current_read_input_registers"]
+        err = self.state_manager.live_update_states["current_read_input_registers"]
         err = err["current_response_err_msg"]
         if err != "-" and len(err) != 0:
             self.coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
@@ -348,7 +348,7 @@ class CurrentStateWindow:
             self.coils_table_rows.appendRow([error])
             return
         current_write_input_registers_dict = \
-            self.state_manager.current_coil_input_reg_states["current_read_input_registers"]
+            self.state_manager.live_update_states["current_read_input_registers"]
         unit_address = current_write_input_registers_dict["current_unit_address"]
         start_address = hex(current_write_input_registers_dict["current_request_from_gui"][0])
         no_of_write_input_registers = current_write_input_registers_dict["current_request_from_gui"][1]
