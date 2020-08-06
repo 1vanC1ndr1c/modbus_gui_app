@@ -1,7 +1,7 @@
 import sys
 
 from modbus_gui_app.gui import window
-from modbus_gui_app.logic.state.state_manager import StateManager
+from modbus_gui_app.state.state_manager import StateManager
 
 
 def main():

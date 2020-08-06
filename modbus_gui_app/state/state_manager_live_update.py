@@ -1,4 +1,3 @@
-# functions that deal with updating the current status in the lower part of the GUI.
 import asyncio
 
 
@@ -21,24 +20,28 @@ def _set_currently_selected_automatic_request(state_manager, source):
         req = state_manager.live_update_states["current_read_coils"]["current_request_serialized"]
         state_manager.live_update_states["current_request"] = req
         _update_current_coils_state(state_manager, source)
+
     elif current_function_code == 2:
         current_function_code = str(hex(current_function_code))[2:].rjust(2, '0')
         state_manager.live_update_states["currently_selected_function"] = current_function_code
         req = state_manager.live_update_states["current_read_discrete_inputs"]["current_request_serialized"]
         state_manager.live_update_states["current_request"] = req
         _update_current_discrete_inputs_state(state_manager, source)
+
     elif current_function_code == 3:
         current_function_code = str(hex(current_function_code))[2:].rjust(2, '0')
         state_manager.live_update_states["currently_selected_function"] = current_function_code
         r = state_manager.live_update_states["current_read_holding_registers"]["current_request_serialized"]
         state_manager.live_update_states["current_request"] = r
         _update_current_holding_registers_state(state_manager, source)
+
     elif current_function_code == 4:
         current_function_code = str(hex(current_function_code))[2:].rjust(2, '0')
         state_manager.live_update_states["currently_selected_function"] = current_function_code
         r = state_manager.live_update_states["current_read_input_registers"]["current_request_serialized"]
         state_manager.live_update_states["current_request"] = r
         _update_current_input_registers_state(state_manager, source)
+
     elif current_function_code == 5:
         f_code = 1
         f_code = str(hex(f_code))[2:].rjust(2, '0')
@@ -46,6 +49,7 @@ def _set_currently_selected_automatic_request(state_manager, source):
         req = state_manager.live_update_states["current_read_coils"]["current_request_serialized"]
         state_manager.live_update_states["current_request"] = req
         _update_current_coils_state(state_manager, "automatic")
+
     elif current_function_code == 6:
         f_code = 4
         f_code = str(hex(f_code))[2:].rjust(2, '0')

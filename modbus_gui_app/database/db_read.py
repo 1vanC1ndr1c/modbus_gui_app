@@ -1,4 +1,4 @@
-def _db_reader(state_manager, current_db_index, conn):
+def _db_reader(current_db_index, conn):
     db_data = []
     cursor = conn.cursor()
 
@@ -13,7 +13,7 @@ def _db_reader(state_manager, current_db_index, conn):
         print("BR_READ: Database Read Error: ", e)
         db_dict = {"READ ERROR"}
 
-    state_manager._historian_db_dicts = db_dict
+    return db_dict
 
 
 def _convert_data_into_dict(db_data):

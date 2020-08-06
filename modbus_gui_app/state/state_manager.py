@@ -10,9 +10,9 @@ from PySide2.QtCore import Signal, QObject
 
 from modbus_gui_app.communication.modbus_connection import ModbusConnection
 from modbus_gui_app.database.db_handler import Backend
-from modbus_gui_app.logic.state.state_manager_data_structures import _init_user_action_state_dict, \
+from modbus_gui_app.state.state_manager_data_structures import _init_user_action_state_dict, \
     _init_live_update_states
-from modbus_gui_app.logic.state.state_manager_live_update import _live_update_loop, \
+from modbus_gui_app.state.state_manager_live_update import _live_update_loop, \
     _set_currently_selected_automatic_request
 
 
@@ -26,7 +26,6 @@ class StateManager(QObject):
         super().__init__()
         self.last_ten_dicts = {}
         self.database = Backend()
-        self.database.set_st_manager(self)
         self.gui_request_queue = queue.Queue()
         self.modbus_connection = None
         self.user_action_state = _init_user_action_state_dict()
@@ -120,7 +119,8 @@ class StateManager(QObject):
         self.database.db_write(self.user_action_state)
 
     def _read_from_db(self):
-        self.database.db_read(self._historian_db_current_index)
+        db_returned_values = self.database.db_read(self._historian_db_current_index)
+        self._historian_db_dicts = db_returned_values
         self._historian_db_current_index = self._historian_db_current_index + 10
 
     def reset_db_dict(self):

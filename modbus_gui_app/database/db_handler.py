@@ -6,12 +6,8 @@ from modbus_gui_app.database.db_write import _db_writer
 
 class Backend:
     def __init__(self):
-        self._state_manager = None
         self._conn = sqlite3.connect('req_and_resp.db', check_same_thread=False)
         self._db_init()
-
-    def set_st_manager(self, state_manager):
-        self._state_manager = state_manager
 
     def _db_init(self):
         self._conn.execute('''CREATE TABLE IF NOT EXISTS REQ_AND_RESP(
@@ -33,7 +29,7 @@ class Backend:
                 RESP_RET_VAL    TEXT    NOT NULL);''')
 
     def db_read(self, current_db_index):
-        return _db_reader(self._state_manager, current_db_index, self._conn)
+        return _db_reader(current_db_index, self._conn)
 
     def db_write(self, dictionary):
         _db_writer(dictionary, self._conn)

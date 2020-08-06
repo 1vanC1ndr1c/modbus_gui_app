@@ -11,7 +11,7 @@ from modbus_gui_app.gui.gui_left_side import _left_side_request_options_init
 from modbus_gui_app.gui.gui_middle import _middle_init
 from modbus_gui_app.gui.gui_right_side import ConnectionInfo
 from modbus_gui_app.gui.history_window import HistoryWindow
-from modbus_gui_app.logic import validation
+from modbus_gui_app.gui import request_validation
 
 
 def run_gui(state_manager):
@@ -100,7 +100,7 @@ class Gui(QMainWindow):
 
     def _button_send_data(self, index, stacked_widget):
         function_code = index + 1
-        is_valid, validation_result = validation.get_request_validation_result(function_code, stacked_widget)
+        is_valid, validation_result = request_validation.get_request_validation_result(function_code, stacked_widget)
 
         if is_valid is True:
             self.gui_request_queue.put(validation_result)
