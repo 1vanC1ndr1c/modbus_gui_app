@@ -38,6 +38,31 @@ def _read_coils_serialize(func_code, req_dict, state_manager, state_dict):
     bytes_req = _generate_serialized_request(modbus_request, new_tid, protocol, unit_addr, state_manager)
     return bytes_req
 
+#
+# def _read_coils_serialize2(request_data, tid):
+#     func_code = "01"
+#     start_addr = request_data[0]
+#     no_of_coils = request_data[1]
+#     unit_addr = request_data[2]
+#
+#     tid = str(tid).rjust(4, '0')
+#     protocol = '0000'
+#     unit_addr = str(unit_addr).rjust(2, '0')
+#     start_addr = start_addr - 1
+#     start_addr = str(hex(start_addr))[2:].rjust(4, '0')
+#     no_of_coils = str(hex(no_of_coils))[2:].rjust(4, '0')
+#
+#     modbus_request = func_code + ''
+#     modbus_request = modbus_request + start_addr + no_of_coils
+#
+#     length = len(bytes.fromhex(modbus_request)) + 1
+#     length = str(length).rjust(4, '0')
+#
+#     bytes_req = tid + protocol + length + unit_addr + modbus_request
+#     bytes_req = bytes.fromhex(bytes_req)
+#
+#     return bytes_req
+
 
 def _read_discrete_inputs_serialize(func_code, req_dict, state_manager, state_dict):
     state_manager.user_action_state["current_request_name"] = "Read Discrete Inputs ."

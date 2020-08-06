@@ -75,22 +75,56 @@ class StateManager(QObject):
     async def gui_queue_read_loop(self):
         executor = ThreadPoolExecutor(1)
         while True:
-            valid_gui_request = await asyncio.get_event_loop().run_in_executor(
+            gui_request_data = await asyncio.get_event_loop().run_in_executor(
                 executor, functools.partial(self._get_msg_from_gui_queue))
-            if valid_gui_request == "End.":
+            if gui_request_data == "End.":
                 break
-            await self._send_request_to_modbus(valid_gui_request)
+            await self._send_request_to_modbus(gui_request_data)
 
     def _get_msg_from_gui_queue(self):
         request = self.gui_request_queue.get()
         return request
 
-    async def _send_request_to_modbus(self, valid_gui_request):
-        self.user_action_state["current_request_from_gui"] = valid_gui_request
+    async def _send_request_to_modbus(self, gui_request_data):
+        function_code = gui_request_data[-1]
+        # if function_code == 1:
+        #     unit_addr = gui_request_data[2]
+        #     func_code = "01"
+        #     unit_addr = str(unit_addr).rjust(2, '0')
+        #
+        #     self.user_action_state["current_request_name"] = "Read Coils."
+        #     self.user_action_state["current_unit_address"] = str(unit_addr)
+        #     self.user_action_state["current_function_code"] = func_code
+        #     self.user_action_state["current_request_from_gui"] = gui_request_data
+        #     self.user_action_state["current_request_from_gui_is_valid"] = True
+        #     self.user_action_state["current_request_from_gui_error_msg"] = "-"
+        #     self.user_action_state["current_request_sent_time"] = datetime.now()
+        #     # TODO BYTES REQUEST IS MISSING - maka a dict in connection with that info
+        #     # TODO JUST COPY THAT DICT INSTEAD OF DOING THIS
+        #     self.connection_info_signal.emit("User Request Sent.")
+        #
+        #     response = await self.modbus_connection.ws_read_coils(gui_request_data)
+        #     self._process_modbus_response(response)
+        #     return
+        #
+        #     # TODO SAVE RESP(PROCESS MODBUS RESPONSE - CHANGE)
+        # elif function_code == 2:
+        #     print("READ DISCRETE INPUTS")
+        # elif function_code == 3:
+        #     print("READ HOLDING REGISTERS")
+        # elif function_code == 4:
+        #     print("READ INPUT REGISTERS")
+        # elif function_code == 5:
+        #     print("WRITE SINGLE COIL")
+        # elif function_code == 6:
+        #     print("WRITE SINGLE REGISTER")
+
+        self.user_action_state["current_request_from_gui"] = gui_request_data
         self.user_action_state["current_request_from_gui_is_valid"] = True
         self.user_action_state["current_request_from_gui_error_msg"] = "-"
         self.user_action_state["current_request_sent_time"] = datetime.now()
         self.connection_info_signal.emit("User Request Sent.")
+
         response = await self.modbus_connection.ws_write(self.user_action_state)
         self._process_modbus_response(response)
 

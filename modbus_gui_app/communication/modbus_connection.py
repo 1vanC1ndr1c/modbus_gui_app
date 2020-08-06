@@ -8,6 +8,9 @@ from modbus_gui_app.communication.user_request_serializer import _user_request_s
 from modbus_gui_app.communication.user_response_deserializer import _user_response_deserialize
 
 
+# from modbus_gui_app.communication.user_request_serializer import _read_coils_serialize2
+
+
 class ModbusConnection:
 
     def __init__(self):
@@ -34,9 +37,22 @@ class ModbusConnection:
         except Exception as conn_error:
             print("MODBUS CONNECTION: Cannot connect: ", conn_error)
 
+    #
+    # async def ws_read_coils(self, request_data):
+    #     self._update_tid()
+    #     request_serialized = _read_coils_serialize2(request_data, self._tid)
+    #     try:
+    #         await self.ws.send_bytes(request_serialized)
+    #     except Exception as e:
+    #         print("MODBUS_CONNECTION: Request Error: ", e)
+    #     pending_response = asyncio.Future()
+    #     self._pending_responses[self._tid] = pending_response
+    #     return await pending_response
+
     async def ws_write(self, state_dict):
         self._update_tid()
         request_serialized = _user_request_serialize(state_dict, self._state_manager, self._tid)
+        print("REQ: ", request_serialized)
         try:
             await self.ws.send_bytes(request_serialized)
         except Exception as e:

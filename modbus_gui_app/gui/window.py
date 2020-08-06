@@ -101,7 +101,6 @@ class Gui(QMainWindow):
     def _button_send_data(self, index, stacked_widget):
         function_code = index + 1
         is_valid, validation_result = request_validation.get_request_validation_result(function_code, stacked_widget)
-
         if is_valid is True:
             self.gui_request_queue.put(validation_result)
 
