@@ -11,9 +11,9 @@ from modbus_gui_app.communication.user_response_deserializer import _user_respon
 class ModbusConnection:
 
     def __init__(self):
-        self._communication_dict = dict()
+        self._communication_dict = {}
         self._tid = 0
-        self._pending_responses = dict()
+        self._pending_responses = {}
         self._state_manager = None
         self.session = None
         self.ws = None

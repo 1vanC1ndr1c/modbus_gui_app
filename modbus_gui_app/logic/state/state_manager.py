@@ -12,14 +12,14 @@ class StateManager(QObject):
 
     def __init__(self, gui_request_queue, database):
         super().__init__()
-        self.last_ten_dicts = dict()
+        self.last_ten_dicts = {}
         self.database = database
         self.gui_request_queue = gui_request_queue
         self.modbus_connection = None
         self.user_action_state = state_manager_functions.init_state()
         self.gui = None
         self.historian_db_current_index = 0
-        self.historian_db_dicts = dict()
+        self.historian_db_dicts = {}
         self.live_update_states = state_manager_live_update.init_live_update_states()
         self.current_state_periodic_refresh_future = None
 

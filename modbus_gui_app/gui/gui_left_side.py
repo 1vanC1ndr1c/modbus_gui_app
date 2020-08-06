@@ -2,7 +2,7 @@ from PySide2 import QtCore
 from PySide2.QtWidgets import QHBoxLayout, QLabel, QComboBox, QStackedWidget, QWidget, QVBoxLayout, QLineEdit, QGroupBox
 
 
-def left_side_request_options_init(left_side_layout):
+def _left_side_request_options_init(left_side_layout):
     select_operation_box = QGroupBox()
     select_operation_layout = QHBoxLayout()
     select_operation_layout.setAlignment(QtCore.Qt.AlignTop)
@@ -20,22 +20,22 @@ def left_side_request_options_init(left_side_layout):
     left_side_layout.addWidget(select_operation_box)
     additional_options_stacked_widget = QStackedWidget()
 
-    read_coils_option_parent_widget = create_read_coils_section()
+    read_coils_option_parent_widget = _create_read_coils_section()
     additional_options_stacked_widget.addWidget(read_coils_option_parent_widget)
 
-    read_discrete_inputs_option_parent_widget = create_read_discrete_inputs_section()
+    read_discrete_inputs_option_parent_widget = _create_read_discrete_inputs_section()
     additional_options_stacked_widget.addWidget(read_discrete_inputs_option_parent_widget)
 
-    read_holding_registers_option_parent_widget = create_read_holding_registers_section()
+    read_holding_registers_option_parent_widget = _create_read_holding_registers_section()
     additional_options_stacked_widget.addWidget(read_holding_registers_option_parent_widget)
 
-    read_input_registers_option_parent_widget = create_read_input_registers_section()
+    read_input_registers_option_parent_widget = _create_read_input_registers_section()
     additional_options_stacked_widget.addWidget(read_input_registers_option_parent_widget)
 
-    write_single_coil_option_parent_widget = create_write_single_coil_option_section()
+    write_single_coil_option_parent_widget = _create_write_single_coil_option_section()
     additional_options_stacked_widget.addWidget(write_single_coil_option_parent_widget)
 
-    write_single_register_option_parent_widget = create_write_single_register_section()
+    write_single_register_option_parent_widget = _create_write_single_register_section()
     additional_options_stacked_widget.addWidget(write_single_register_option_parent_widget)
 
     left_side_layout.addWidget(additional_options_stacked_widget, 0, QtCore.Qt.AlignTop)
@@ -49,7 +49,7 @@ def left_side_request_options_init(left_side_layout):
     return left_size_constraint_widget, additional_options_stacked_widget, select_operation_combo_box
 
 
-def create_read_coils_section():
+def _create_read_coils_section():
     read_coils_option_parent_widget = QWidget()
     read_coils_option_parent_layout = QVBoxLayout()
 
@@ -82,7 +82,7 @@ def create_read_coils_section():
     return read_coils_option_parent_widget
 
 
-def create_read_discrete_inputs_section():
+def _create_read_discrete_inputs_section():
     read_discrete_inputs_option_parent_widget = QWidget()
     read_discrete_inputs_option_parent_layout = QVBoxLayout()
 
@@ -115,7 +115,7 @@ def create_read_discrete_inputs_section():
     return read_discrete_inputs_option_parent_widget
 
 
-def create_read_holding_registers_section():
+def _create_read_holding_registers_section():
     read_holding_registers_option_parent_widget = QWidget()
     read_holding_registers_option_parent_layout = QVBoxLayout()
 
@@ -148,7 +148,7 @@ def create_read_holding_registers_section():
     return read_holding_registers_option_parent_widget
 
 
-def create_read_input_registers_section():
+def _create_read_input_registers_section():
     read_input_registers_option_parent_widget = QWidget()
     read_input_registers_option_parent_layout = QVBoxLayout()
 
@@ -181,7 +181,7 @@ def create_read_input_registers_section():
     return read_input_registers_option_parent_widget
 
 
-def create_write_single_coil_option_section():
+def _create_write_single_coil_option_section():
     write_single_coil_option_parent_widget = QWidget()
     write_single_coil_option_parent_layout = QVBoxLayout()
 
@@ -215,7 +215,7 @@ def create_write_single_coil_option_section():
     return write_single_coil_option_parent_widget
 
 
-def create_write_single_register_section():
+def _create_write_single_register_section():
     write_single_register_option_parent_widget = QWidget()
     write_single_register_option_parent_layout = QVBoxLayout()
 

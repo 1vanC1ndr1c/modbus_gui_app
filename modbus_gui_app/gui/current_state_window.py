@@ -8,35 +8,35 @@ class CurrentStateWindow:
 
     def __init__(self, gui, state_manager):
         self.lower_box = QGroupBox()
-        self.lower_parent_layout = QVBoxLayout()
-        self.lower_stacked_widget = QStackedWidget()
-        self.state_manager = state_manager
-        self.underline_font = None
+        self._lower_parent_layout = QVBoxLayout()
+        self._lower_stacked_widget = QStackedWidget()
+        self._state_manager = state_manager
+        self._underline_font = None
         self.gui = gui
-        self.current_window_stacked_widget = QStackedWidget()
-        self.is_first = True
-        self.current_coils_parent_widget = QWidget()
-        self.coils_table_view = QTableView()
-        self.coils_table_rows = QStandardItemModel()
-        self.current_discrete_inputs_parent_widget = QWidget()
-        self.discrete_inputs_table_view = QTableView()
-        self.discrete_inputs_table_rows = QStandardItemModel()
-        self.current_holding_registers_parent_widget = QWidget()
-        self.holding_registers_table_view = QTableView()
-        self.holding_registers_table_rows = QStandardItemModel()
-        self.current_input_registers_parent_widget = QWidget()
-        self.input_registers_table_view = QTableView()
-        self.input_registers_table_rows = QStandardItemModel()
-        self.current_coils_write_parent_widget = QWidget()
-        self.coils_write_table_view = QTableView()
-        self.coils_write_table_rows = QStandardItemModel()
-        self.current_write_input_registers_parent_widget = QWidget()
-        self.write_input_registers_table_view = QTableView()
-        self.write_input_registers_table_rows = QStandardItemModel()
+        self._current_window_stacked_widget = QStackedWidget()
+        self._is_first = True
+        self._current_parent_widget = QWidget()
+        self._coils_table_view = QTableView()
+        self._coils_table_rows = QStandardItemModel()
+        self._d_inputs_parent_widget = QWidget()
+        self._d_inputs_table_view = QTableView()
+        self._d_inputs_table_rows = QStandardItemModel()
+        self._h_reg_parent_widget = QWidget()
+        self._h_reg_table_view = QTableView()
+        self._h_reg_table_rows = QStandardItemModel()
+        self._i_reg_parent_widget = QWidget()
+        self._i_reg_table_view = QTableView()
+        self._i_reg_table_rows = QStandardItemModel()
+        self._coils_wr_parent_widget = QWidget()
+        self._coils_wr_table_view = QTableView()
+        self._coils_wr_table_rows = QStandardItemModel()
+        self._wr_i_reg_parent_widget = QWidget()
+        self._wr_i_reg_table_view = QTableView()
+        self._wr_i_reg_table_rows = QStandardItemModel()
 
     def init_current_state_window(self):
-        self.underline_font = QFont("Arial", 12)
-        self.underline_font.setUnderline(True)
+        self._underline_font = QFont("Arial", 12)
+        self._underline_font.setUnderline(True)
         self.lower_box.setMinimumHeight(400)
         self.lower_box.setStyleSheet("background-color: white")
 
@@ -50,78 +50,78 @@ class CurrentStateWindow:
         loading_gif.start()
         loading_layout.addWidget(loading_label)
         loading_parent_widget.setLayout(loading_layout)
-        self.lower_stacked_widget.addWidget(loading_parent_widget)
+        self._lower_stacked_widget.addWidget(loading_parent_widget)
 
-        self.set_coils_current_state()
-        self.lower_stacked_widget.addWidget(self.current_coils_parent_widget)
-        self.set_discrete_inputs_current_state()
-        self.lower_stacked_widget.addWidget(self.current_discrete_inputs_parent_widget)
-        self.set_holding_registers_current_state()
-        self.lower_stacked_widget.addWidget(self.current_holding_registers_parent_widget)
-        self.set_input_registers_current_state()
-        self.lower_stacked_widget.addWidget(self.current_input_registers_parent_widget)
-        self.set_coils_write_current_state()
-        self.lower_stacked_widget.addWidget(self.current_coils_write_parent_widget)
-        self.set_write_input_registers_current_state()
-        self.lower_stacked_widget.addWidget(self.current_write_input_registers_parent_widget)
+        self._set_current_coils()
+        self._lower_stacked_widget.addWidget(self._current_parent_widget)
+        self._set_current_discrete_inputs()
+        self._lower_stacked_widget.addWidget(self._d_inputs_parent_widget)
+        self._set_current_holding_registers()
+        self._lower_stacked_widget.addWidget(self._h_reg_parent_widget)
+        self._set_current_input_registers()
+        self._lower_stacked_widget.addWidget(self._i_reg_parent_widget)
+        self._set_current_coils_write()
+        self._lower_stacked_widget.addWidget(self._coils_wr_parent_widget)
+        self._set_current_input_registers_write()
+        self._lower_stacked_widget.addWidget(self._wr_i_reg_parent_widget)
 
-        self.lower_parent_layout.addWidget(self.lower_stacked_widget)
-        self.lower_box.setLayout(self.lower_parent_layout)
-        self.gui.lower_box = self.lower_box
+        self._lower_parent_layout.addWidget(self._lower_stacked_widget)
+        self.lower_box.setLayout(self._lower_parent_layout)
+        self.gui._lower_box = self.lower_box
 
     def signal_current_state_window_from_gui(self):
-        if self.is_first is False:
+        if self._is_first is False:
             current_function = self.gui.left_side_select_operation_box.currentIndex() + 1
-            self.lower_stacked_widget.setCurrentIndex(current_function)
+            self._lower_stacked_widget.setCurrentIndex(current_function)
             current_function = str(hex(current_function))[2:].rjust(2, '0')
-            self.update_table(current_function)
+            self._update_table(current_function)
 
     def signal_current_state_window_from_state_manager(self, is_first):
-        if self.is_first is True:
-            self.is_first = is_first
+        if self._is_first is True:
+            self._is_first = is_first
             self.signal_current_state_window_from_gui()
-        current_function = self.state_manager.live_update_states["currently_selected_function"]
-        self.update_table(current_function)
+        current_function = self._state_manager.live_update_states["currently_selected_function"]
+        self._update_table(current_function)
 
-    def update_table(self, current_function):
+    def _update_table(self, current_function):
         if current_function == "01":
-            self.update_coils_current_state()
+            self._update_current_coils()
         elif current_function == "02":
-            self.update_discrete_inputs_current_state()
+            self._update_current_discrete_inputs()
         elif current_function == "03":
-            self.update_holding_registers_current_state()
+            self._update_current_holding_registers()
         elif current_function == "04":
-            self.update_input_registers_current_state()
+            self._update_current_input_registers()
         elif current_function == "05":
-            self.update_coils_write_current_state()
+            self._update_current_coils_write()
         elif current_function == "06":
-            self.update_write_input_registers_current_state()
+            self._update_current_input_registers_write()
 
-    def set_coils_current_state(self):
+    def _set_current_coils(self):
         coils_parent_layout = QVBoxLayout()
         coils_label = QLabel("Current state in the coils:")
-        coils_label.setFont(self.underline_font)
+        coils_label.setFont(self._underline_font)
         coils_parent_layout.addWidget(coils_label)
-        self.coils_table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.coils_table_view.horizontalHeader().setStretchLastSection(True)
-        self.coils_table_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.coils_table_rows.setHorizontalHeaderLabels(["UNIT ADDRESS", "COIL ADDRESS", "VALUE"])
-        self.coils_table_view.setStyleSheet("QHeaderView::section { background-color:lightgray }")
-        self.update_coils_current_state()
-        coils_parent_layout.addWidget(self.coils_table_view)
-        self.current_coils_parent_widget.setLayout(coils_parent_layout)
+        self._coils_table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self._coils_table_view.horizontalHeader().setStretchLastSection(True)
+        self._coils_table_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self._coils_table_rows.setHorizontalHeaderLabels(["UNIT ADDRESS", "COIL ADDRESS", "VALUE"])
+        self._coils_table_view.setStyleSheet("QHeaderView::section { background-color:lightgray }")
+        self._update_current_coils()
+        coils_parent_layout.addWidget(self._coils_table_view)
+        self._current_parent_widget.setLayout(coils_parent_layout)
 
-    def update_coils_current_state(self):
-        self.update_coils_write_current_state()
-        self.coils_table_rows.setHorizontalHeaderLabels(["UNIT ADDRESS", "COIL ADDRESS", "VALUE"])
-        self.coils_table_rows.removeRows(0, self.coils_table_rows.rowCount())
-        err = self.state_manager.live_update_states["current_read_coils"]["current_response_err_msg"]
+    def _update_current_coils(self):
+        self._update_current_coils_write()
+        self._coils_table_rows.setHorizontalHeaderLabels(["UNIT ADDRESS", "COIL ADDRESS", "VALUE"])
+        self._coils_table_rows.removeRows(0, self._coils_table_rows.rowCount())
+        err = self._state_manager.live_update_states["current_read_coils"]["current_response_err_msg"]
         if err != "-" and len(err) != 0:
-            self.coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
+            self._coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
             error = QStandardItem(str(err))
-            self.coils_table_rows.appendRow([error])
+            self._coils_table_rows.appendRow([error])
             return
-        current_coils_dict = self.state_manager.live_update_states["current_read_coils"]
+        current_coils_dict = self._state_manager.live_update_states["current_read_coils"]
         unit_address = current_coils_dict["current_unit_address"]
         start_address = hex(current_coils_dict["current_request_from_gui"][0])
         no_of_coils = current_coils_dict["current_request_from_gui"][1]
@@ -136,34 +136,33 @@ class CurrentStateWindow:
             current_coil_value = QStandardItem(str(current_coil_value))
             current_address = QStandardItem(str(current_address))
             current_unit_address = QStandardItem(str(current_unit_address))
-            self.coils_table_rows.appendRow([current_unit_address, current_address, current_coil_value])
-        self.coils_table_view.setModel(self.coils_table_rows)
+            self._coils_table_rows.appendRow([current_unit_address, current_address, current_coil_value])
+        self._coils_table_view.setModel(self._coils_table_rows)
 
-    def set_discrete_inputs_current_state(self):
+    def _set_current_discrete_inputs(self):
         discrete_inputs_parent_layout = QVBoxLayout()
         discrete_inputs_label = QLabel("Current state in the discrete inputs:")
-        discrete_inputs_label.setFont(self.underline_font)
+        discrete_inputs_label.setFont(self._underline_font)
         discrete_inputs_parent_layout.addWidget(discrete_inputs_label)
-        self.discrete_inputs_table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.discrete_inputs_table_view.horizontalHeader().setStretchLastSection(True)
-        self.discrete_inputs_table_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.discrete_inputs_table_rows.setHorizontalHeaderLabels(["UNIT ADDRESS", "DISCRETE INPUT ADDRESS", "VALUE"])
-        self.discrete_inputs_table_view.setStyleSheet("QHeaderView::section { background-color:lightgray }")
-        self.update_discrete_inputs_current_state()
-        discrete_inputs_parent_layout.addWidget(self.discrete_inputs_table_view)
-        self.current_discrete_inputs_parent_widget.setLayout(discrete_inputs_parent_layout)
+        self._d_inputs_table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self._d_inputs_table_view.horizontalHeader().setStretchLastSection(True)
+        self._d_inputs_table_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self._d_inputs_table_rows.setHorizontalHeaderLabels(["UNIT ADDRESS", "DISCRETE INPUT ADDRESS", "VALUE"])
+        self._d_inputs_table_view.setStyleSheet("QHeaderView::section { background-color:lightgray }")
+        self._update_current_discrete_inputs()
+        discrete_inputs_parent_layout.addWidget(self._d_inputs_table_view)
+        self._d_inputs_parent_widget.setLayout(discrete_inputs_parent_layout)
 
-    def update_discrete_inputs_current_state(self):
-        self.discrete_inputs_table_rows.removeRows(0, self.discrete_inputs_table_rows.rowCount())
-        err = self.state_manager.live_update_states["current_read_discrete_inputs"]
+    def _update_current_discrete_inputs(self):
+        self._d_inputs_table_rows.removeRows(0, self._d_inputs_table_rows.rowCount())
+        err = self._state_manager.live_update_states["current_read_discrete_inputs"]
         err = err["current_response_err_msg"]
         if err != "-" and len(err) != 0:
-            self.coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
+            self._coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
             error = QStandardItem(str(err))
-            self.coils_table_rows.appendRow([error])
+            self._coils_table_rows.appendRow([error])
             return
-        current_discrete_inputs_dict = \
-            self.state_manager.live_update_states["current_read_discrete_inputs"]
+        current_discrete_inputs_dict = self._state_manager.live_update_states["current_read_discrete_inputs"]
         unit_address = current_discrete_inputs_dict["current_unit_address"]
         start_address = hex(current_discrete_inputs_dict["current_request_from_gui"][0])
         no_of_discrete_inputs = current_discrete_inputs_dict["current_request_from_gui"][1]
@@ -178,36 +177,34 @@ class CurrentStateWindow:
             current_discrete_inputs_value = QStandardItem(str(current_discrete_inputs_value))
             current_address = QStandardItem(str(current_address))
             current_unit_address = QStandardItem(str(current_unit_address))
-            self.discrete_inputs_table_rows.appendRow(
-                [current_unit_address, current_address, current_discrete_inputs_value])
-        self.discrete_inputs_table_view.setModel(self.discrete_inputs_table_rows)
+            self._d_inputs_table_rows.appendRow([current_unit_address, current_address, current_discrete_inputs_value])
+        self._d_inputs_table_view.setModel(self._d_inputs_table_rows)
 
-    def set_holding_registers_current_state(self):
+    def _set_current_holding_registers(self):
         holding_registers_parent_layout = QVBoxLayout()
         holding_registers_label = QLabel("Current state in the holding registers:")
-        holding_registers_label.setFont(self.underline_font)
+        holding_registers_label.setFont(self._underline_font)
         holding_registers_parent_layout.addWidget(holding_registers_label)
-        self.holding_registers_table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.holding_registers_table_view.horizontalHeader().setStretchLastSection(True)
-        self.holding_registers_table_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.holding_registers_table_rows.setHorizontalHeaderLabels(
+        self._h_reg_table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self._h_reg_table_view.horizontalHeader().setStretchLastSection(True)
+        self._h_reg_table_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self._h_reg_table_rows.setHorizontalHeaderLabels(
             ["UNIT ADDRESS", "HOLDING REGISTER ADDRESS", "VALUE"])
-        self.holding_registers_table_view.setStyleSheet("QHeaderView::section { background-color:lightgray }")
-        self.update_holding_registers_current_state()
-        holding_registers_parent_layout.addWidget(self.holding_registers_table_view)
-        self.current_holding_registers_parent_widget.setLayout(holding_registers_parent_layout)
+        self._h_reg_table_view.setStyleSheet("QHeaderView::section { background-color:lightgray }")
+        self._update_current_holding_registers()
+        holding_registers_parent_layout.addWidget(self._h_reg_table_view)
+        self._h_reg_parent_widget.setLayout(holding_registers_parent_layout)
 
-    def update_holding_registers_current_state(self):
-        self.holding_registers_table_rows.removeRows(0, self.holding_registers_table_rows.rowCount())
-        err = self.state_manager.live_update_states["current_read_holding_registers"]
+    def _update_current_holding_registers(self):
+        self._h_reg_table_rows.removeRows(0, self._h_reg_table_rows.rowCount())
+        err = self._state_manager.live_update_states["current_read_holding_registers"]
         err = err["current_response_err_msg"]
         if err != "-" and len(err) != 0:
-            self.coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
+            self._coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
             error = QStandardItem(str(err))
-            self.coils_table_rows.appendRow([error])
+            self._coils_table_rows.appendRow([error])
             return
-        current_holding_registers_dict = \
-            self.state_manager.live_update_states["current_read_holding_registers"]
+        current_holding_registers_dict = self._state_manager.live_update_states["current_read_holding_registers"]
         unit_address = current_holding_registers_dict["current_unit_address"]
         start_address = hex(current_holding_registers_dict["current_request_from_gui"][0])
         no_of_holding_registers = current_holding_registers_dict["current_request_from_gui"][1]
@@ -228,36 +225,33 @@ class CurrentStateWindow:
             current_holding_registers_value = QStandardItem(str(current_holding_registers_value))
             current_address = QStandardItem(str(current_address))
             current_unit_address = QStandardItem(str(current_unit_address))
-            self.holding_registers_table_rows.appendRow(
-                [current_unit_address, current_address, current_holding_registers_value])
-        self.holding_registers_table_view.setModel(self.holding_registers_table_rows)
+            self._h_reg_table_rows.appendRow([current_unit_address, current_address, current_holding_registers_value])
+        self._h_reg_table_view.setModel(self._h_reg_table_rows)
 
-    def set_input_registers_current_state(self):
+    def _set_current_input_registers(self):
         input_registers_parent_layout = QVBoxLayout()
         input_registers_label = QLabel("Current state in the input registers:")
-        input_registers_label.setFont(self.underline_font)
+        input_registers_label.setFont(self._underline_font)
         input_registers_parent_layout.addWidget(input_registers_label)
-        self.input_registers_table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.input_registers_table_view.horizontalHeader().setStretchLastSection(True)
-        self.input_registers_table_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.input_registers_table_rows.setHorizontalHeaderLabels(
-            ["UNIT ADDRESS", "INPUT REGISTER ADDRESS", "VALUE"])
-        self.input_registers_table_view.setStyleSheet("QHeaderView::section { background-color:lightgray }")
-        self.update_input_registers_current_state()
-        input_registers_parent_layout.addWidget(self.input_registers_table_view)
-        self.current_input_registers_parent_widget.setLayout(input_registers_parent_layout)
+        self._i_reg_table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self._i_reg_table_view.horizontalHeader().setStretchLastSection(True)
+        self._i_reg_table_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self._i_reg_table_rows.setHorizontalHeaderLabels(["UNIT ADDRESS", "INPUT REGISTER ADDRESS", "VALUE"])
+        self._i_reg_table_view.setStyleSheet("QHeaderView::section { background-color:lightgray }")
+        self._update_current_input_registers()
+        input_registers_parent_layout.addWidget(self._i_reg_table_view)
+        self._i_reg_parent_widget.setLayout(input_registers_parent_layout)
 
-    def update_input_registers_current_state(self):
-        self.input_registers_table_rows.removeRows(0, self.input_registers_table_rows.rowCount())
-        err = self.state_manager.live_update_states["current_read_input_registers"]
+    def _update_current_input_registers(self):
+        self._i_reg_table_rows.removeRows(0, self._i_reg_table_rows.rowCount())
+        err = self._state_manager.live_update_states["current_read_input_registers"]
         err = err["current_response_err_msg"]
         if err != "-" and len(err) != 0:
-            self.coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
+            self._coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
             error = QStandardItem(str(err))
-            self.coils_table_rows.appendRow([error])
+            self._coils_table_rows.appendRow([error])
             return
-        current_input_registers_dict = \
-            self.state_manager.live_update_states["current_read_input_registers"]
+        current_input_registers_dict = self._state_manager.live_update_states["current_read_input_registers"]
         unit_address = current_input_registers_dict["current_unit_address"]
         start_address = hex(current_input_registers_dict["current_request_from_gui"][0])
         no_of_input_registers = current_input_registers_dict["current_request_from_gui"][1]
@@ -278,34 +272,33 @@ class CurrentStateWindow:
             current_input_registers_value = QStandardItem(str(current_input_registers_value))
             current_address = QStandardItem(str(current_address))
             current_unit_address = QStandardItem(str(current_unit_address))
-            self.input_registers_table_rows.appendRow(
-                [current_unit_address, current_address, current_input_registers_value])
-        self.input_registers_table_view.setModel(self.input_registers_table_rows)
+            self._i_reg_table_rows.appendRow([current_unit_address, current_address, current_input_registers_value])
+        self._i_reg_table_view.setModel(self._i_reg_table_rows)
 
-    def set_coils_write_current_state(self):
+    def _set_current_coils_write(self):
         coils_write_parent_layout = QVBoxLayout()
         coils_write_label = QLabel("Current state in the coils:")
-        coils_write_label.setFont(self.underline_font)
+        coils_write_label.setFont(self._underline_font)
         coils_write_parent_layout.addWidget(coils_write_label)
-        self.coils_write_table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.coils_write_table_view.horizontalHeader().setStretchLastSection(True)
-        self.coils_write_table_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.coils_write_table_rows.setHorizontalHeaderLabels(["UNIT ADDRESS", "COIL ADDRESS", "VALUE"])
-        self.coils_write_table_view.setStyleSheet("QHeaderView::section { background-color:lightgray }")
-        self.update_coils_write_current_state()
-        coils_write_parent_layout.addWidget(self.coils_write_table_view)
-        self.current_coils_write_parent_widget.setLayout(coils_write_parent_layout)
+        self._coils_wr_table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self._coils_wr_table_view.horizontalHeader().setStretchLastSection(True)
+        self._coils_wr_table_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self._coils_wr_table_rows.setHorizontalHeaderLabels(["UNIT ADDRESS", "COIL ADDRESS", "VALUE"])
+        self._coils_wr_table_view.setStyleSheet("QHeaderView::section { background-color:lightgray }")
+        self._update_current_coils_write()
+        coils_write_parent_layout.addWidget(self._coils_wr_table_view)
+        self._coils_wr_parent_widget.setLayout(coils_write_parent_layout)
 
-    def update_coils_write_current_state(self):
-        self.coils_write_table_rows.setHorizontalHeaderLabels(["UNIT ADDRESS", "COIL ADDRESS", "VALUE"])
-        self.coils_write_table_rows.removeRows(0, self.coils_write_table_rows.rowCount())
-        err = self.state_manager.live_update_states["current_read_coils"]["current_response_err_msg"]
+    def _update_current_coils_write(self):
+        self._coils_wr_table_rows.setHorizontalHeaderLabels(["UNIT ADDRESS", "COIL ADDRESS", "VALUE"])
+        self._coils_wr_table_rows.removeRows(0, self._coils_wr_table_rows.rowCount())
+        err = self._state_manager.live_update_states["current_read_coils"]["current_response_err_msg"]
         if err != "-" and len(err) != 0:
-            self.coils_write_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
+            self._coils_wr_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
             error = QStandardItem(str(err))
-            self.coils_write_table_rows.appendRow([error])
+            self._coils_wr_table_rows.appendRow([error])
             return
-        current_coils_write_dict = self.state_manager.live_update_states["current_read_coils"]
+        current_coils_write_dict = self._state_manager.live_update_states["current_read_coils"]
         unit_address = current_coils_write_dict["current_unit_address"]
         start_address = hex(current_coils_write_dict["current_request_from_gui"][0])
         no_of_coils = current_coils_write_dict["current_request_from_gui"][1]
@@ -320,35 +313,34 @@ class CurrentStateWindow:
             current_coil_value = QStandardItem(str(current_coil_value))
             current_address = QStandardItem(str(current_address))
             current_unit_address = QStandardItem(str(current_unit_address))
-            self.coils_write_table_rows.appendRow([current_unit_address, current_address, current_coil_value])
-        self.coils_write_table_view.setModel(self.coils_write_table_rows)
+            self._coils_wr_table_rows.appendRow([current_unit_address, current_address, current_coil_value])
+        self._coils_wr_table_view.setModel(self._coils_wr_table_rows)
 
-    def set_write_input_registers_current_state(self):
+    def _set_current_input_registers_write(self):
         write_input_registers_parent_layout = QVBoxLayout()
         write_input_registers_label = QLabel("Current state in the input registers:")
-        write_input_registers_label.setFont(self.underline_font)
+        write_input_registers_label.setFont(self._underline_font)
         write_input_registers_parent_layout.addWidget(write_input_registers_label)
-        self.write_input_registers_table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.write_input_registers_table_view.horizontalHeader().setStretchLastSection(True)
-        self.write_input_registers_table_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.write_input_registers_table_rows.setHorizontalHeaderLabels(
-            ["UNIT ADDRESS", "INPUT REGISTER ADDRESS", "VALUE"])
-        self.write_input_registers_table_view.setStyleSheet("QHeaderView::section { background-color:lightgray }")
-        self.update_write_input_registers_current_state()
-        write_input_registers_parent_layout.addWidget(self.write_input_registers_table_view)
-        self.current_write_input_registers_parent_widget.setLayout(write_input_registers_parent_layout)
+        self._wr_i_reg_table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self._wr_i_reg_table_view.horizontalHeader().setStretchLastSection(True)
+        self._wr_i_reg_table_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self._wr_i_reg_table_rows.setHorizontalHeaderLabels(["UNIT ADDRESS", "INPUT REGISTER ADDRESS", "VALUE"])
+        self._wr_i_reg_table_view.setStyleSheet("QHeaderView::section { background-color:lightgray }")
+        self._update_current_input_registers_write()
+        write_input_registers_parent_layout.addWidget(self._wr_i_reg_table_view)
+        self._wr_i_reg_parent_widget.setLayout(write_input_registers_parent_layout)
 
-    def update_write_input_registers_current_state(self):
-        self.write_input_registers_table_rows.removeRows(0, self.write_input_registers_table_rows.rowCount())
-        err = self.state_manager.live_update_states["current_read_input_registers"]
+    def _update_current_input_registers_write(self):
+        self._wr_i_reg_table_rows.removeRows(0, self._wr_i_reg_table_rows.rowCount())
+        err = self._state_manager.live_update_states["current_read_input_registers"]
         err = err["current_response_err_msg"]
         if err != "-" and len(err) != 0:
-            self.coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
+            self._coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
             error = QStandardItem(str(err))
-            self.coils_table_rows.appendRow([error])
+            self._coils_table_rows.appendRow([error])
             return
         current_write_input_registers_dict = \
-            self.state_manager.live_update_states["current_read_input_registers"]
+            self._state_manager.live_update_states["current_read_input_registers"]
         unit_address = current_write_input_registers_dict["current_unit_address"]
         start_address = hex(current_write_input_registers_dict["current_request_from_gui"][0])
         no_of_write_input_registers = current_write_input_registers_dict["current_request_from_gui"][1]
@@ -361,14 +353,13 @@ class CurrentStateWindow:
                 active_write_input_registers[adr] = val
         start_address = int(start_address, 16)
         for i in range(0, no_of_write_input_registers):
-            current_write_input_registers_value = 0
+            current_write_input_reg_value = 0
             current_address = hex(start_address + i)
             current_unit_address = unit_address
             if current_address in active_write_input_registers.keys():
-                current_write_input_registers_value = active_write_input_registers[current_address]
-            current_write_input_registers_value = QStandardItem(str(current_write_input_registers_value))
+                current_write_input_reg_value = active_write_input_registers[current_address]
+            current_write_input_reg_value = QStandardItem(str(current_write_input_reg_value))
             current_address = QStandardItem(str(current_address))
             current_unit_address = QStandardItem(str(current_unit_address))
-            self.write_input_registers_table_rows.appendRow(
-                [current_unit_address, current_address, current_write_input_registers_value])
-        self.write_input_registers_table_view.setModel(self.write_input_registers_table_rows)
+            self._wr_i_reg_table_rows.appendRow([current_unit_address, current_address, current_write_input_reg_value])
+        self._wr_i_reg_table_view.setModel(self._wr_i_reg_table_rows)

@@ -3,7 +3,7 @@ from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QDialog, QLabel, QVBoxLayout
 
 
-def init_error_window(message):
+def _init_error_window(message):
     error_dlg_window = QDialog(None, QtCore.Qt.WindowCloseButtonHint)
     error_dlg_window.setWindowTitle("ERROR")
     error_font = QFont("Arial", 12)

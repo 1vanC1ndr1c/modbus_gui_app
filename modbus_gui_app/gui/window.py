@@ -6,9 +6,9 @@ from PySide2.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, \
     QHBoxLayout, QSizePolicy, QFrame, QMenu, QMainWindow, QAction, QGroupBox
 
 from modbus_gui_app.gui.current_state_window import CurrentStateWindow
-from modbus_gui_app.gui.error_window import init_error_window
-from modbus_gui_app.gui.gui_left_side import left_side_request_options_init
-from modbus_gui_app.gui.gui_middle import middle_init
+from modbus_gui_app.gui.error_window import _init_error_window
+from modbus_gui_app.gui.gui_left_side import _left_side_request_options_init
+from modbus_gui_app.gui.gui_middle import _middle_init
 from modbus_gui_app.gui.gui_right_side import ConnectionInfo
 from modbus_gui_app.gui.history_window import HistoryWindow
 from modbus_gui_app.logic import validation
@@ -27,81 +27,78 @@ class Gui(QMainWindow):
 
     def __init__(self, state_manager, gui_request_queue):
         super().__init__()
-        self.state_manager = state_manager
-        self.state_manager.response_signal.connect(self.update_response_layout)
-        self.state_manager.periodic_update_signal.connect(self.update_current_state_window)
-        self.state_manager.invalid_connection_signal.connect(self.generate_invalid_connection_error)
-        self.state_dict = state_manager.user_action_state
+        self._state_manager = state_manager
+        self._state_manager.response_signal.connect(self._update_response_layout)
+        self._state_manager.periodic_update_signal.connect(self._update_current_state_window)
+        self._state_manager.invalid_connection_signal.connect(self._generate_invalid_connection_error)
+        self._state_dict = state_manager.user_action_state
         self.gui_request_queue = gui_request_queue
-        self.state_manager.set_gui(self)
+        self._state_manager.set_gui(self)
+        self._main_widget = QWidget()
+        self._parent_layout = QVBoxLayout()
+        self._upper_layout = QHBoxLayout()
+        self._left_layout = QVBoxLayout()
+        self._middle_layout = QVBoxLayout()
+        self._right_layout = QVBoxLayout()
+        self._history_window = HistoryWindow(state_manager)
+        self._current_state_window = CurrentStateWindow(self, state_manager)
 
-        self.main_widget = QWidget()
-        self.parent_layout = QVBoxLayout()
-        self.upper_layout = QHBoxLayout()
-        self.left_layout = QVBoxLayout()
-        self.middle_layout = QVBoxLayout()
-        self.right_layout = QVBoxLayout()
-        self.history_window = HistoryWindow(state_manager)
-        self.current_state_window = CurrentStateWindow(self, state_manager)
+        self._font = QFont("Arial", 12)
+        self._main_widget.setFont(self._font)
 
-        self.font = QFont("Arial", 12)
-        self.main_widget.setFont(self.font)
+        self._menu_bar = self.menuBar()
+        self._history_menu = QMenu("History")
+        self._history_action = QAction("Open Request and Response History")
+        self._history_action.setShortcut("Ctrl+H")
+        self._history_action.setStatusTip("See the history of requests and responses")
+        self._history_action.triggered.connect(lambda l: self._history_window.init_history_window())
+        self._history_menu.addAction(self._history_action)
+        self._menu_bar.addMenu(self._history_menu)
 
-        self.menu_bar = self.menuBar()
-        self.history_menu = QMenu("History")
-        self.history_action = QAction("Open Request and Response History")
-        self.history_action.setShortcut("Ctrl+H")
-        self.history_action.setStatusTip("See the history of requests and responses")
-        self.history_action.triggered.connect(lambda l: self.history_window.init_history_window())
-        self.history_menu.addAction(self.history_action)
+        self._left_side_parent_widget, self._left_side_options_stacked_widget, self.left_side_select_operation_box = \
+            _left_side_request_options_init(self._left_layout)
+        self._upper_layout.addWidget(self._left_side_parent_widget, 0, QtCore.Qt.AlignTop)
 
-        self.menu_bar.addMenu(self.history_menu)
+        self._left_vertical_line = self._create_vertical_line()
+        self._upper_layout.addWidget(self._left_vertical_line)
 
-        self.left_side_parent_widget, self.left_side_options_stacked_widget, self.left_side_select_operation_box = \
-            left_side_request_options_init(self.left_layout)
+        _middle_init(self._middle_layout, self._state_dict, True)
+        self._middle_constraint_widget = QWidget()
+        self._middle_constraint_widget.setMaximumWidth(600)
+        self._middle_constraint_widget.setMaximumHeight(300)
+        self._middle_constraint_widget.setLayout(self._middle_layout)
+        self._upper_layout.addWidget(self._middle_constraint_widget, 0, QtCore.Qt.AlignTop)
 
-        self.upper_layout.addWidget(self.left_side_parent_widget, 0, QtCore.Qt.AlignTop)
+        self._right_vertical_line = self._create_vertical_line()
+        self._upper_layout.addWidget(self._right_vertical_line)
 
-        self.left_vertical_line = self.create_vertical_line()
-        self.upper_layout.addWidget(self.left_vertical_line)
+        self._connection_info = ConnectionInfo(self, self._state_manager)
+        self._connection_info.right_side_init(self._right_layout)
+        self._state_manager.connection_info_signal.connect(self._connection_info.generate_connection_info)
+        self._upper_layout.addLayout(self._right_layout)
 
-        middle_init(self.middle_layout, self.state_dict, True)
-        self.middle_constraint_widget = QWidget()
-        self.middle_constraint_widget.setMaximumWidth(600)
-        self.middle_constraint_widget.setMaximumHeight(300)
-        self.middle_constraint_widget.setLayout(self.middle_layout)
-        self.upper_layout.addWidget(self.middle_constraint_widget, 0, QtCore.Qt.AlignTop)
+        self._button_submit = QPushButton("Submit")
+        self._button_submit.setStyleSheet("background-color: green")
+        self._button_submit.setFont(self._font)
+        self._button_submit.sizeHint()
+        self._button_submit.clicked.connect(lambda c:
+                                            self._button_send_data(
+                                                self._left_side_options_stacked_widget.currentIndex(),
+                                                self._left_side_options_stacked_widget.currentWidget()))
+        self._left_layout.addWidget(self._button_submit)
+        self._left_layout.addStretch()
+        self._parent_layout.addLayout(self._upper_layout)
 
-        self.right_vertical_line = self.create_vertical_line()
-        self.upper_layout.addWidget(self.right_vertical_line)
-
-        self.connection_info = ConnectionInfo(self, self.state_manager)
-        self.connection_info.right_side_init(self.right_layout)
-        self.state_manager.connection_info_signal.connect(self.connection_info.generate_connection_info)
-        self.upper_layout.addLayout(self.right_layout)
-
-        self.button_submit = QPushButton("Submit")
-        self.button_submit.setStyleSheet("background-color: green")
-        self.button_submit.setFont(self.font)
-        self.button_submit.sizeHint()
-        self.button_submit.clicked.connect(lambda c:
-                                           self.button_send_request_data(
-                                               self.left_side_options_stacked_widget.currentIndex(),
-                                               self.left_side_options_stacked_widget.currentWidget()))
-        self.left_layout.addWidget(self.button_submit)
-        self.left_layout.addStretch()
-        self.parent_layout.addLayout(self.upper_layout)
-
-        self.lower_box = QGroupBox()
-        self.current_state_window.init_current_state_window()
+        self._lower_box = QGroupBox()
+        self._current_state_window.init_current_state_window()
         self.left_side_select_operation_box.currentIndexChanged.connect(
-            self.current_state_window.signal_current_state_window_from_gui)
-        self.parent_layout.addWidget(self.lower_box)
+            self._current_state_window.signal_current_state_window_from_gui)
+        self._parent_layout.addWidget(self._lower_box)
 
-        self.main_widget.setLayout(self.parent_layout)
-        self.setCentralWidget(self.main_widget)
+        self._main_widget.setLayout(self._parent_layout)
+        self.setCentralWidget(self._main_widget)
 
-    def button_send_request_data(self, index, stacked_widget):
+    def _button_send_data(self, index, stacked_widget):
         function_code = index + 1
         is_valid, validation_result = validation.get_request_validation_result(function_code, stacked_widget)
 
@@ -109,15 +106,15 @@ class Gui(QMainWindow):
             self.gui_request_queue.put(validation_result)
 
         elif is_valid is False:
-            init_error_window(validation_result)
+            _init_error_window(validation_result)
 
-    def update_response_layout(self, flag):
-        middle_init(self.middle_layout, self.state_dict, flag)
+    def _update_response_layout(self, flag):
+        _middle_init(self._middle_layout, self._state_dict, flag)
 
-    def update_current_state_window(self, is_first):
-        self.current_state_window.signal_current_state_window_from_state_manager(is_first)
+    def _update_current_state_window(self, is_first):
+        self._current_state_window.signal_current_state_window_from_state_manager(is_first)
 
-    def create_vertical_line(self):
+    def _create_vertical_line(self):
         vertical_line = QFrame()
         vertical_line.setFixedWidth(20)
         vertical_line.setFrameShape(QFrame.VLine)
@@ -126,19 +123,19 @@ class Gui(QMainWindow):
         vertical_line.setMinimumHeight(300)
         return vertical_line
 
-    def generate_invalid_connection_error(self):
-        init_error_window("No Connection Established.")
+    def _generate_invalid_connection_error(self):
+        _init_error_window("No Connection Established.")
 
     def closeEvent(self, event: QCloseEvent):
         try:
-            self.state_manager.ws_read_loop_future.cancel()
+            self._state_manager.ws_read_loop_future.cancel()
         except Exception as close_exception:
             print("WINDOW: Error When Closing The App: ", close_exception)
         try:
-            self.state_manager.database.db_close()
+            self._state_manager.database.db_close()
         except Exception as close_exception:
             print("WINDOW: Error When Closing The App: ", close_exception)
-        self.state_manager.gui_request_queue.put("End.")
+        self._state_manager.gui_request_queue.put("End.")
         event.accept()
 
 

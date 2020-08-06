@@ -3,7 +3,7 @@ from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QLabel, QHBoxLayout, QScrollArea, QVBoxLayout, QGroupBox
 
 
-def middle_init(mid_layout, dictionary, first_init):
+def _middle_init(mid_layout, dictionary, first_init):
     reset_layout(mid_layout)
 
     mid_layout.setAlignment(QtCore.Qt.AlignTop)
@@ -39,20 +39,20 @@ def middle_init(mid_layout, dictionary, first_init):
     err_msg = dictionary.get("current_response_err_msg")
 
     if function_code == 1:
-        read_coils_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
+        _read_coils_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
     elif function_code == 2:
-        read_discrete_inputs_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
+        _read_discrete_inputs_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
     elif function_code == 3:
-        read_holding_registers_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
+        _read_holding_registers_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
     elif function_code == 4:
-        read_input_registers_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
+        _read_input_registers_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
     elif function_code == 5:
-        write_single_coil_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
+        _write_single_coil_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
     elif function_code == 6:
-        write_single_register_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
+        _write_single_register_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg)
 
 
-def read_coils_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
+def _read_coils_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
     response_box1 = QHBoxLayout()
     response_title_label = QLabel("Read coils response: ")
     response_title_label.setFont(u_font)
@@ -89,7 +89,7 @@ def read_coils_generate_response_widget(u_font, resp, mid_layout, dictionary, is
     mid_layout.addStretch()
 
 
-def read_discrete_inputs_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
+def _read_discrete_inputs_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
     response_box1 = QHBoxLayout()
     response_title_label = QLabel("Read discrete inputs: ")
     response_title_label.setFont(u_font)
@@ -126,7 +126,7 @@ def read_discrete_inputs_generate_response_widget(u_font, resp, mid_layout, dict
     mid_layout.addStretch()
 
 
-def read_holding_registers_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
+def _read_holding_registers_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
     response_box1 = QHBoxLayout()
     response_title_label = QLabel("Read holding registers response: ")
     response_title_label.setFont(u_font)
@@ -167,7 +167,7 @@ def read_holding_registers_generate_response_widget(u_font, resp, mid_layout, di
     mid_layout.addStretch()
 
 
-def read_input_registers_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
+def _read_input_registers_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
     response_box1 = QHBoxLayout()
     response_title_label = QLabel("Read input registers response: ")
     response_title_label.setFont(u_font)
@@ -208,7 +208,7 @@ def read_input_registers_generate_response_widget(u_font, resp, mid_layout, dict
     mid_layout.addStretch()
 
 
-def write_single_coil_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
+def _write_single_coil_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
     response_box1 = QHBoxLayout()
     response_title_label = QLabel("Write single coil response: ")
     response_title_label.setFont(u_font)
@@ -236,7 +236,7 @@ def write_single_coil_generate_response_widget(u_font, resp, mid_layout, diction
     mid_layout.addStretch()
 
 
-def write_single_register_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
+def _write_single_register_generate_response_widget(u_font, resp, mid_layout, dictionary, is_valid_resp, err_msg):
     response_box1 = QHBoxLayout()
     response_title_label = QLabel("Write register response: ")
     response_title_label.setFont(u_font)

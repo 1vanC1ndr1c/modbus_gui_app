@@ -17,7 +17,7 @@ def _db_reader(state_manager, current_db_index, conn):
 
 
 def _convert_data_into_dict(db_data):
-    db_dicts = dict()
+    db_dicts = {}
     for element in db_data:
         for single_dict_db in element:
             request_time_stamp = single_dict_db[0]
