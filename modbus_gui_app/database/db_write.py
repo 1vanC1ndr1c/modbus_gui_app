@@ -1,4 +1,4 @@
-def db_writer(dictionary, conn):
+def _db_writer(dictionary, conn):
     req_time_stamp = dictionary["current_request_sent_time"]
     tid = dictionary["current_tid"]
     req_type = "Request."
@@ -40,7 +40,6 @@ def db_writer(dictionary, conn):
                       req_byte, resp_time_stamp, resp_type, resp_byte, resp_validity,
                       resp_err_msg, resp_return_value))
         conn.commit()
-        print("Writing: Records created successfully.")
 
     except Exception as e:
         print("DB_WRITE: Database Writing Error:", e)

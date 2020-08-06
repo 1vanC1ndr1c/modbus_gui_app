@@ -1,20 +1,20 @@
 import sqlite3
 
-from modbus_gui_app.database.db_read import db_reader
-from modbus_gui_app.database.db_write import db_writer
+from modbus_gui_app.database.db_read import _db_reader
+from modbus_gui_app.database.db_write import _db_writer
 
 
 class Backend:
     def __init__(self):
-        self.state_manager = None
-        self.conn = sqlite3.connect('req_and_resp.db', check_same_thread=False)
-        self.db_init()
+        self._state_manager = None
+        self._conn = sqlite3.connect('req_and_resp.db', check_same_thread=False)
+        self._db_init()
 
     def set_st_manager(self, state_manager):
-        self.state_manager = state_manager
+        self._state_manager = state_manager
 
-    def db_init(self):
-        self.conn.execute('''CREATE TABLE IF NOT EXISTS REQ_AND_RESP(
+    def _db_init(self):
+        self._conn.execute('''CREATE TABLE IF NOT EXISTS REQ_AND_RESP(
                 REQ_SENT_TIME   TIMESTAMP PRIMARY KEY   NOT NULL,
                 TID             INT     NOT NULL,
                 REQ_TYPE        TEXT    NOT NULL,
@@ -31,14 +31,12 @@ class Backend:
                 RESP_VALID      TEXT    NOT NULL,
                 RESP_ERR_MSG    TEXT    NOT NULL,
                 RESP_RET_VAL    TEXT    NOT NULL);''')
-        print("Opened (or created) database successfully.")
 
     def db_read(self, current_db_index):
-        return db_reader(self.state_manager, current_db_index, self.conn)
+        return _db_reader(self._state_manager, current_db_index, self._conn)
 
     def db_write(self, dictionary):
-        db_writer(dictionary, self.conn)
+        _db_writer(dictionary, self._conn)
 
     def db_close(self):
-        self.conn.close()
-        print("Closed database successfully.")
+        self._conn.close()

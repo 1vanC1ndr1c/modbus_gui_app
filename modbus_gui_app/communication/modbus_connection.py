@@ -68,8 +68,6 @@ class ModbusConnection:
                     _live_update_response_deserialize(self._state_manager, bytes_response.data)
                     automatic_request_tid = self._state_manager.live_update_states["current_tid"]
                     self._pending_responses[automatic_request_tid].set_result("Done.")
-
                 else:
-                    print("RESPONSE: ", bytes_response.data)
                     deserialized_dict = _user_response_deserialize(bytes_response.data, self._state_manager)
                     self._pending_responses[self._tid].set_result(deserialized_dict)
