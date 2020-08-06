@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-def init_current_request_and_response_dictionary():
+def _init_user_action_state_dict():
     current_request_and_response_dictionary = {
         "current_tid": 0,
         "current_unit_address": "00",
@@ -21,7 +21,7 @@ def init_current_request_and_response_dictionary():
     return current_request_and_response_dictionary
 
 
-def init_live_update_states():
+def _init_live_update_states():
     time_stamp = datetime.now()
 
     current_read_coils = {
@@ -111,10 +111,3 @@ def init_live_update_states():
         "read_input_registers_tid": 9904
     }
     return live_update_states
-
-
-def init_connection_info():
-    connection_info_state = {
-        "connection_established": datetime.now()
-    }
-    return connection_info_state

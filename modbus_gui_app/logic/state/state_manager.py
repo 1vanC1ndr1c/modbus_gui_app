@@ -1,10 +1,19 @@
+import asyncio
+import functools
+import queue
+from concurrent.futures.thread import ThreadPoolExecutor
+from copy import deepcopy
+from datetime import datetime
+from threading import Thread
+
 from PySide2.QtCore import Signal, QObject
 
-from modbus_gui_app.logic.state import state_manager_functions
-from modbus_gui_app.logic.state import state_manager_live_update
+from modbus_gui_app.communication.modbus_connection import ModbusConnection
 from modbus_gui_app.database.db_handler import Backend
-
-import queue
+from modbus_gui_app.logic.state.state_manager_data_structures import _init_user_action_state_dict, \
+    _init_live_update_states
+from modbus_gui_app.logic.state.state_manager_live_update import _live_update_loop, \
+    _set_currently_selected_automatic_request
 
 
 class StateManager(QObject):
@@ -20,51 +29,100 @@ class StateManager(QObject):
         self.database.set_st_manager(self)
         self.gui_request_queue = queue.Queue()
         self.modbus_connection = None
-        self.user_action_state = state_manager_functions.init_state()
+        self.user_action_state = _init_user_action_state_dict()
         self.gui = None
-        self.historian_db_current_index = 0
-        self.historian_db_dicts = {}
-        self.live_update_states = state_manager_live_update.init_live_update_states()
-        self.current_state_periodic_refresh_future = None
+        self._historian_db_current_index = 0
+        self._historian_db_dicts = {}
+        self.live_update_states = _init_live_update_states()
+        self.ws_read_loop_future = None
 
     def get_historian_db_dicts(self):
-        self.state_manager_read_from_db()
-        return self.historian_db_dicts
+        self._read_from_db()
+        return self._historian_db_dicts
 
-
-    # connect to modbus
     def start_communications_thread(self):
-        state_manager_functions.start_communications_thread(self)
+        communications_thread = Thread(
+            daemon=True,
+            target=lambda: asyncio.new_event_loop().run_until_complete(
+                self._start_readers_and_writers()))
+        communications_thread.start()
 
-    # user communication
-    async def gui_to_state_manager_write(self):
-        await state_manager_functions.gui_to_state_manager_write(self)
+    async def _start_readers_and_writers(self):
+        self.modbus_connection = ModbusConnection()
+        self.modbus_connection.set_state_manager(self)
+        await self.modbus_connection.open_session()
+        self.connection_info_signal.emit("Connection Established")
 
-    async def send_request_to_modbus(self, valid_gui_request):
-        await state_manager_functions.send_request_to_modbus(self, valid_gui_request)
+        live_update_refresh_future = asyncio.ensure_future(_live_update_loop(self))
+        ws_read_loop_future = asyncio.ensure_future(self.modbus_connection.ws_read_loop())
+        self.ws_read_loop_future = ws_read_loop_future
+        state_manager_to_modbus_write_future = asyncio.ensure_future(self.gui_queue_read_loop())
 
-    def process_modbus_response(self, deserialized_dict):
-        state_manager_functions.process_modbus_response(self, deserialized_dict)
+        await asyncio.wait([ws_read_loop_future, live_update_refresh_future, state_manager_to_modbus_write_future],
+                           return_when=asyncio.FIRST_COMPLETED)
 
-    # internal data and database
-    def update_history_last_ten(self):
-        state_manager_functions.update_history_last_ten(self)
+        state_manager_to_modbus_write_future.cancel()
+        live_update_refresh_future.cancel()
+        ws_read_loop_future.cancel()
+        try:
+            await self.modbus_connection.ws.close()
+        except Exception as conn_error:
+            print("STATE MANAGER FUNCTIONS: Error When Connecting, No Connection. ", conn_error)
+            self.invalid_connection_signal.emit("No Connection.")
+            self.connection_info_signal.emit("No Connection.")
 
-    def state_manager_write_to_db(self):
-        state_manager_functions.state_manager_write_to_db(self)
+        await self.modbus_connection.session.close()
 
-    def state_manager_read_from_db(self):
-        state_manager_functions.state_manager_read_from_db(self)
+    async def gui_queue_read_loop(self):
+        executor = ThreadPoolExecutor(1)
+        while True:
+            valid_gui_request = await asyncio.get_event_loop().run_in_executor(
+                executor, functools.partial(self._get_msg_from_gui_queue))
+            if valid_gui_request == "End.":
+                break
+            await self._send_request_to_modbus(valid_gui_request)
+
+    def _get_msg_from_gui_queue(self):
+        request = self.gui_request_queue.get()
+        return request
+
+    async def _send_request_to_modbus(self, valid_gui_request):
+        self.user_action_state["current_request_from_gui"] = valid_gui_request
+        self.user_action_state["current_request_from_gui_is_valid"] = True
+        self.user_action_state["current_request_from_gui_error_msg"] = "-"
+        self.user_action_state["current_request_sent_time"] = datetime.now()
+        self.connection_info_signal.emit("User Request Sent.")
+        response = await self.modbus_connection.ws_write(self.user_action_state)
+        self._process_modbus_response(response)
+
+    def _process_modbus_response(self, deserialized_dict):
+        self.user_action_state["current_response_received_time"] = datetime.now()
+        if deserialized_dict != "-":
+            for key in deserialized_dict:
+                if key in self.user_action_state:
+                    self.user_action_state[key] = deserialized_dict[key]
+        self._update_history_last_ten()
+        self._write_to_db()
+        self.response_signal.emit(False)
+        self.periodic_update_signal.emit(False)
+        _set_currently_selected_automatic_request(self, "user")
+        self.connection_info_signal.emit("User Response Received.")
+
+    def _update_history_last_ten(self):
+        if len(self.last_ten_dicts) >= 10:  # save only the last 10. If more, delete the oldest one.
+            min_key = min(self.last_ten_dicts.keys())
+            self.last_ten_dicts.pop(min_key)
+        # use deepcopy, otherwise, the older data will be overwritten
+        tid = deepcopy(self.user_action_state["current_tid"])
+        self.last_ten_dicts[tid] = deepcopy(self.user_action_state)
+
+    def _write_to_db(self):
+        self.database.db_write(self.user_action_state)
+
+    def _read_from_db(self):
+        self.database.db_read(self._historian_db_current_index)
+        self._historian_db_current_index = self._historian_db_current_index + 10
 
     def reset_db_dict(self):
-        state_manager_functions.reset_db_dict(self)
-
-    # functions that deal with updating the current status in the lower part of the GUI.
-    async def current_state_periodic_refresh(self):
-        await state_manager_live_update.current_state_periodic_refresh(self)
-
-    def set_currently_selected_function(self, source):
-        state_manager_live_update.set_currently_selected_automatic_request(self, source)
-
-    def update_current_coils_state(self, source):
-        state_manager_live_update.update_current_coils_state(self, source)
+        self._historian_db_dicts = {}
+        self._historian_db_current_index = 0
