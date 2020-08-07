@@ -62,6 +62,8 @@ class CurrentStateWindow:
         self._lower_stacked_widget.addWidget(self._i_reg_parent_widget)
         self._set_current_coils_write()
         self._lower_stacked_widget.addWidget(self._coils_wr_parent_widget)
+        self._set_current_input_registers_write()
+        self._lower_stacked_widget.addWidget(self._wr_i_reg_parent_widget)
 
         self._lower_parent_layout.addWidget(self._lower_stacked_widget)
         self.lower_box.setLayout(self._lower_parent_layout)
@@ -93,8 +95,7 @@ class CurrentStateWindow:
         elif current_function == "05":
             self._update_current_coils_write()
         elif current_function == "06":
-            # self._update_current_input_registers_write()
-            pass
+            self._update_current_input_registers_write()
 
     def _set_current_coils(self):
         coils_parent_layout = QVBoxLayout()
