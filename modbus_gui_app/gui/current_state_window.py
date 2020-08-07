@@ -15,7 +15,7 @@ class CurrentStateWindow:
         self.gui = gui
         self._current_window_stacked_widget = QStackedWidget()
         self._is_first = True
-        self._current_parent_widget = QWidget()
+        self._coils_parent_widget = QWidget()
         self._coils_table_view = QTableView()
         self._coils_table_rows = QStandardItemModel()
         self._d_inputs_parent_widget = QWidget()
@@ -53,7 +53,7 @@ class CurrentStateWindow:
         self._lower_stacked_widget.addWidget(loading_parent_widget)
 
         self._set_current_coils()
-        self._lower_stacked_widget.addWidget(self._current_parent_widget)
+        self._lower_stacked_widget.addWidget(self._coils_parent_widget)
         self._set_current_discrete_inputs()
         self._lower_stacked_widget.addWidget(self._d_inputs_parent_widget)
         self._set_current_holding_registers()
@@ -62,8 +62,6 @@ class CurrentStateWindow:
         self._lower_stacked_widget.addWidget(self._i_reg_parent_widget)
         self._set_current_coils_write()
         self._lower_stacked_widget.addWidget(self._coils_wr_parent_widget)
-        self._set_current_input_registers_write()
-        self._lower_stacked_widget.addWidget(self._wr_i_reg_parent_widget)
 
         self._lower_parent_layout.addWidget(self._lower_stacked_widget)
         self.lower_box.setLayout(self._lower_parent_layout)
@@ -95,7 +93,8 @@ class CurrentStateWindow:
         elif current_function == "05":
             self._update_current_coils_write()
         elif current_function == "06":
-            self._update_current_input_registers_write()
+            # self._update_current_input_registers_write()
+            pass
 
     def _set_current_coils(self):
         coils_parent_layout = QVBoxLayout()
@@ -109,7 +108,7 @@ class CurrentStateWindow:
         self._coils_table_view.setStyleSheet("QHeaderView::section { background-color:lightgray }")
         self._update_current_coils()
         coils_parent_layout.addWidget(self._coils_table_view)
-        self._current_parent_widget.setLayout(coils_parent_layout)
+        self._coils_parent_widget.setLayout(coils_parent_layout)
 
     def _update_current_coils(self):
         self._update_current_coils_write()
@@ -158,9 +157,9 @@ class CurrentStateWindow:
         err = self._state_manager.live_update_states["current_read_discrete_inputs"]
         err = err["current_response_err_msg"]
         if err != "-" and len(err) != 0:
-            self._coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
+            self._d_inputs_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
             error = QStandardItem(str(err))
-            self._coils_table_rows.appendRow([error])
+            self._d_inputs_table_rows.appendRow([error])
             return
         current_discrete_inputs_dict = self._state_manager.live_update_states["current_read_discrete_inputs"]
         unit_address = current_discrete_inputs_dict["current_unit_address"]
@@ -200,9 +199,9 @@ class CurrentStateWindow:
         err = self._state_manager.live_update_states["current_read_holding_registers"]
         err = err["current_response_err_msg"]
         if err != "-" and len(err) != 0:
-            self._coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
+            self._h_reg_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
             error = QStandardItem(str(err))
-            self._coils_table_rows.appendRow([error])
+            self._h_reg_table_rows.appendRow([error])
             return
         current_holding_registers_dict = self._state_manager.live_update_states["current_read_holding_registers"]
         unit_address = current_holding_registers_dict["current_unit_address"]
@@ -243,13 +242,14 @@ class CurrentStateWindow:
         self._i_reg_parent_widget.setLayout(input_registers_parent_layout)
 
     def _update_current_input_registers(self):
+        self._update_current_input_registers_write()
         self._i_reg_table_rows.removeRows(0, self._i_reg_table_rows.rowCount())
         err = self._state_manager.live_update_states["current_read_input_registers"]
         err = err["current_response_err_msg"]
         if err != "-" and len(err) != 0:
-            self._coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
+            self._i_reg_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
             error = QStandardItem(str(err))
-            self._coils_table_rows.appendRow([error])
+            self._i_reg_table_rows.appendRow([error])
             return
         current_input_registers_dict = self._state_manager.live_update_states["current_read_input_registers"]
         unit_address = current_input_registers_dict["current_unit_address"]
@@ -335,12 +335,11 @@ class CurrentStateWindow:
         err = self._state_manager.live_update_states["current_read_input_registers"]
         err = err["current_response_err_msg"]
         if err != "-" and len(err) != 0:
-            self._coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
+            self._wr_i_reg_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
             error = QStandardItem(str(err))
-            self._coils_table_rows.appendRow([error])
+            self._wr_i_reg_table_rows.appendRow([error])
             return
-        current_write_input_registers_dict = \
-            self._state_manager.live_update_states["current_read_input_registers"]
+        current_write_input_registers_dict = self._state_manager.live_update_states["current_read_input_registers"]
         unit_address = current_write_input_registers_dict["current_unit_address"]
         start_address = hex(current_write_input_registers_dict["current_request_from_gui"][0])
         no_of_write_input_registers = current_write_input_registers_dict["current_request_from_gui"][1]
