@@ -1,154 +1,116 @@
-def _user_request_serialize(state_dict, state_manager, tid):
-    req_dict = state_dict.get("current_request_from_gui")
-    func_code = req_dict[3]
-    func_code = str(hex(func_code))[2:].rjust(2, '0')
-    state_dict["current_tid"] = tid
-
-    if func_code == "01":
-        bytes_req = _read_coils_serialize(func_code, req_dict, state_manager, state_dict)
-        return bytes_req
-    elif func_code == "02":
-        bytes_req = _read_discrete_inputs_serialize(func_code, req_dict, state_manager, state_dict)
-        return bytes_req
-    elif func_code == "03":
-        bytes_req = _read_holding_registers_serialize(func_code, req_dict, state_manager, state_dict)
-        return bytes_req
-    elif func_code == "04":
-        bytes_req = _read_input_registers_serialize(func_code, req_dict, state_manager, state_dict)
-        return bytes_req
-    elif func_code == "05":
-        bytes_req = _write_single_coil_serialize(func_code, req_dict, state_manager, state_dict)
-        return bytes_req
-    elif func_code == "06":
-        bytes_req = _write_single_register_serialize(func_code, req_dict, state_manager, state_dict)
-        return bytes_req
-    else:
-        state_manager.user_action_state["current_request_name"] = "Unknown Request."
-        return b'0'
-
-
-def _read_coils_serialize(func_code, req_dict, state_manager, state_dict):
-    state_manager.user_action_state["current_request_name"] = "Read Coils."
-
-    new_tid, protocol, unit_addr, start_addr = _get_tid_prot_uddr_saddr(state_dict, req_dict, state_manager, func_code)
-    no_of_coils = str(hex(req_dict[1]))[2:].rjust(4, '0')
-    modbus_request = func_code + ''
-    modbus_request = modbus_request + start_addr + no_of_coils
-
-    bytes_req = _generate_serialized_request(modbus_request, new_tid, protocol, unit_addr, state_manager)
-    return bytes_req
-
-#
-# def _read_coils_serialize2(request_data, tid):
-#     func_code = "01"
-#     start_addr = request_data[0]
-#     no_of_coils = request_data[1]
-#     unit_addr = request_data[2]
-#
-#     tid = str(tid).rjust(4, '0')
-#     protocol = '0000'
-#     unit_addr = str(unit_addr).rjust(2, '0')
-#     start_addr = start_addr - 1
-#     start_addr = str(hex(start_addr))[2:].rjust(4, '0')
-#     no_of_coils = str(hex(no_of_coils))[2:].rjust(4, '0')
-#
-#     modbus_request = func_code + ''
-#     modbus_request = modbus_request + start_addr + no_of_coils
-#
-#     length = len(bytes.fromhex(modbus_request)) + 1
-#     length = str(length).rjust(4, '0')
-#
-#     bytes_req = tid + protocol + length + unit_addr + modbus_request
-#     bytes_req = bytes.fromhex(bytes_req)
-#
-#     return bytes_req
-
-
-def _read_discrete_inputs_serialize(func_code, req_dict, state_manager, state_dict):
-    state_manager.user_action_state["current_request_name"] = "Read Discrete Inputs ."
-
-    new_tid, protocol, unit_addr, start_addr = _get_tid_prot_uddr_saddr(state_dict, req_dict, state_manager, func_code)
-    no_of_discrete_inputs = str(hex(req_dict[1]))[2:].rjust(4, '0')
-    modbus_request = func_code + ''
-    modbus_request = modbus_request + start_addr + no_of_discrete_inputs
-
-    bytes_req = _generate_serialized_request(modbus_request, new_tid, protocol, unit_addr, state_manager)
-    return bytes_req
-
-
-def _read_holding_registers_serialize(func_code, req_dict, state_manager, state_dict):
-    state_manager.user_action_state["current_request_name"] = "Read Holding Registers."
-
-    new_tid, protocol, unit_addr, start_addr = _get_tid_prot_uddr_saddr(state_dict, req_dict, state_manager, func_code)
-    no_of_holding_registers = str(hex(req_dict[1]))[2:].rjust(4, '0')
-    modbus_request = func_code + ''
-    modbus_request = modbus_request + start_addr + no_of_holding_registers
-
-    bytes_req = _generate_serialized_request(modbus_request, new_tid, protocol, unit_addr, state_manager)
-    return bytes_req
-
-
-def _read_input_registers_serialize(func_code, req_dict, state_manager, state_dict):
-    state_manager.user_action_state["current_request_name"] = "Read Input Registers."
-
-    new_tid, protocol, unit_addr, start_addr = _get_tid_prot_uddr_saddr(state_dict, req_dict, state_manager, func_code)
-    no_of_input_registers = str(hex(req_dict[1]))[2:].rjust(4, '0')
-    modbus_request = func_code + ''
-    modbus_request = modbus_request + start_addr + no_of_input_registers
-
-    bytes_req = _generate_serialized_request(modbus_request, new_tid, protocol, unit_addr, state_manager)
-    return bytes_req
-
-
-def _write_single_coil_serialize(func_code, req_dict, state_manager, state_dict):
-    state_manager.user_action_state["current_request_name"] = "Write Single Coil."
-
-    new_tid, protocol, unit_addr, start_addr = _get_tid_prot_uddr_saddr(state_dict, req_dict, state_manager, func_code)
-    modbus_request = func_code + ''
-    on_off_select = req_dict[1]
-    if on_off_select == 0:
-        modbus_request = modbus_request + start_addr + "ff" + "00"
-    else:
-        modbus_request = modbus_request + start_addr + "00" + "00"
-
-    bytes_req = _generate_serialized_request(modbus_request, new_tid, protocol, unit_addr, state_manager)
-    return bytes_req
-
-
-def _write_single_register_serialize(func_code, req_dict, state_manager, state_dict):
-    state_manager.user_action_state["current_request_name"] = "Write Single Register."
-
-    new_tid, protocol, unit_addr, start_addr = _get_tid_prot_uddr_saddr(state_dict, req_dict, state_manager, func_code)
-    reg_val = req_dict[1]
-    reg_val = str(hex(reg_val))[2:].rjust(4, '0')
-    modbus_request = func_code + ''
-    modbus_request = modbus_request + start_addr + reg_val
-
-    bytes_req = _generate_serialized_request(modbus_request, new_tid, protocol, unit_addr, state_manager)
-    return bytes_req
-
-
-def _get_tid_prot_uddr_saddr(state_dict, req_dict, state_manager, function_code):
-    new_tid = state_dict.get("current_tid")
-    new_tid = str(new_tid).rjust(4, '0')
+def read_coils_serialize2(start_addr, no_of_coils, unit_addr, tid):
+    func_code = "01"
+    tid = str(tid).rjust(4, '0')
     protocol = '0000'
-    unit_address = req_dict[2]
-    unit_address = str(unit_address).rjust(2, '0')
-    state_manager.user_action_state["current_unit_address"] = str(unit_address)
-    state_manager.user_action_state["current_function_code"] = str(function_code)
-    start_add = req_dict[0]
-    start_add = start_add - 1
-    start_add = str(hex(start_add))[2:].rjust(4, '0')
+    unit_addr = str(unit_addr).rjust(2, '0')
+    start_addr = str(hex(start_addr - 1))[2:].rjust(4, '0')
+    no_of_coils = str(hex(no_of_coils))[2:].rjust(4, '0')
 
-    return new_tid, protocol, unit_address, start_add
+    modbus_request = func_code + start_addr + no_of_coils
+    length = str(len(bytes.fromhex(modbus_request)) + 1).rjust(4, '0')
+    bytes_req = bytes.fromhex(tid + protocol + length + unit_addr + modbus_request)
+
+    communication_dict = _make_com_dict(tid, unit_addr, func_code, "Read Coils.", start_addr, no_of_coils, bytes_req)
+    return bytes_req, communication_dict
 
 
-def _generate_serialized_request(modbus_request, new_tid, protocol, unit_address, state_manager):
-    length = len(bytes.fromhex(modbus_request)) + 1
-    length = str(length).rjust(4, '0')
+def read_discrete_inputs_serialize2(start_addr, input_count, unit_addr, tid):
+    func_code = "02"
+    tid = str(tid).rjust(4, '0')
+    protocol = '0000'
+    unit_addr = str(unit_addr).rjust(2, '0')
+    start_addr = str(hex(start_addr - 1))[2:].rjust(4, '0')
+    input_count = str(hex(input_count))[2:].rjust(4, '0')
 
-    bytes_req = new_tid + protocol + length + unit_address + modbus_request
-    bytes_req = bytes.fromhex(bytes_req)
+    modbus_request = func_code + start_addr + input_count
+    length = str(len(bytes.fromhex(modbus_request)) + 1).rjust(4, '0')
+    bytes_req = bytes.fromhex(tid + protocol + length + unit_addr + modbus_request)
 
-    state_manager.user_action_state["current_request_serialized"] = bytes_req
-    return bytes_req
+    name = "Read Discrete Inputs."
+    communication_dict = _make_com_dict(tid, unit_addr, func_code, name, start_addr, input_count, bytes_req)
+    return bytes_req, communication_dict
+
+
+def read_holding_registers_serialize2(start_addr, h_regs_count, unit_addr, tid):
+    func_code = "03"
+    tid = str(tid).rjust(4, '0')
+    protocol = '0000'
+    unit_addr = str(unit_addr).rjust(2, '0')
+    start_addr = str(hex(start_addr - 1))[2:].rjust(4, '0')
+    h_regs_count = str(hex(h_regs_count))[2:].rjust(4, '0')
+
+    modbus_request = func_code + start_addr + h_regs_count
+    length = str(len(bytes.fromhex(modbus_request)) + 1).rjust(4, '0')
+    bytes_req = bytes.fromhex(tid + protocol + length + unit_addr + modbus_request)
+
+    name = "Read Holding Registers."
+    communication_dict = _make_com_dict(tid, unit_addr, func_code, name, start_addr, h_regs_count, bytes_req)
+    return bytes_req, communication_dict
+
+
+def read_input_registers_serialize2(start_addr, in_regs_count, unit_addr, tid):
+    func_code = "04"
+    tid = str(tid).rjust(4, '0')
+    protocol = '0000'
+    unit_addr = str(unit_addr).rjust(2, '0')
+    start_addr = str(hex(start_addr - 1))[2:].rjust(4, '0')
+    in_regs_count = str(hex(in_regs_count))[2:].rjust(4, '0')
+
+    modbus_request = func_code + start_addr + in_regs_count
+    length = str(len(bytes.fromhex(modbus_request)) + 1).rjust(4, '0')
+    bytes_req = bytes.fromhex(tid + protocol + length + unit_addr + modbus_request)
+
+    name = "Read Input Registers."
+    communication_dict = _make_com_dict(tid, unit_addr, func_code, name, start_addr, in_regs_count, bytes_req)
+    return bytes_req, communication_dict
+
+
+def write_single_coil_serialize2(start_addr, coil_state, unit_addr, tid):
+    func_code = "05"
+    tid = str(tid).rjust(4, '0')
+    protocol = '0000'
+    start_addr = str(hex(start_addr - 1))[2:].rjust(4, '0')
+    unit_addr = str(unit_addr).rjust(2, '0')
+
+    if coil_state == 0:
+        modbus_request = func_code + start_addr + "ff" + "00"
+    else:
+        modbus_request = func_code + start_addr + "00" + "00"
+
+    length = str(len(bytes.fromhex(modbus_request)) + 1).rjust(4, '0')
+    bytes_req = bytes.fromhex(tid + protocol + length + unit_addr + modbus_request)
+
+    name = "Write Single Coil."
+    communication_dict = _make_com_dict(tid, unit_addr, func_code, name, start_addr, coil_state, bytes_req)
+    return bytes_req, communication_dict
+
+
+def write_single_register_serialize2(start_addr, reg_value, unit_addr, tid):
+    func_code = "06"
+    tid = str(tid).rjust(4, '0')
+    protocol = '0000'
+    unit_addr = str(unit_addr).rjust(2, '0')
+    start_addr = str(hex(start_addr - 1))[2:].rjust(4, '0')
+    reg_value = str(hex(reg_value))[2:].rjust(4, '0')
+
+    modbus_request = func_code + start_addr + reg_value
+    length = str(len(bytes.fromhex(modbus_request)) + 1).rjust(4, '0')
+    bytes_req = bytes.fromhex(tid + protocol + length + unit_addr + modbus_request)
+
+    name = "Write Single Register."
+    communication_dict = _make_com_dict(tid, unit_addr, func_code, name, start_addr, reg_value, bytes_req)
+    return bytes_req, communication_dict
+
+
+def _make_com_dict(tid, unit_addr, func_code, req_name, start_addr, no_of_el, bytes_req):
+    communication_dict = {
+        "current_tid": int(tid),
+        "current_unit_address": unit_addr,
+        "current_function_code": func_code,
+        "current_request_name": req_name,
+        "current_request_from_gui": [int(start_addr) + 1, int(no_of_el), int(unit_addr), 1],
+        "current_request_from_gui_is_valid": True,
+        "current_request_from_gui_error_msg": "-",
+        "current_request_serialized": bytes_req
+    }
+    return communication_dict

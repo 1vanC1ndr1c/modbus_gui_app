@@ -1,7 +1,7 @@
 import re
 
 
-def _user_response_deserialize(bytes_response, state_manager):
+def _user_response_deserialize(bytes_response, communication_dictionary):
     response_dict = {"current_response_serialized": bytes_response, "current_response_is_valid": True}
 
     hex_response_array = re.findall('..', str(bytes_response.hex()))
@@ -10,9 +10,11 @@ def _user_response_deserialize(bytes_response, state_manager):
     if is_valid is False:
         return response_dict
 
-    func_code = state_manager.user_action_state["current_request_from_gui"][3]
+    tid = ''.join(hex_response_array[:2])
+    response_dict["response_tid"] = tid
+    func_code = communication_dictionary["current_request_from_gui"][3]
     modbus_resp = hex_response_array[9:]
-    start_addr = state_manager.user_action_state["current_request_from_gui"][0]
+    start_addr = communication_dictionary["current_request_from_gui"][0]
     start_addr = int(str(start_addr), 16)
     start_addr = hex(start_addr)
 
@@ -38,6 +40,29 @@ def _user_response_deserialize(bytes_response, state_manager):
 
 
 def _read_coils_deserialize(modbus_response, start_addr, response_dict):
+    binary_data = ""
+    for byte in modbus_response:
+        scale = 16
+        num_of_bits = 8
+        bin_data_byte = bin(int(byte, scale))[2:].zfill(num_of_bits)  # get the reversed the bits
+        bin_data_byte = str(bin_data_byte)
+        bin_data_byte = bin_data_byte[len(bin_data_byte)::-1]
+        binary_data = binary_data + bin_data_byte
+
+    indices = []
+    for i, bit in enumerate(binary_data):
+        if bit == '1':
+            res = i + int(start_addr, 16)
+            res = hex(res)
+            indices.append(res)
+    if len(indices) == 0:
+        indices = "-"
+    response_dict["current_response_returned_values"] = indices
+    response_dict["current_response_err_msg"] = "-"
+    return response_dict
+
+
+def read_coils_deserialize2(modbus_response, start_addr, response_dict):
     binary_data = ""
     for byte in modbus_response:
         scale = 16

@@ -15,6 +15,10 @@ from modbus_gui_app.state.state_manager_data_structures import _init_user_action
 from modbus_gui_app.state.state_manager_live_update import _live_update_loop, \
     _set_currently_selected_automatic_request
 
+from modbus_gui_app.communication.user_request_serializer import read_coils_serialize2, read_discrete_inputs_serialize2, \
+    read_holding_registers_serialize2, read_input_registers_serialize2, write_single_coil_serialize2, \
+    write_single_register_serialize2
+
 
 class StateManager(QObject):
     response_signal = Signal(bool)
@@ -87,46 +91,56 @@ class StateManager(QObject):
 
     async def _send_request_to_modbus(self, gui_request_data):
         function_code = gui_request_data[-1]
-        # if function_code == 1:
-        #     unit_addr = gui_request_data[2]
-        #     func_code = "01"
-        #     unit_addr = str(unit_addr).rjust(2, '0')
-        #
-        #     self.user_action_state["current_request_name"] = "Read Coils."
-        #     self.user_action_state["current_unit_address"] = str(unit_addr)
-        #     self.user_action_state["current_function_code"] = func_code
-        #     self.user_action_state["current_request_from_gui"] = gui_request_data
-        #     self.user_action_state["current_request_from_gui_is_valid"] = True
-        #     self.user_action_state["current_request_from_gui_error_msg"] = "-"
-        #     self.user_action_state["current_request_sent_time"] = datetime.now()
-        #     # TODO BYTES REQUEST IS MISSING - maka a dict in connection with that info
-        #     # TODO JUST COPY THAT DICT INSTEAD OF DOING THIS
-        #     self.connection_info_signal.emit("User Request Sent.")
-        #
-        #     response = await self.modbus_connection.ws_read_coils(gui_request_data)
-        #     self._process_modbus_response(response)
-        #     return
-        #
-        #     # TODO SAVE RESP(PROCESS MODBUS RESPONSE - CHANGE)
-        # elif function_code == 2:
-        #     print("READ DISCRETE INPUTS")
-        # elif function_code == 3:
-        #     print("READ HOLDING REGISTERS")
-        # elif function_code == 4:
-        #     print("READ INPUT REGISTERS")
-        # elif function_code == 5:
-        #     print("WRITE SINGLE COIL")
-        # elif function_code == 6:
-        #     print("WRITE SINGLE REGISTER")
+        tid = self.modbus_connection.tid + 1
+        start_addr = gui_request_data[0]
+        unit_addr = gui_request_data[2]
+        response = None
 
-        self.user_action_state["current_request_from_gui"] = gui_request_data
-        self.user_action_state["current_request_from_gui_is_valid"] = True
-        self.user_action_state["current_request_from_gui_error_msg"] = "-"
-        self.user_action_state["current_request_sent_time"] = datetime.now()
-        self.connection_info_signal.emit("User Request Sent.")
+        if function_code == 1:
+            no_of_coils = gui_request_data[1]
+            bytes_reg, results_dict = read_coils_serialize2(start_addr, no_of_coils, unit_addr, tid)
+            self.user_action_state.update(results_dict)
+            self.connection_info_signal.emit("User Request Sent.")
+            response = await self.modbus_connection.ws_read_coils(start_addr, no_of_coils, unit_addr)
 
-        response = await self.modbus_connection.ws_write(self.user_action_state)
-        self._process_modbus_response(response)
+        elif function_code == 2:
+            input_count = gui_request_data[1]
+            bytes_reg, results_dict = read_discrete_inputs_serialize2(start_addr, input_count, unit_addr, tid)
+            self.user_action_state.update(results_dict)
+            self.connection_info_signal.emit("User Request Sent.")
+            response = await self.modbus_connection.ws_read_discrete_inputs(start_addr, input_count, unit_addr)
+
+        elif function_code == 3:
+            h_regs_count = gui_request_data[1]
+            bytes_reg, results_dict = read_holding_registers_serialize2(start_addr, h_regs_count, unit_addr, tid)
+            self.user_action_state.update(results_dict)
+            self.connection_info_signal.emit("User Request Sent.")
+            response = await self.modbus_connection.ws_read_holding_registers(start_addr, h_regs_count, unit_addr)
+
+        elif function_code == 4:
+            in_regs_count = gui_request_data[1]
+            bytes_reg, results_dict = read_input_registers_serialize2(start_addr, in_regs_count, unit_addr, tid)
+            self.user_action_state.update(results_dict)
+            self.connection_info_signal.emit("User Request Sent.")
+            response = await self.modbus_connection.ws_read_input_registers(start_addr, in_regs_count, unit_addr)
+
+        elif function_code == 5:
+            coil_state = gui_request_data[1]
+            bytes_reg, results_dict = write_single_coil_serialize2(start_addr, coil_state, unit_addr, tid)
+            self.user_action_state.update(results_dict)
+            self.connection_info_signal.emit("User Request Sent.")
+            response = await self.modbus_connection.ws_write_single_coil(start_addr, coil_state, unit_addr)
+
+        elif function_code == 6:
+            reg_value = gui_request_data[1]
+            bytes_reg, results_dict = write_single_register_serialize2(start_addr, reg_value, unit_addr, tid)
+            self.user_action_state.update(results_dict)
+            self.connection_info_signal.emit("User Request Sent.")
+            response = await self.modbus_connection.ws_write_single_register(start_addr, reg_value, unit_addr)
+
+        if response is not None:
+            self.user_action_state.update(self.modbus_connection.communication_dict)
+            self._process_modbus_response(response)
 
     def _process_modbus_response(self, deserialized_dict):
         self.user_action_state["current_response_received_time"] = datetime.now()
@@ -142,10 +156,9 @@ class StateManager(QObject):
         self.connection_info_signal.emit("User Response Received.")
 
     def _update_history_last_ten(self):
-        if len(self.last_ten_dicts) >= 10:  # save only the last 10. If more, delete the oldest one.
+        if len(self.last_ten_dicts) >= 10:
             min_key = min(self.last_ten_dicts.keys())
             self.last_ten_dicts.pop(min_key)
-        # use deepcopy, otherwise, the older data will be overwritten
         tid = deepcopy(self.user_action_state["current_tid"])
         self.last_ten_dicts[tid] = deepcopy(self.user_action_state)
 
