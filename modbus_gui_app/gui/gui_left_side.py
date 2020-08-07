@@ -96,9 +96,9 @@ def _create_read_discrete_inputs_section():
     read_discrete_inputs_option_parent_layout.addLayout(read_discrete_inputs_option_first_row_layout)
 
     read_discrete_inputs_option_second_row_layout = QHBoxLayout()
-    read_discrete_inputs_option_second_row_text = QLabel("Register count(dec):")
+    read_discrete_inputs_option_second_row_text = QLabel("Input count(dec):")
     read_discrete_inputs_option_second_row_input = QLineEdit()
-    read_discrete_inputs_option_second_row_input.setPlaceholderText("Insert the number of registers...")
+    read_discrete_inputs_option_second_row_input.setPlaceholderText("Insert the number of inputs...")
     read_discrete_inputs_option_second_row_layout.addWidget(read_discrete_inputs_option_second_row_text)
     read_discrete_inputs_option_second_row_layout.addWidget(read_discrete_inputs_option_second_row_input)
     read_discrete_inputs_option_parent_layout.addLayout(read_discrete_inputs_option_second_row_layout)
