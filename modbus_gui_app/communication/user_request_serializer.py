@@ -108,7 +108,7 @@ def _make_com_dict(tid, unit_addr, func_code, req_name, start_addr, no_of_el, by
         "current_unit_address": unit_addr,
         "current_function_code": func_code,
         "current_request_name": req_name,
-        "current_request_from_gui": [int(start_addr) + 1, int(no_of_el), int(unit_addr), 1],
+        "current_request_from_gui": [int(start_addr) + 1, int(no_of_el), int(unit_addr), int(func_code)],
         "current_request_from_gui_is_valid": True,
         "current_request_from_gui_error_msg": "-",
         "current_request_serialized": bytes_req

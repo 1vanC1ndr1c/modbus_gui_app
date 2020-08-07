@@ -9,15 +9,15 @@ from threading import Thread
 from PySide2.QtCore import Signal, QObject
 
 from modbus_gui_app.communication.modbus_connection import ModbusConnection
+from modbus_gui_app.communication.user_request_serializer import read_coils_serialize2, read_discrete_inputs_serialize, \
+    read_holding_registers_serialize, read_input_registers_serialize, write_single_coil_serialize, \
+    write_single_register_serialize
 from modbus_gui_app.database.db_handler import Backend
+from modbus_gui_app.error_logging.error_logger import init_logger
 from modbus_gui_app.state.state_manager_data_structures import _init_user_action_state_dict, \
     _init_live_update_states
 from modbus_gui_app.state.state_manager_live_update import _live_update_loop, \
     _set_currently_selected_automatic_request
-
-from modbus_gui_app.communication.user_request_serializer import read_coils_serialize2, read_discrete_inputs_serialize, \
-    read_holding_registers_serialize, read_input_registers_serialize, write_single_coil_serialize, \
-    write_single_register_serialize
 
 
 class StateManager(QObject):
@@ -38,6 +38,7 @@ class StateManager(QObject):
         self._historian_db_dicts = {}
         self.live_update_states = _init_live_update_states()
         self.ws_read_loop_future = None
+        self.logger = init_logger(__name__)
 
     def get_historian_db_dicts(self):
         self._read_from_db()
@@ -70,7 +71,7 @@ class StateManager(QObject):
         try:
             await self.modbus_connection.ws.close()
         except Exception as conn_error:
-            print("STATE MANAGER FUNCTIONS: Error When Connecting, No Connection. ", conn_error)
+            self.logger.exception("STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.\n" + str(conn_error))
             self.invalid_connection_signal.emit("No Connection.")
             self.connection_info_signal.emit("No Connection.")
 
@@ -139,7 +140,7 @@ class StateManager(QObject):
             response = await self.modbus_connection.ws_write_single_register(start_addr, reg_value, unit_addr)
 
         if response is not None:
-            self.user_action_state.update(self.modbus_connection.communication_dict)
+            self.user_action_state.update(self.modbus_connection.dicts_by_tid[tid])
             self._process_modbus_response(response)
 
     def _process_modbus_response(self, deserialized_dict):

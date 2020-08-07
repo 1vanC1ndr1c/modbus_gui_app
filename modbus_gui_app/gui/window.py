@@ -5,13 +5,14 @@ from PySide2.QtGui import QFont, QIcon, Qt, QCloseEvent
 from PySide2.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, \
     QHBoxLayout, QSizePolicy, QFrame, QMenu, QMainWindow, QAction, QGroupBox
 
+from modbus_gui_app.error_logging.error_logger import init_logger
+from modbus_gui_app.gui import request_validation
 from modbus_gui_app.gui.current_state_window import CurrentStateWindow
 from modbus_gui_app.gui.error_window import _init_error_window
 from modbus_gui_app.gui.gui_left_side import _left_side_request_options_init
 from modbus_gui_app.gui.gui_middle import _middle_init
 from modbus_gui_app.gui.gui_right_side import ConnectionInfo
 from modbus_gui_app.gui.history_window import HistoryWindow
-from modbus_gui_app.gui import request_validation
 
 
 def run_gui(state_manager):
@@ -27,6 +28,7 @@ class Gui(QMainWindow):
 
     def __init__(self, state_manager):
         super().__init__()
+        self.logger = init_logger(__name__)
         self._state_manager = state_manager
         self._state_manager.response_signal.connect(self._update_response_layout)
         self._state_manager.periodic_update_signal.connect(self._update_current_state_window)
@@ -129,11 +131,11 @@ class Gui(QMainWindow):
         try:
             self._state_manager.ws_read_loop_future.cancel()
         except Exception as close_exception:
-            print("WINDOW: Error When Closing The App: ", close_exception)
+            self.logger.exception("WINDOW: Error When Closing The App: \n" + str(close_exception))
         try:
             self._state_manager.database.db_close()
         except Exception as close_exception:
-            print("WINDOW: Error When Closing The App: ", close_exception)
+            self.logger.exception("WINDOW: Error When Closing The App: \n" + str(close_exception))
         self._state_manager.gui_request_queue.put("End.")
         event.accept()
 

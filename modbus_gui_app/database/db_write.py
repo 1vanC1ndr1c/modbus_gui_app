@@ -1,4 +1,9 @@
+from modbus_gui_app.error_logging.error_logger import init_logger
+
+
 def _db_writer(dictionary, conn):
+    logger = init_logger(__name__)
+
     req_time_stamp = dictionary["current_request_sent_time"]
     tid = dictionary["current_tid"]
     req_type = "Request."
@@ -40,6 +45,5 @@ def _db_writer(dictionary, conn):
                       req_byte, resp_time_stamp, resp_type, resp_byte, resp_validity,
                       resp_err_msg, resp_return_value))
         conn.commit()
-
     except Exception as e:
-        print("DB_WRITE: Database Writing Error:", e)
+        logger.exception("DB_WRITE: Database Writing Error:  \n" + str(e))

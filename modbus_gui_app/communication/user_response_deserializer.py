@@ -1,12 +1,16 @@
 import re
 
+from modbus_gui_app.error_logging.error_logger import init_logger
+
 
 def _user_response_deserialize(bytes_response, communication_dictionary):
+    logger = init_logger(__name__)
+
     response_dict = {"current_response_serialized": bytes_response, "current_response_is_valid": True}
 
     hex_response_array = re.findall('..', str(bytes_response.hex()))
 
-    is_valid = _check_for_response_errors(response_dict, hex_response_array)
+    is_valid = _check_for_response_errors(response_dict, hex_response_array, logger)
     if is_valid is False:
         return response_dict
 
@@ -23,9 +27,9 @@ def _user_response_deserialize(bytes_response, communication_dictionary):
     elif func_code == 2:
         return _read_discrete_inputs_deserialize(modbus_resp, start_addr, response_dict)
     elif func_code == 3:
-        return _read_holding_registers_deserialize(modbus_resp, start_addr, response_dict)
+        return _read_holding_registers_deserialize(modbus_resp, start_addr, response_dict, logger)
     elif func_code == 4:
-        return _read_input_registers_deserialize(modbus_resp, start_addr, response_dict)
+        return _read_input_registers_deserialize(modbus_resp, start_addr, response_dict, logger)
     elif func_code == 5:
         return _write_single_coil_deserialize(response_dict, bytes_response)
     elif func_code == 6:
@@ -109,13 +113,13 @@ def _read_discrete_inputs_deserialize(modbus_response, start_add, response_dict)
     return response_dict
 
 
-def _read_holding_registers_deserialize(modbus_response, start_add, response_dict):
+def _read_holding_registers_deserialize(modbus_response, start_add, response_dict, logger):
     values = []
     for i in range(0, len(modbus_response), 2):
         try:
             values.append((modbus_response[i] + modbus_response[i + 1]).replace("\'", ""))
         except Exception as e:
-            print("USER  RESPONSE DESERIALIZER: Deserialization Error: ", e)
+            logger.exception("USER  RESPONSE DESERIALIZER: Deserialization Error: \n" + str(e))
             pass
     if len(values) == 0:
         values = "-"
@@ -137,13 +141,13 @@ def _read_holding_registers_deserialize(modbus_response, start_add, response_dic
     return response_dict
 
 
-def _read_input_registers_deserialize(modbus_response, start_add, response_dict):
+def _read_input_registers_deserialize(modbus_response, start_add, response_dict, logger):
     values = []
     for i in range(0, len(modbus_response), 2):
         try:
             values.append((modbus_response[i] + modbus_response[i + 1]).replace("\'", ""))
         except Exception as e:
-            print("USER  RESPONSE DESERIALIZER: Deserialization Error: ", e)
+            logger.exception("USER  RESPONSE DESERIALIZER: Deserialization Error: \n" + str(e))
             pass
     if len(values) == 0:
         values = "-"
@@ -177,7 +181,7 @@ def _write_single_register_deserialize(response_dict, bytes_response):
     return response_dict
 
 
-def _check_for_response_errors(response_dict, hex_response_array):
+def _check_for_response_errors(response_dict, hex_response_array, logger):
     try:
         if hex_response_array[7].startswith('8'):
             err_msg = str(hex_response_array[8])
@@ -193,7 +197,7 @@ def _check_for_response_errors(response_dict, hex_response_array):
             response_dict["current_response_err_msg"] = err_msg
             return False
     except Exception as error_check_exception:
-        print("USER  RESPONSE DESERIALIZER: Error when checking for errors: ", error_check_exception)
+        logger.exception("USER  RESPONSE DESERIALIZER: Error when checking for errors: \n" + str(error_check_exception))
         response_dict["current_response_is_valid"] = False
         response_dict["current_response_err_msg"] = "Error with the request processing!"
         response_dict["current_response_serialized"] = "-"

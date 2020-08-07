@@ -1,6 +1,10 @@
+from modbus_gui_app.error_logging.error_logger import init_logger
+
+
 def _db_reader(current_db_index, conn):
     db_data = []
     cursor = conn.cursor()
+    logger = init_logger(__name__)
 
     try:
         cursor.execute("SELECT * FROM req_and_resp "
@@ -10,7 +14,7 @@ def _db_reader(current_db_index, conn):
         db_data.append(cursor.fetchall())
         db_dict = _convert_data_into_dict(db_data)
     except Exception as e:
-        print("BR_READ: Database Read Error: ", e)
+        logger.exception("DB_READ: Database Read Error:  \n" + str(e))
         db_dict = {"READ ERROR"}
 
     return db_dict
