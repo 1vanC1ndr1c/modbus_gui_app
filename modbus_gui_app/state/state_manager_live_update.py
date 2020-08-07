@@ -5,7 +5,9 @@ async def _live_update_loop(state_manager):
     while True:
         _set_currently_selected_automatic_request(state_manager, "automatic")
         state_manager.connection_info_signal.emit("Automatic Request Sent.")
+        state_manager.modbus_connection.live_update_states.update(state_manager.live_update_states)
         await state_manager.modbus_connection.ws_refresh()
+        state_manager.live_update_states.update(state_manager.modbus_connection.live_update_states)
         state_manager.periodic_update_signal.emit(False)
         state_manager.connection_info_signal.emit("Automatic Request Received.")
         await asyncio.sleep(1)
@@ -31,15 +33,15 @@ def _set_currently_selected_automatic_request(state_manager, source):
     elif current_function_code == 3:
         current_function_code = str(hex(current_function_code))[2:].rjust(2, '0')
         state_manager.live_update_states["currently_selected_function"] = current_function_code
-        r = state_manager.live_update_states["current_read_holding_registers"]["current_request_serialized"]
-        state_manager.live_update_states["current_request"] = r
+        req = state_manager.live_update_states["current_read_holding_registers"]["current_request_serialized"]
+        state_manager.live_update_states["current_request"] = req
         _update_current_holding_registers_state(state_manager, source)
 
     elif current_function_code == 4:
         current_function_code = str(hex(current_function_code))[2:].rjust(2, '0')
         state_manager.live_update_states["currently_selected_function"] = current_function_code
-        r = state_manager.live_update_states["current_read_input_registers"]["current_request_serialized"]
-        state_manager.live_update_states["current_request"] = r
+        req = state_manager.live_update_states["current_read_input_registers"]["current_request_serialized"]
+        state_manager.live_update_states["current_request"] = req
         _update_current_input_registers_state(state_manager, source)
 
     elif current_function_code == 5:

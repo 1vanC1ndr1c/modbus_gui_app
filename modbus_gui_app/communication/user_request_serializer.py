@@ -14,7 +14,7 @@ def read_coils_serialize2(start_addr, no_of_coils, unit_addr, tid):
     return bytes_req, communication_dict
 
 
-def read_discrete_inputs_serialize2(start_addr, input_count, unit_addr, tid):
+def read_discrete_inputs_serialize(start_addr, input_count, unit_addr, tid):
     func_code = "02"
     tid = str(tid).rjust(4, '0')
     protocol = '0000'
@@ -31,7 +31,7 @@ def read_discrete_inputs_serialize2(start_addr, input_count, unit_addr, tid):
     return bytes_req, communication_dict
 
 
-def read_holding_registers_serialize2(start_addr, h_regs_count, unit_addr, tid):
+def read_holding_registers_serialize(start_addr, h_regs_count, unit_addr, tid):
     func_code = "03"
     tid = str(tid).rjust(4, '0')
     protocol = '0000'
@@ -48,7 +48,7 @@ def read_holding_registers_serialize2(start_addr, h_regs_count, unit_addr, tid):
     return bytes_req, communication_dict
 
 
-def read_input_registers_serialize2(start_addr, in_regs_count, unit_addr, tid):
+def read_input_registers_serialize(start_addr, in_regs_count, unit_addr, tid):
     func_code = "04"
     tid = str(tid).rjust(4, '0')
     protocol = '0000'
@@ -65,7 +65,7 @@ def read_input_registers_serialize2(start_addr, in_regs_count, unit_addr, tid):
     return bytes_req, communication_dict
 
 
-def write_single_coil_serialize2(start_addr, coil_state, unit_addr, tid):
+def write_single_coil_serialize(start_addr, coil_state, unit_addr, tid):
     func_code = "05"
     tid = str(tid).rjust(4, '0')
     protocol = '0000'
@@ -85,7 +85,7 @@ def write_single_coil_serialize2(start_addr, coil_state, unit_addr, tid):
     return bytes_req, communication_dict
 
 
-def write_single_register_serialize2(start_addr, reg_value, unit_addr, tid):
+def write_single_register_serialize(start_addr, reg_value, unit_addr, tid):
     func_code = "06"
     tid = str(tid).rjust(4, '0')
     protocol = '0000'

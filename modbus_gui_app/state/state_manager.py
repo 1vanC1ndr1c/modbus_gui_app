@@ -15,9 +15,9 @@ from modbus_gui_app.state.state_manager_data_structures import _init_user_action
 from modbus_gui_app.state.state_manager_live_update import _live_update_loop, \
     _set_currently_selected_automatic_request
 
-from modbus_gui_app.communication.user_request_serializer import read_coils_serialize2, read_discrete_inputs_serialize2, \
-    read_holding_registers_serialize2, read_input_registers_serialize2, write_single_coil_serialize2, \
-    write_single_register_serialize2
+from modbus_gui_app.communication.user_request_serializer import read_coils_serialize2, read_discrete_inputs_serialize, \
+    read_holding_registers_serialize, read_input_registers_serialize, write_single_coil_serialize, \
+    write_single_register_serialize
 
 
 class StateManager(QObject):
@@ -52,7 +52,7 @@ class StateManager(QObject):
 
     async def _start_readers_and_writers(self):
         self.modbus_connection = ModbusConnection()
-        self.modbus_connection.set_state_manager(self)
+        self.modbus_connection.live_update_states.update(self.live_update_states)
         await self.modbus_connection.open_session()
         self.connection_info_signal.emit("Connection Established")
 
@@ -105,35 +105,35 @@ class StateManager(QObject):
 
         elif function_code == 2:
             input_count = gui_request_data[1]
-            bytes_reg, results_dict = read_discrete_inputs_serialize2(start_addr, input_count, unit_addr, tid)
+            bytes_reg, results_dict = read_discrete_inputs_serialize(start_addr, input_count, unit_addr, tid)
             self.user_action_state.update(results_dict)
             self.connection_info_signal.emit("User Request Sent.")
             response = await self.modbus_connection.ws_read_discrete_inputs(start_addr, input_count, unit_addr)
 
         elif function_code == 3:
             h_regs_count = gui_request_data[1]
-            bytes_reg, results_dict = read_holding_registers_serialize2(start_addr, h_regs_count, unit_addr, tid)
+            bytes_reg, results_dict = read_holding_registers_serialize(start_addr, h_regs_count, unit_addr, tid)
             self.user_action_state.update(results_dict)
             self.connection_info_signal.emit("User Request Sent.")
             response = await self.modbus_connection.ws_read_holding_registers(start_addr, h_regs_count, unit_addr)
 
         elif function_code == 4:
             in_regs_count = gui_request_data[1]
-            bytes_reg, results_dict = read_input_registers_serialize2(start_addr, in_regs_count, unit_addr, tid)
+            bytes_reg, results_dict = read_input_registers_serialize(start_addr, in_regs_count, unit_addr, tid)
             self.user_action_state.update(results_dict)
             self.connection_info_signal.emit("User Request Sent.")
             response = await self.modbus_connection.ws_read_input_registers(start_addr, in_regs_count, unit_addr)
 
         elif function_code == 5:
             coil_state = gui_request_data[1]
-            bytes_reg, results_dict = write_single_coil_serialize2(start_addr, coil_state, unit_addr, tid)
+            bytes_reg, results_dict = write_single_coil_serialize(start_addr, coil_state, unit_addr, tid)
             self.user_action_state.update(results_dict)
             self.connection_info_signal.emit("User Request Sent.")
             response = await self.modbus_connection.ws_write_single_coil(start_addr, coil_state, unit_addr)
 
         elif function_code == 6:
             reg_value = gui_request_data[1]
-            bytes_reg, results_dict = write_single_register_serialize2(start_addr, reg_value, unit_addr, tid)
+            bytes_reg, results_dict = write_single_register_serialize(start_addr, reg_value, unit_addr, tid)
             self.user_action_state.update(results_dict)
             self.connection_info_signal.emit("User Request Sent.")
             response = await self.modbus_connection.ws_write_single_register(start_addr, reg_value, unit_addr)
