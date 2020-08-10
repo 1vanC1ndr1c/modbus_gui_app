@@ -50,7 +50,7 @@ class ModbusConnection:
     async def open_session(self):
         self.session = aiohttp.ClientSession()
         try:
-            self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
+            self.ws = await self.session.ws_connect('ws://localhost:3456/ws', timeout=1000.0)
         except Exception as conn_error:
             self.logger.exception("MODBUS CONNECTION: Cannot connect:\n" + str(conn_error))
 
@@ -62,6 +62,7 @@ class ModbusConnection:
         try:
             self.user_action_dict["current_request_sent_time"] = datetime.now()
             await self.ws.send_bytes(request_serialized)
+            print(request_serialized)
         except Exception as e:
             self.logger.exception("MODBUS_CONNECTION: Read Coils Request Error:\n" + str(e))
         pending_response = asyncio.Future()
@@ -141,10 +142,11 @@ class ModbusConnection:
     async def ws_read_loop(self):
         while True:
             bytes_response = await self.ws.receive()
-
+            print(bytes_response)
+            if bytes_response.data is None:
+                breakpoint()
             if isinstance(bytes_response.data, bytes):
                 check_bytes = str(bytes_response.data.hex())
-
                 if check_bytes.startswith("99"):
                     _live_update_response_deserialize(self.live_update_states, bytes_response.data)
                     automatic_request_tid = self.live_update_states["current_tid"]
