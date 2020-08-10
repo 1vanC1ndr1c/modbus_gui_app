@@ -62,60 +62,48 @@ def _set_currently_selected_automatic_request(state_manager, source):
 
 
 def _update_current_coils_state(state_manager, source):
-    state_manager.live_update_states["current_tid"] = 9901
     state_manager.live_update_states["currently_selected_function"] = "01"
     if source == "user":
         current_state = state_manager.user_action_state
         state_manager.live_update_states["current_read_coils"] = current_state.copy()
         state_manager.live_update_states["current_request"] = current_state["current_request_serialized"]
     elif source == "automatic":
-        current_tid = state_manager.live_update_states["read_coils_tid"]
         new_dict = state_manager.live_update_states["current_read_coils"]
-        new_dict["current_tid"] = current_tid
         new_dict["current_request_from_gui_is_valid"] = True
         state_manager.live_update_states["current_read_coils"] = new_dict
 
 
 def _update_current_discrete_inputs_state(state_manager, source):
-    state_manager.live_update_states["current_tid"] = 9902
     state_manager.live_update_states["currently_selected_function"] = "02"
     if source == "user":
         current_state = state_manager.user_action_state
         state_manager.live_update_states["current_read_discrete_inputs"] = current_state.copy()
         state_manager.live_update_states["current_request"] = current_state["current_request_serialized"]
     elif source == "automatic":
-        current_tid = state_manager.live_update_states["read_discrete_inputs_tid"]
         new_dict = state_manager.live_update_states["current_read_discrete_inputs"]
-        new_dict["current_tid"] = current_tid
         new_dict["current_request_from_gui_is_valid"] = True
         state_manager.live_update_states["current_read_discrete_inputs"] = new_dict
 
 
 def _update_current_holding_registers_state(state_manager, source):
-    state_manager.live_update_states["current_tid"] = 9903
     state_manager.live_update_states["currently_selected_function"] = "03"
     if source == "user":
         current_state = state_manager.user_action_state
         state_manager.live_update_states["current_read_holding_registers"] = current_state.copy()
         state_manager.live_update_states["current_request"] = current_state["current_request_serialized"]
     elif source == "automatic":
-        current_tid = state_manager.live_update_states["read_holding_registers_tid"]
         new_dict = state_manager.live_update_states["current_read_holding_registers"]
-        new_dict["current_tid"] = current_tid
         new_dict["current_request_from_gui_is_valid"] = True
         state_manager.live_update_states["current_read_holding_registers"] = new_dict
 
 
 def _update_current_input_registers_state(state_manager, source):
-    state_manager.live_update_states["current_tid"] = 9904
     state_manager.live_update_states["currently_selected_function"] = "04"
     if source == "user":
         current_state = state_manager.user_action_state
         state_manager.live_update_states["current_read_input_registers"] = current_state.copy()
         state_manager.live_update_states["current_request"] = current_state["current_request_serialized"]
     elif source == "automatic":
-        current_tid = state_manager.live_update_states["read_input_registers_tid"]
         new_dict = state_manager.live_update_states["current_read_input_registers"]
-        new_dict["current_tid"] = current_tid
         new_dict["current_request_from_gui_is_valid"] = True
         state_manager.live_update_states["current_read_input_registers"] = new_dict

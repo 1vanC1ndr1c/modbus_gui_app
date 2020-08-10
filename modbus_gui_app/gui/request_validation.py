@@ -193,8 +193,8 @@ def validate_start_address(start_address_hex):
 def validate_unit_address(unit_address):
     try:
         unit_address = int(str(unit_address))
-        if unit_address < 1 or unit_address > 255:
-            return False, "Unit address  needs to be [1, 255]", None
+        if unit_address < 1 or unit_address > 254:
+            return False, "Unit address  needs to be [1, 254]", None
     except:
         return False, "Unit address needs to be a base 10 number.", None
     return True, "-", unit_address

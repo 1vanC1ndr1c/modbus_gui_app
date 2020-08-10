@@ -9,7 +9,7 @@ from threading import Thread
 from PySide2.QtCore import Signal, QObject
 
 from modbus_gui_app.communication.modbus_connection import ModbusConnection
-from modbus_gui_app.communication.user_request_serializer import read_coils_serialize2, read_discrete_inputs_serialize, \
+from modbus_gui_app.communication.user_request_serializer import read_coils_serialize, read_discrete_inputs_serialize, \
     read_holding_registers_serialize, read_input_registers_serialize, write_single_coil_serialize, \
     write_single_register_serialize
 from modbus_gui_app.database.db_handler import Backend
@@ -99,7 +99,7 @@ class StateManager(QObject):
 
         if function_code == 1:
             no_of_coils = gui_request_data[1]
-            bytes_reg, results_dict = read_coils_serialize2(start_addr, no_of_coils, unit_addr, tid)
+            bytes_reg, results_dict = read_coils_serialize(start_addr, no_of_coils, unit_addr, tid)
             self.user_action_state.update(results_dict)
             self.connection_info_signal.emit("User Request Sent.")
             response = await self.modbus_connection.ws_read_coils(start_addr, no_of_coils, unit_addr)

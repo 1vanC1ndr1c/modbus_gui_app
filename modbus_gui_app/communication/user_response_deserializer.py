@@ -19,7 +19,6 @@ def _user_response_deserialize(bytes_response, communication_dictionary):
     func_code = communication_dictionary["current_request_from_gui"][3]
     modbus_resp = hex_response_array[9:]
     start_addr = communication_dictionary["current_request_from_gui"][0]
-    start_addr = int(str(start_addr), 16)
     start_addr = hex(start_addr)
 
     if func_code == 1:
@@ -128,6 +127,7 @@ def _read_holding_registers_deserialize(modbus_response, start_add, response_dic
         return response_dict
 
     location_and_value = []
+
     for i, val in enumerate(values):
         location = i + int(start_add, 16)
         location = hex(location)

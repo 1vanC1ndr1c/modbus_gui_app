@@ -27,9 +27,7 @@ def _live_update_response_deserialize(live_update_states, bytes_response):
 
 def _read_coils_live_update_deserialize(live_update_states, hex_response_array, deserialize_dict):
     modbus_response = hex_response_array[9:]
-
-    start_add = live_update_states["current_read_coils"]["current_request_from_gui"][0]
-    start_add = hex(int(str(start_add), 16))
+    start_add = hex(live_update_states["current_read_coils"]["current_request_from_gui"][0])
 
     deserialize_dict = _read_coils_deserialize(modbus_response, start_add, deserialize_dict)
     deserialize_dict["current_response_received_time"] = datetime.now()
@@ -41,37 +39,30 @@ def _read_coils_live_update_deserialize(live_update_states, hex_response_array, 
 
 def _read_discrete_inputs_live_update_deserialize(live_update_states, hex_response_array, deserialize_dict):
     modbus_response = hex_response_array[9:]
-
-    start_add = live_update_states["current_read_discrete_inputs"]["current_request_from_gui"][0]
-    start_add = hex(int(str(start_add), 16))
+    start_add = hex(live_update_states["current_read_discrete_inputs"]["current_request_from_gui"][0])
 
     deserialize_dict = _read_discrete_inputs_deserialize(modbus_response, start_add, deserialize_dict)
+
     deserialize_dict["current_response_received_time"] = datetime.now()
     for key in deserialize_dict:
         if key in live_update_states["current_read_discrete_inputs"]:
-            live_update_states["current_read_discrete_inputs"][key] = \
-                deserialize_dict[key]
+            live_update_states["current_read_discrete_inputs"][key] = deserialize_dict[key]
 
 
 def _read_holding_registers_live_update_deserialize(live_update_states, hex_response_array, deserialize_dict, logger):
     modbus_response = hex_response_array[9:]
-
-    start_add = live_update_states["current_read_holding_registers"]["current_request_from_gui"][0]
-    start_add = hex(int(str(start_add), 16))
+    start_add = hex(live_update_states["current_read_holding_registers"]["current_request_from_gui"][0])
 
     deserialize_dict = _read_holding_registers_deserialize(modbus_response, start_add, deserialize_dict, logger)
     deserialize_dict["current_response_received_time"] = datetime.now()
     for key in deserialize_dict:
         if key in live_update_states["current_read_holding_registers"]:
-            live_update_states["current_read_holding_registers"][key] = \
-                deserialize_dict[key]
+            live_update_states["current_read_holding_registers"][key] = deserialize_dict[key]
 
 
 def _read_input_registers_live_update_deserialize(live_update_states, hex_response_array, deserialize_dict, logger):
     modbus_response = hex_response_array[9:]
-
-    start_add = live_update_states["current_read_input_registers"]["current_request_from_gui"][0]
-    start_add = hex(int(str(start_add), 16))
+    start_add = hex(live_update_states["current_read_input_registers"]["current_request_from_gui"][0])
 
     deserialize_dict = _read_input_registers_deserialize(modbus_response, start_add, deserialize_dict, logger)
     deserialize_dict["current_response_received_time"] = datetime.now()

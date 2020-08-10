@@ -25,7 +25,7 @@ def _init_live_update_states():
     time_stamp = datetime.now()
 
     current_read_coils = {
-        'current_tid': 9901,
+        'current_tid': 0,
         'current_unit_address': '01',
         'current_function_code': '01',
         'current_request_name': 'Read Coils.',
@@ -41,7 +41,7 @@ def _init_live_update_states():
         'current_response_returned_values': '-'
     }
     current_read_discrete_inputs = {
-        'current_tid': 9902,
+        'current_tid': 0,
         'current_unit_address': '01',
         'current_function_code': '02',
         'current_request_name': 'Read Discrete Inputs .',
@@ -58,7 +58,7 @@ def _init_live_update_states():
     }
 
     current_read_holding_registers = {
-        'current_tid': 9903,
+        'current_tid': 0,
         'current_unit_address': '01',
         'current_function_code': '03',
         'current_request_name': 'Read Holding Registers.',
@@ -78,7 +78,7 @@ def _init_live_update_states():
     }
 
     current_read_input_registers = {
-        'current_tid': 9904,
+        'current_tid': 0,
         'current_unit_address': '01',
         'current_function_code': '04',
         'current_request_name': 'Read Input Registers.',
@@ -99,15 +99,11 @@ def _init_live_update_states():
 
     live_update_states = {
         "current_request": b'0',
-        "current_tid": 9901,
+        "current_tid": 0,
         "currently_selected_function": "01",
         "current_read_coils": current_read_coils,
         "current_read_discrete_inputs": current_read_discrete_inputs,
         "current_read_holding_registers": current_read_holding_registers,
         "current_read_input_registers": current_read_input_registers,
-        "read_coils_tid": 9901,
-        "read_discrete_inputs_tid": 9902,
-        "read_holding_registers_tid": 9903,
-        "read_input_registers_tid": 9904
     }
     return live_update_states

@@ -2,9 +2,11 @@ import re
 from datetime import datetime
 
 
-def _automatic_request_serialize(live_update_states):
+def _automatic_request_serialize(live_update_states, tid):
     function_code = live_update_states["currently_selected_function"]
+    live_update_states["current_tid"] = int(str(hex(tid))[2:].rjust(4, '0'), 16)
 
+    live_update_states["current_tid"] = tid
     if function_code == "01":
         _read_coils_automatic_request_serialize(live_update_states)
     elif function_code == "02":
@@ -17,7 +19,7 @@ def _automatic_request_serialize(live_update_states):
 
 def _read_coils_automatic_request_serialize(live_update_states):
     old_request = live_update_states["current_request"]
-    current_tid = live_update_states["read_coils_tid"]
+    current_tid = str(hex(live_update_states["current_tid"]))[2:].rjust(4, '0')
     valid = live_update_states["current_read_coils"]["current_request_from_gui_is_valid"]
 
     if old_request == b'0' or valid is False:
@@ -25,16 +27,14 @@ def _read_coils_automatic_request_serialize(live_update_states):
     old_request = re.findall('..', str(old_request.hex()))[2:]
     new_request = bytes.fromhex(str(current_tid) + ''.join(old_request))
 
-    live_update_states["current_request_serialized"] = new_request
     live_update_states["current_read_coils"]["current_request_serialized"] = new_request
     live_update_states["current_read_coils"]["current_request_sent_time"] = datetime.now()
     live_update_states["current_request"] = new_request
-    live_update_states["current_tid"] = current_tid
 
 
 def _read_discrete_inputs_automatic_request_serialize(live_update_states):
     old_request = live_update_states["current_request"]
-    current_tid = live_update_states["read_discrete_inputs_tid"]
+    current_tid = str(hex(live_update_states["current_tid"]))[2:].rjust(4, '0')
     valid = live_update_states["current_read_discrete_inputs"]["current_request_from_gui_is_valid"]
 
     if old_request == b'0' or valid is False:
@@ -42,16 +42,14 @@ def _read_discrete_inputs_automatic_request_serialize(live_update_states):
     old_request = re.findall('..', str(old_request.hex()))[2:]
     new_request = bytes.fromhex(str(current_tid) + ''.join(old_request))
 
-    live_update_states["current_request_serialized"] = new_request
     live_update_states["current_read_discrete_inputs"]["current_request_serialized"] = new_request
     live_update_states["current_read_discrete_inputs"]["current_request_sent_time"] = datetime.now()
     live_update_states["current_request"] = new_request
-    live_update_states["current_tid"] = current_tid
 
 
 def _read_holding_registers_automatic_request_serialize(live_update_states):
     old_request = live_update_states["current_request"]
-    current_tid = live_update_states["read_holding_registers_tid"]
+    current_tid = str(hex(live_update_states["current_tid"]))[2:].rjust(4, '0')
     valid = live_update_states["current_read_holding_registers"]["current_request_from_gui_is_valid"]
 
     if old_request == b'0' or valid is False:
@@ -59,25 +57,21 @@ def _read_holding_registers_automatic_request_serialize(live_update_states):
     old_request = re.findall('..', str(old_request.hex()))[2:]
     new_request = bytes.fromhex(str(current_tid) + ''.join(old_request))
 
-    live_update_states["current_request_serialized"] = new_request
     live_update_states["current_read_holding_registers"]["current_request_serialized"] = new_request
     live_update_states["current_read_holding_registers"]["current_request_sent_time"] = datetime.now()
     live_update_states["current_request"] = new_request
-    live_update_states["current_tid"] = current_tid
 
 
 def _read_input_registers_automatic_request_serialize(live_update_states):
     old_request = live_update_states["current_request"]
-    current_tid = live_update_states["read_input_registers_tid"]
-
+    current_tid = str(hex(live_update_states["current_tid"]))[2:].rjust(4, '0')
     valid = live_update_states["current_read_input_registers"]["current_request_from_gui_is_valid"]
+
     if old_request == b'0' or valid is False:
         old_request = b'\x00\x01\x00\x00\x00\x06\x01\x04\x00\x00\x00\x14'
     old_request = re.findall('..', str(old_request.hex()))[2:]
     new_request = bytes.fromhex(str(current_tid) + ''.join(old_request))
 
-    live_update_states["current_request_serialized"] = new_request
     live_update_states["current_read_input_registers"]["current_request_serialized"] = new_request
     live_update_states["current_read_input_registers"]["current_request_sent_time"] = datetime.now()
     live_update_states["current_request"] = new_request
-    live_update_states["current_tid"] = current_tid
