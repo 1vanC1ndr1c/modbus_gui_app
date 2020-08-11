@@ -10,7 +10,7 @@ from modbus_gui_app.communication.user_request_serializer import read_coils_seri
     read_discrete_inputs_serialize, read_holding_registers_serialize, read_input_registers_serialize
 from modbus_gui_app.communication.user_request_serializer import write_single_coil_serialize, \
     write_single_register_serialize
-from modbus_gui_app.communication.user_response_deserializer import _user_response_deserialize
+from modbus_gui_app.communication.user_response_deserializer import user_response_deserialize
 from modbus_gui_app.error_logging.error_logger import init_logger
 
 
@@ -37,8 +37,6 @@ class ModbusConnection:
 
         logger(modbus_gui_app.error_logging.error_logger): A custom logger object that writes any exceptions raised
                                                            into a file.
-
-
     """
 
     def __init__(self):
@@ -75,7 +73,8 @@ class ModbusConnection:
     async def open_session(self):
         """  A method that opens an aiohttp.ClientSession() and logs an exception if one happens.
 
-        Returns: None
+        Raises:
+            Exception: An exception is raised if the connection cannot be established. The error is logged.
         """
         self.session = aiohttp.ClientSession()
         try:
@@ -84,15 +83,17 @@ class ModbusConnection:
             self.logger.exception("MODBUS CONNECTION: Cannot connect:\n" + str(conn_error))
 
     async def ws_read_coils(self, start_addr, no_of_coils, unit_addr):
-        """ Me
-
+        """ A method that transforms the given arguments into a byte request that reads coils from a specified device.
         Args:
-            start_addr:
-            no_of_coils:
-            unit_addr:
+            start_addr(int): The starting address from which the coils are being read.
+            no_of_coils(int): The specified number of coils to be read.
+            unit_addr(int): The unit address on the device.
 
         Returns:
+            pending_response(dict): A dictionary that contains the deserialized response and the information about it.
 
+        Raises:
+            Exception: An exception is raised if the request is not sent. The error is logged.
         """
         self._update_tid()
         request_serialized, comm_dict = read_coils_serialize(start_addr, no_of_coils, unit_addr, self.tid)
@@ -109,6 +110,19 @@ class ModbusConnection:
         return await pending_response
 
     async def ws_read_discrete_inputs(self, start_addr, input_count, unit_addr):
+        """ A method that transforms the given arguments into a byte request that reads discrete inputs
+            from a specified device.
+        Args:
+            start_addr(int): The starting address from which the coils are being read.
+            input_count(int): The specified number of discrete inputs to be read.
+            unit_addr(int): The unit address on the device.
+
+        Returns:
+            pending_response(dict): A dictionary that contains the deserialized response and the information about it.
+
+        Raises:
+            Exception: An exception is raised if the request is not sent. The error is logged.
+        """
         self._update_tid()
         request_serialized, comm_dict = read_discrete_inputs_serialize(start_addr, input_count, unit_addr, self.tid)
         self.user_action_dict.update(comm_dict)
@@ -124,6 +138,19 @@ class ModbusConnection:
         return await pending_response
 
     async def ws_read_holding_registers(self, start_addr, h_regs_count, unit_addr):
+        """ A method that transforms the given arguments into a byte request that reads holding registers
+            from a specified device.
+        Args:
+            start_addr(int): The starting address from which the coils are being read.
+            h_regs_count(int): The specified number of holding registers to be read.
+            unit_addr(int): The unit address on the device.
+
+        Returns:
+            pending_response(dict): A dictionary that contains the deserialized response and the information about it.
+
+        Raises:
+            Exception: An exception is raised if the request is not sent. The error is logged.
+        """
         self._update_tid()
         request_serialized, comm_dict = read_holding_registers_serialize(start_addr, h_regs_count, unit_addr, self.tid)
         self.user_action_dict.update(comm_dict)
@@ -139,6 +166,19 @@ class ModbusConnection:
         return await pending_response
 
     async def ws_read_input_registers(self, start_addr, in_regs_count, unit_addr):
+        """ A method that transforms the given arguments into a byte request that reads input registers
+            from a specified device.
+        Args:
+            start_addr(int): The starting address from which the coils are being read.
+            in_regs_count(int): The specified number of holding registers to be read.
+            unit_addr(int): The unit address on the device.
+
+        Returns:
+            pending_response(dict): A dictionary that contains the deserialized response and the information about it.
+
+        Raises:
+            Exception: An exception is raised if the request is not sent. The error is logged.
+        """
         self._update_tid()
         request_serialized, comm_dict = read_input_registers_serialize(start_addr, in_regs_count, unit_addr, self.tid)
         self.user_action_dict.update(comm_dict)
@@ -154,6 +194,19 @@ class ModbusConnection:
         return await pending_response
 
     async def ws_write_single_coil(self, start_addr, coil_state, unit_addr):
+        """ A method that transforms the given arguments into a byte request that writes a coil value
+            into a specified device.
+        Args:
+            start_addr(int): The starting address from which the coils are being read.
+            coil_state(int): Value to be written in a coil. It can only be 1 or 0.
+            unit_addr(int): The unit address on the device.
+
+        Returns:
+            pending_response(dict): A dictionary that contains the deserialized response and the information about it.
+
+        Raises:
+            Exception: An exception is raised if the request is not sent. The error is logged.
+        """
         self._update_tid()
         request_serialized, comm_dict = write_single_coil_serialize(start_addr, coil_state, unit_addr, self.tid)
         self.user_action_dict.update(comm_dict)
@@ -169,6 +222,19 @@ class ModbusConnection:
         return await pending_response
 
     async def ws_write_single_register(self, start_addr, reg_value, unit_addr):
+        """ A method that transforms the given arguments into a byte request that writes a coil value
+              into a specified device.
+          Args:
+              start_addr(int): The starting address from which the coils are being read.
+              reg_value(int): Value to be written in a register
+              unit_addr(int): The unit address on the device.
+
+          Returns:
+              pending_response(dict): A dictionary that contains the deserialized response and the information about it.
+
+          Raises:
+            Exception: An exception is raised if the request is not sent. The error is logged.
+          """
         self._update_tid()
         request_serialized, comm_dict = write_single_register_serialize(start_addr, reg_value, unit_addr, self.tid)
         self.user_action_dict.update(comm_dict)
@@ -184,6 +250,11 @@ class ModbusConnection:
         return await pending_response
 
     async def ws_read_loop(self):
+        """ This method continuously reads the incoming responses and processes them.
+            It ignores the start of the communication and end of the communication messages (ACK, CLOSE, CLOSED...)
+            and only takes into a consideration the messages that contain byte data in their body.
+            Those messages are split into responses to the automatic requests and responses to a user request.
+        """
         while True:
             bytes_response = await self.ws.receive()
             if isinstance(bytes_response.data, bytes):
@@ -194,10 +265,16 @@ class ModbusConnection:
                 else:
                     self._user_req_list.remove(resp_tid)
                     req_dict = self.dicts_by_tid[resp_tid]
-                    deserialized_dict = _user_response_deserialize(bytes_response.data, req_dict)
+                    deserialized_dict = user_response_deserialize(bytes_response.data, req_dict)
                     self._pending_responses[resp_tid].set_result(deserialized_dict)
 
     async def ws_refresh(self):
+        """This is a generic method that is called by an outside live-update handler.
+           It is used to serialize and send a request for the automatic refresh of the data being used in the program.
+
+           Raises:
+               Exception: An exception is raised if the data was not sent.
+        """
         self._update_tid()
         _automatic_request_serialize(self.live_update_states, self.tid)
         automatic_request = self.live_update_states["current_request"]

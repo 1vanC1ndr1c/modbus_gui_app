@@ -13,7 +13,10 @@ class HistoryWindow:
         self._rows = QStandardItemModel()
         self._table_view = QTableView()
 
+
     def init_history_window(self):
+        self._rows = QStandardItemModel()
+        self._table_view = QTableView()
         self._is_first = True
         self._last_ten_dicts = self._state_manager.last_ten_dicts
 

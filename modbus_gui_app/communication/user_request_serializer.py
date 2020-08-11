@@ -1,4 +1,17 @@
 def read_coils_serialize(start_addr, no_of_coils, unit_addr, tid):
+    """ This function serializes the input data into a request that will be sent and saves the serialization information
+        into a dictionary.
+
+    Args:
+        start_addr: The starting address from which the coils are being read.
+        no_of_coils: Number of coils to be read.
+        unit_addr:  The unit address on the device.
+        tid: The transaction id that will be used in the request.
+
+    Returns:
+        bytes, dict: Bytes of the request that is serialized, and the dictionary that contains the information
+                    about the serialization.
+    """
     func_code = "01"
     protocol = '0000'
     tid = str(hex(tid))[2:].rjust(4, '0')
@@ -14,6 +27,19 @@ def read_coils_serialize(start_addr, no_of_coils, unit_addr, tid):
 
 
 def read_discrete_inputs_serialize(start_addr, input_count, unit_addr, tid):
+    """ This function serializes the input data into a request that will be sent and saves the serialization information
+        into dictionary.
+
+    Args:
+        start_addr: The starting address from which the coils are being read.
+        input_count: Number of discrete inputs to be read.
+        unit_addr:  The unit address on the device.
+        tid: The transaction id that will be used in the request.
+
+     Returns:
+        bytes, dict: Bytes of the request that is serialized, and the dictionary that contains the information
+                    about the serialization.
+    """
     func_code = "02"
     protocol = '0000'
     tid = str(hex(tid))[2:].rjust(4, '0')
@@ -31,6 +57,19 @@ def read_discrete_inputs_serialize(start_addr, input_count, unit_addr, tid):
 
 
 def read_holding_registers_serialize(start_addr, h_regs_count, unit_addr, tid):
+    """ This function serializes the input data into a request that will be sent and saves the serialization information
+        into dictionary.
+
+    Args:
+        start_addr: The starting address from which the coils are being read.
+        h_regs_count: Number of holding registers to be read.
+        unit_addr:  The unit address on the device.
+        tid: The transaction id that will be used in the request.
+
+    Returns:
+        bytes, dict: Bytes of the request that is serialized, and the dictionary that contains the information
+                    about the serialization.
+    """
     func_code = "03"
     protocol = '0000'
     tid = str(hex(tid))[2:].rjust(4, '0')
@@ -48,6 +87,19 @@ def read_holding_registers_serialize(start_addr, h_regs_count, unit_addr, tid):
 
 
 def read_input_registers_serialize(start_addr, in_regs_count, unit_addr, tid):
+    """ This function serializes the input data into a request that will be sent and saves the serialization information
+        into dictionary.
+
+    Args:
+        start_addr: The starting address from which the coils are being read.
+        in_regs_count: Number of input registers to be read.
+        unit_addr:  The unit address on the device.
+        tid: The transaction id that will be used in the request.
+
+    Returns:
+        bytes, dict: Bytes of the request that is serialized, and the dictionary that contains the information
+                    about the serialization.
+    """
     func_code = "04"
     protocol = '0000'
     tid = str(hex(tid))[2:].rjust(4, '0')
@@ -65,13 +117,26 @@ def read_input_registers_serialize(start_addr, in_regs_count, unit_addr, tid):
 
 
 def write_single_coil_serialize(start_addr, coil_state, unit_addr, tid):
+    """ This function serializes the input data into a request that will be sent and saves the serialization information
+        into dictionary.
+
+    Args:
+        start_addr: The starting address from which the coils are being read.
+        coil_state: The value to be written into a coil. It can only be 1 or 0.
+        unit_addr:  The unit address on the device.
+        tid: The transaction id that will be used in the request.
+
+    Returns:
+        bytes, dict: Bytes of the request that is serialized, and the dictionary that contains the information
+                    about the serialization.
+    """
     func_code = "05"
     protocol = '0000'
     tid = str(hex(tid))[2:].rjust(4, '0')
     unit_addr = str(hex(unit_addr))[2:].rjust(2, '0')
     start_addr = str(hex(start_addr - 1))[2:].rjust(4, '0')
 
-    if coil_state == 0:
+    if coil_state == 1:
         modbus_request = func_code + start_addr + "ff" + "00"
     else:
         modbus_request = func_code + start_addr + "00" + "00"
@@ -85,6 +150,19 @@ def write_single_coil_serialize(start_addr, coil_state, unit_addr, tid):
 
 
 def write_single_register_serialize(start_addr, reg_value, unit_addr, tid):
+    """ This function serializes the input data into a request that will be sent and saves the serialization information
+        into dictionary.
+
+    Args:
+        start_addr: The starting address from which the coils are being read.
+        reg_value: The value to be written into a register.
+        unit_addr:  The unit address on the device.
+        tid: The transaction id that will be used in the request.
+
+    Returns:
+        bytes, dict: Bytes of the request that is serialized, and the dictionary that contains the information
+                    about the serialization.
+    """
     func_code = "06"
     protocol = '0000'
     tid = str(hex(tid))[2:].rjust(4, '0')

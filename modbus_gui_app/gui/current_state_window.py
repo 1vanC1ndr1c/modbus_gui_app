@@ -1,5 +1,5 @@
 from PySide2 import QtCore
-from PySide2.QtGui import QFont, QStandardItemModel, QMovie, QStandardItem
+from PySide2.QtGui import QFont, QStandardItemModel, QMovie, QStandardItem, QColor, QBrush
 from PySide2.QtWidgets import QGroupBox, QVBoxLayout, QLabel, QStackedWidget, QTableView, QAbstractItemView, \
     QHeaderView, QWidget
 
@@ -118,7 +118,7 @@ class CurrentStateWindow:
         err = self._state_manager.live_update_states["current_read_coils"]["current_response_err_msg"]
         if err != "-" and len(err) != 0:
             self._coils_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
-            error = QStandardItem(str(err))
+            error = _QCustomStandardItem(str(err))
             self._coils_table_rows.appendRow([error])
             return
         current_coils_dict = self._state_manager.live_update_states["current_read_coils"]
@@ -133,9 +133,9 @@ class CurrentStateWindow:
             current_unit_address = unit_address
             if current_address in active_coils:
                 current_coil_value = 1
-            current_coil_value = QStandardItem(str(current_coil_value))
-            current_address = QStandardItem(str(current_address))
-            current_unit_address = QStandardItem(str(current_unit_address))
+            current_coil_value = _QCustomStandardItem(str(current_coil_value))
+            current_address = _QCustomStandardItem(str(current_address))
+            current_unit_address = _QCustomStandardItem(str(current_unit_address))
             self._coils_table_rows.appendRow([current_unit_address, current_address, current_coil_value])
         self._coils_table_view.setModel(self._coils_table_rows)
 
@@ -159,7 +159,7 @@ class CurrentStateWindow:
         err = err["current_response_err_msg"]
         if err != "-" and len(err) != 0:
             self._d_inputs_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
-            error = QStandardItem(str(err))
+            error = _QCustomStandardItem(str(err))
             self._d_inputs_table_rows.appendRow([error])
             return
         current_discrete_inputs_dict = self._state_manager.live_update_states["current_read_discrete_inputs"]
@@ -174,9 +174,9 @@ class CurrentStateWindow:
             current_unit_address = unit_address
             if current_address in active_discrete_inputs:
                 current_discrete_inputs_value = 1
-            current_discrete_inputs_value = QStandardItem(str(current_discrete_inputs_value))
-            current_address = QStandardItem(str(current_address))
-            current_unit_address = QStandardItem(str(current_unit_address))
+            current_discrete_inputs_value = _QCustomStandardItem(str(current_discrete_inputs_value))
+            current_address = _QCustomStandardItem(str(current_address))
+            current_unit_address = _QCustomStandardItem(str(current_unit_address))
             self._d_inputs_table_rows.appendRow([current_unit_address, current_address, current_discrete_inputs_value])
         self._d_inputs_table_view.setModel(self._d_inputs_table_rows)
 
@@ -201,7 +201,7 @@ class CurrentStateWindow:
         err = err["current_response_err_msg"]
         if err != "-" and len(err) != 0:
             self._h_reg_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
-            error = QStandardItem(str(err))
+            error = _QCustomStandardItem(str(err))
             self._h_reg_table_rows.appendRow([error])
             return
         current_holding_registers_dict = self._state_manager.live_update_states["current_read_holding_registers"]
@@ -222,9 +222,9 @@ class CurrentStateWindow:
             current_unit_address = unit_address
             if current_address in active_holding_registers.keys():
                 current_holding_registers_value = active_holding_registers[current_address]
-            current_holding_registers_value = QStandardItem(str(current_holding_registers_value))
-            current_address = QStandardItem(str(current_address))
-            current_unit_address = QStandardItem(str(current_unit_address))
+            current_holding_registers_value = _QCustomStandardItem(str(current_holding_registers_value))
+            current_address = _QCustomStandardItem(str(current_address))
+            current_unit_address = _QCustomStandardItem(str(current_unit_address))
             self._h_reg_table_rows.appendRow([current_unit_address, current_address, current_holding_registers_value])
         self._h_reg_table_view.setModel(self._h_reg_table_rows)
 
@@ -249,7 +249,7 @@ class CurrentStateWindow:
         err = err["current_response_err_msg"]
         if err != "-" and len(err) != 0:
             self._i_reg_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
-            error = QStandardItem(str(err))
+            error = _QCustomStandardItem(str(err))
             self._i_reg_table_rows.appendRow([error])
             return
         current_input_registers_dict = self._state_manager.live_update_states["current_read_input_registers"]
@@ -270,9 +270,9 @@ class CurrentStateWindow:
             current_unit_address = unit_address
             if current_address in active_input_registers.keys():
                 current_input_registers_value = active_input_registers[current_address]
-            current_input_registers_value = QStandardItem(str(current_input_registers_value))
-            current_address = QStandardItem(str(current_address))
-            current_unit_address = QStandardItem(str(current_unit_address))
+            current_input_registers_value = _QCustomStandardItem(str(current_input_registers_value))
+            current_address = _QCustomStandardItem(str(current_address))
+            current_unit_address = _QCustomStandardItem(str(current_unit_address))
             self._i_reg_table_rows.appendRow([current_unit_address, current_address, current_input_registers_value])
         self._i_reg_table_view.setModel(self._i_reg_table_rows)
 
@@ -296,7 +296,7 @@ class CurrentStateWindow:
         err = self._state_manager.live_update_states["current_read_coils"]["current_response_err_msg"]
         if err != "-" and len(err) != 0:
             self._coils_wr_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
-            error = QStandardItem(str(err))
+            error = _QCustomStandardItem(str(err))
             self._coils_wr_table_rows.appendRow([error])
             return
         current_coils_write_dict = self._state_manager.live_update_states["current_read_coils"]
@@ -311,9 +311,9 @@ class CurrentStateWindow:
             current_unit_address = unit_address
             if current_address in active_coils:
                 current_coil_value = 1
-            current_coil_value = QStandardItem(str(current_coil_value))
-            current_address = QStandardItem(str(current_address))
-            current_unit_address = QStandardItem(str(current_unit_address))
+            current_coil_value = _QCustomStandardItem(str(current_coil_value))
+            current_address = _QCustomStandardItem(str(current_address))
+            current_unit_address = _QCustomStandardItem(str(current_unit_address))
             self._coils_wr_table_rows.appendRow([current_unit_address, current_address, current_coil_value])
         self._coils_wr_table_view.setModel(self._coils_wr_table_rows)
 
@@ -337,7 +337,7 @@ class CurrentStateWindow:
         err = err["current_response_err_msg"]
         if err != "-" and len(err) != 0:
             self._wr_i_reg_table_rows.setHorizontalHeaderLabels(["ERROR", "", ""])
-            error = QStandardItem(str(err))
+            error = _QCustomStandardItem(str(err))
             self._wr_i_reg_table_rows.appendRow([error])
             return
         current_write_input_registers_dict = self._state_manager.live_update_states["current_read_input_registers"]
@@ -358,8 +358,19 @@ class CurrentStateWindow:
             current_unit_address = unit_address
             if current_address in active_write_input_registers.keys():
                 current_write_input_reg_value = active_write_input_registers[current_address]
-            current_write_input_reg_value = QStandardItem(str(current_write_input_reg_value))
-            current_address = QStandardItem(str(current_address))
-            current_unit_address = QStandardItem(str(current_unit_address))
+            current_write_input_reg_value = _QCustomStandardItem(str(current_write_input_reg_value))
+            current_address = _QCustomStandardItem(str(current_address))
+            current_unit_address = _QCustomStandardItem(str(current_unit_address))
             self._wr_i_reg_table_rows.appendRow([current_unit_address, current_address, current_write_input_reg_value])
         self._wr_i_reg_table_view.setModel(self._wr_i_reg_table_rows)
+
+
+class _QCustomStandardItem(QStandardItem):
+    def __init__(self, text):
+        super().__init__()
+        brush = QBrush()
+        brush.setColor(QColor(0, 0, 0))
+        self.setText(text)
+        self.setForeground(brush)
+        self.setEditable(False)
+        self.setEnabled(False)

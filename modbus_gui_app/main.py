@@ -1,4 +1,6 @@
 import sys
+import sphinx
+import pytest
 
 from modbus_gui_app.gui import window
 from modbus_gui_app.state.state_manager import StateManager

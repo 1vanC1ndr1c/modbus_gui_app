@@ -3,6 +3,16 @@ from datetime import datetime
 
 
 def _automatic_request_serialize(live_update_states, tid):
+    """ This function picks the correct serialization function based on the function code found in live_update_states.
+        That function is that called.
+    Args:
+        live_update_states: The dictionary that needs to be updated with the current automated request data.
+        tid: The transaction id that will be used in the request.
+
+    Returns:
+        bytes, dict: Bytes of the request that is serialized, and the dictionary that contains the information
+                    about the serialization.
+    """
     function_code = live_update_states["currently_selected_function"]
     live_update_states["current_tid"] = int(str(hex(tid))[2:].rjust(4, '0'), 16)
 
@@ -18,6 +28,12 @@ def _automatic_request_serialize(live_update_states, tid):
 
 
 def _read_coils_automatic_request_serialize(live_update_states):
+    """This function updates the dictionary by giving the previous valid request a new transaction ID.
+        It then updates the dictionary with new values.
+
+    Args:
+        live_update_states: The dictionary that contains the previous request. The updated request is saved into it.
+    """
     old_request = live_update_states["current_request"]
     current_tid = str(hex(live_update_states["current_tid"]))[2:].rjust(4, '0')
     valid = live_update_states["current_read_coils"]["current_request_from_gui_is_valid"]
@@ -33,6 +49,12 @@ def _read_coils_automatic_request_serialize(live_update_states):
 
 
 def _read_discrete_inputs_automatic_request_serialize(live_update_states):
+    """This function updates the dictionary by giving the previous valid request a new transaction ID.
+        It then updates the dictionary with new values.
+
+    Args:
+        live_update_states: The dictionary that contains the previous request. The updated request is saved into it.
+    """
     old_request = live_update_states["current_request"]
     current_tid = str(hex(live_update_states["current_tid"]))[2:].rjust(4, '0')
     valid = live_update_states["current_read_discrete_inputs"]["current_request_from_gui_is_valid"]
@@ -48,6 +70,12 @@ def _read_discrete_inputs_automatic_request_serialize(live_update_states):
 
 
 def _read_holding_registers_automatic_request_serialize(live_update_states):
+    """This function updates the dictionary by giving the previous valid request a new transaction ID.
+        It then updates the dictionary with new values.
+
+    Args:
+        live_update_states: The dictionary that contains the previous request. The updated request is saved into it.
+    """
     old_request = live_update_states["current_request"]
     current_tid = str(hex(live_update_states["current_tid"]))[2:].rjust(4, '0')
     valid = live_update_states["current_read_holding_registers"]["current_request_from_gui_is_valid"]
@@ -63,6 +91,12 @@ def _read_holding_registers_automatic_request_serialize(live_update_states):
 
 
 def _read_input_registers_automatic_request_serialize(live_update_states):
+    """This function updates the dictionary by giving the previous valid request a new transaction ID.
+        It then updates the dictionary with new values.
+
+    Args:
+        live_update_states: The dictionary that contains the previous request. The updated request is saved into it.
+    """
     old_request = live_update_states["current_request"]
     current_tid = str(hex(live_update_states["current_tid"]))[2:].rjust(4, '0')
     valid = live_update_states["current_read_input_registers"]["current_request_from_gui_is_valid"]

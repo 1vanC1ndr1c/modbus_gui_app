@@ -147,6 +147,10 @@ def validate_write_single_coil(function_code, stacked_widget):
 
     if valid_start_address_hex is True and valid_unit_address is True:
         select_state = stacked_widget.findChildren(QComboBox)[0].currentIndex()
+        if select_state == 0:
+            select_state = 1
+        else:
+            select_state = 0
         data = [start_address_hex, select_state, unit_address, function_code]
         return True, data
 
