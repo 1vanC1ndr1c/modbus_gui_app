@@ -15,6 +15,31 @@ from modbus_gui_app.error_logging.error_logger import init_logger
 
 
 class ModbusConnection:
+    """ A class that is used for the communication between the application and modbus devices.
+
+    Attributes:
+        user_action_dict(dict): A dictionary that contains the current information being exchanged between
+                                the device and user generated actions (i.e. requests and responses).
+
+        dicts_by_tid(dict): A dictionary that contains the aforementioned user action dictionaries that get assigned
+                            with a transaction id (tid) when the request is being generated. That TID is used to
+                            differentiate between user actions (transaction IDs are unique).
+
+        tid(int): A unique transaction ID that incrementally changes whenever a request is being generated. Every
+                  pair of request and response is saved to a dictionary that contains that ID. When the ID reaches
+                  the maximum hexadecimal value of 0xFFFF, it resets to 0x0000.
+
+        session(aiohttp.ClientSession()): A variable that is used so that the session can be opened and close by an
+                                          outside actor.
+
+        live_update_states(dict): A dictionary that contains the current information being exchanged between the
+                                  device and automatically generated requests (live update of the information).
+
+        logger(modbus_gui_app.error_logging.error_logger): A custom logger object that writes any exceptions raised
+                                                           into a file.
+
+
+    """
 
     def __init__(self):
         self.user_action_dict = {
@@ -48,6 +73,10 @@ class ModbusConnection:
         self.tid = self.tid + 1
 
     async def open_session(self):
+        """  A method that opens an aiohttp.ClientSession() and logs an exception if one happens.
+
+        Returns: None
+        """
         self.session = aiohttp.ClientSession()
         try:
             self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
@@ -55,6 +84,16 @@ class ModbusConnection:
             self.logger.exception("MODBUS CONNECTION: Cannot connect:\n" + str(conn_error))
 
     async def ws_read_coils(self, start_addr, no_of_coils, unit_addr):
+        """ Me
+
+        Args:
+            start_addr:
+            no_of_coils:
+            unit_addr:
+
+        Returns:
+
+        """
         self._update_tid()
         request_serialized, comm_dict = read_coils_serialize(start_addr, no_of_coils, unit_addr, self.tid)
         self.user_action_dict.update(comm_dict)
