@@ -1,0 +1,22 @@
+Communication module
+=====================
+
+
+modbus_connection:
+""""""""""""""""""""""""
+.. automodule:: modbus_gui_app.communication.modbus_connection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+
+live_update_req_serializer :
+""""""""""""""""""""""""""""
+.. automodule:: modbus_gui_app.communication.live_update_req_serializer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+
