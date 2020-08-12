@@ -18,6 +18,7 @@
     <script src="_static/bizstyle.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="State Module" href="state.html" />
     <link rel="prev" title="Main Page." href="index.html" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <!--[if lt IE 9]>
@@ -34,6 +35,9 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
+          <a href="state.html" title="State Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
           <a href="index.html" title="Main Page."
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Modbus GUI App 2020 documentation</a> &#187;</li>
@@ -49,7 +53,7 @@
   <div class="section" id="communication-module">
 <h1>Communication module<a class="headerlink" href="#communication-module" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-modbus_gui_app.communication.modbus_connection">
-<span id="modbus-connection"></span><h2>modbus_connection:<a class="headerlink" href="#module-modbus_gui_app.communication.modbus_connection" title="Permalink to this headline">¶</a></h2>
+<span id="modbus-connection"></span><h2>modbus_connection<a class="headerlink" href="#module-modbus_gui_app.communication.modbus_connection" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="modbus_gui_app.communication.modbus_connection.ModbusConnection">
 <em class="property">class </em><code class="sig-prename descclassname">modbus_gui_app.communication.modbus_connection.</code><code class="sig-name descname">ModbusConnection</code><a class="headerlink" href="#modbus_gui_app.communication.modbus_connection.ModbusConnection" title="Permalink to this definition">¶</a></dt>
@@ -324,7 +328,7 @@ It is used to serialize and send a request for the automatic refresh of the data
 
 </div>
 <div class="section" id="module-modbus_gui_app.communication.live_update_req_serializer">
-<span id="live-update-req-serializer"></span><h2>live_update_req_serializer :<a class="headerlink" href="#module-modbus_gui_app.communication.live_update_req_serializer" title="Permalink to this headline">¶</a></h2>
+<span id="live-update-req-serializer"></span><h2>live_update_req_serializer<a class="headerlink" href="#module-modbus_gui_app.communication.live_update_req_serializer" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="modbus_gui_app.communication.live_update_req_serializer._automatic_request_serialize">
 <code class="sig-prename descclassname">modbus_gui_app.communication.live_update_req_serializer.</code><code class="sig-name descname">_automatic_request_serialize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">live_update_states</span></em>, <em class="sig-param"><span class="n">tid</span></em><span class="sig-paren">)</span><a class="headerlink" href="#modbus_gui_app.communication.live_update_req_serializer._automatic_request_serialize" title="Permalink to this definition">¶</a></dt>
@@ -413,7 +417,7 @@ It is used to serialize and send a request for the automatic refresh of the data
 
 </div>
 <div class="section" id="module-modbus_gui_app.communication.live_update_resp_deserializer">
-<span id="live-update-resp-deserializer"></span><h2>live_update_resp_deserializer:<a class="headerlink" href="#module-modbus_gui_app.communication.live_update_resp_deserializer" title="Permalink to this headline">¶</a></h2>
+<span id="live-update-resp-deserializer"></span><h2>live_update_resp_deserializer<a class="headerlink" href="#module-modbus_gui_app.communication.live_update_resp_deserializer" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="modbus_gui_app.communication.live_update_resp_deserializer._live_update_response_deserialize">
 <code class="sig-prename descclassname">modbus_gui_app.communication.live_update_resp_deserializer.</code><code class="sig-name descname">_live_update_response_deserialize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">live_update_states</span></em>, <em class="sig-param"><span class="n">bytes_response</span></em><span class="sig-paren">)</span><a class="headerlink" href="#modbus_gui_app.communication.live_update_resp_deserializer._live_update_response_deserialize" title="Permalink to this definition">¶</a></dt>
@@ -518,7 +522,7 @@ serialized and unserialized).</p></li>
 
 </div>
 <div class="section" id="module-modbus_gui_app.communication.user_request_serializer">
-<span id="user-request-serializer"></span><h2>user_request_serializer:<a class="headerlink" href="#module-modbus_gui_app.communication.user_request_serializer" title="Permalink to this headline">¶</a></h2>
+<span id="user-request-serializer"></span><h2>user_request_serializer<a class="headerlink" href="#module-modbus_gui_app.communication.user_request_serializer" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="modbus_gui_app.communication.user_request_serializer.read_coils_serialize">
 <code class="sig-prename descclassname">modbus_gui_app.communication.user_request_serializer.</code><code class="sig-name descname">read_coils_serialize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start_addr</span></em>, <em class="sig-param"><span class="n">no_of_coils</span></em>, <em class="sig-param"><span class="n">unit_addr</span></em>, <em class="sig-param"><span class="n">tid</span></em><span class="sig-paren">)</span><a class="headerlink" href="#modbus_gui_app.communication.user_request_serializer.read_coils_serialize" title="Permalink to this definition">¶</a></dt>
@@ -693,7 +697,7 @@ serialized and unserialized).</p></li>
 
 </div>
 <div class="section" id="module-modbus_gui_app.communication.user_response_deserializer">
-<span id="user-response-deserializer"></span><h2>user_response_deserializer:<a class="headerlink" href="#module-modbus_gui_app.communication.user_response_deserializer" title="Permalink to this headline">¶</a></h2>
+<span id="user-response-deserializer"></span><h2>user_response_deserializer<a class="headerlink" href="#module-modbus_gui_app.communication.user_response_deserializer" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="modbus_gui_app.communication.user_response_deserializer.check_for_response_errors">
 <code class="sig-prename descclassname">modbus_gui_app.communication.user_response_deserializer.</code><code class="sig-name descname">check_for_response_errors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">response_dict</span></em>, <em class="sig-param"><span class="n">hex_response_array</span></em>, <em class="sig-param"><span class="n">logger</span></em><span class="sig-paren">)</span><a class="headerlink" href="#modbus_gui_app.communication.user_response_deserializer.check_for_response_errors" title="Permalink to this definition">¶</a></dt>
@@ -883,11 +887,11 @@ this particular response.</p></li>
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Communication module</a><ul>
-<li><a class="reference internal" href="#module-modbus_gui_app.communication.modbus_connection">modbus_connection:</a></li>
-<li><a class="reference internal" href="#module-modbus_gui_app.communication.live_update_req_serializer">live_update_req_serializer :</a></li>
-<li><a class="reference internal" href="#module-modbus_gui_app.communication.live_update_resp_deserializer">live_update_resp_deserializer:</a></li>
-<li><a class="reference internal" href="#module-modbus_gui_app.communication.user_request_serializer">user_request_serializer:</a></li>
-<li><a class="reference internal" href="#module-modbus_gui_app.communication.user_response_deserializer">user_response_deserializer:</a></li>
+<li><a class="reference internal" href="#module-modbus_gui_app.communication.modbus_connection">modbus_connection</a></li>
+<li><a class="reference internal" href="#module-modbus_gui_app.communication.live_update_req_serializer">live_update_req_serializer</a></li>
+<li><a class="reference internal" href="#module-modbus_gui_app.communication.live_update_resp_deserializer">live_update_resp_deserializer</a></li>
+<li><a class="reference internal" href="#module-modbus_gui_app.communication.user_request_serializer">user_request_serializer</a></li>
+<li><a class="reference internal" href="#module-modbus_gui_app.communication.user_response_deserializer">user_response_deserializer</a></li>
 </ul>
 </li>
 </ul>
@@ -895,6 +899,9 @@ this particular response.</p></li>
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
                         title="previous chapter">Main Page.</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="state.html"
+                        title="next chapter">State Module</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -925,6 +932,9 @@ this particular response.</p></li>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="state.html" title="State Module"
+             >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Main Page."
              >previous</a> |</li>

@@ -1,0 +1,304 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>State Module &#8212; Modbus GUI App 2020 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Database Module" href="database.html" />
+    <link rel="prev" title="Communication module" href="communication.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="database.html" title="Database Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="communication.html" title="Communication module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Modbus GUI App 2020 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">State Module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="state-module">
+<h1>State Module<a class="headerlink" href="#state-module" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-modbus_gui_app.state.state_manager">
+<span id="state-manager"></span><h2>state_manager<a class="headerlink" href="#module-modbus_gui_app.state.state_manager" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="modbus_gui_app.state.state_manager.StateManager">
+<em class="property">class </em><code class="sig-prename descclassname">modbus_gui_app.state.state_manager.</code><code class="sig-name descname">StateManager</code><a class="headerlink" href="#modbus_gui_app.state.state_manager.StateManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class used to be the intermediate between the communication, database and the graphical interface of
+the application. All message routing and current values of the information (state) goes through an instance of
+this class.</p>
+<dl class="py attribute">
+<dt id="modbus_gui_app.state.state_manager.StateManager.response_signal">
+<code class="sig-name descname">response_signal</code><a class="headerlink" href="#modbus_gui_app.state.state_manager.StateManager.response_signal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to signal when there is a response ready to be shown
+within the GUI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>PySide2.QtCore.Signal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modbus_gui_app.state.state_manager.StateManager.periodic_update_signal">
+<code class="sig-name descname">periodic_update_signal</code><a class="headerlink" href="#modbus_gui_app.state.state_manager.StateManager.periodic_update_signal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to signal when the periodic update is done refreshing
+the current information and that information is ready to be shown
+in the GUI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>PySide2.QtCore.Signal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modbus_gui_app.state.state_manager.StateManager.connection_info_signal">
+<code class="sig-name descname">connection_info_signal</code><a class="headerlink" href="#modbus_gui_app.state.state_manager.StateManager.connection_info_signal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to signal that the connection has a new message
+being sent or received.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>PySide2.QtCore.Signal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modbus_gui_app.state.state_manager.StateManager.invalid_connection_signal">
+<code class="sig-name descname">invalid_connection_signal</code><a class="headerlink" href="#modbus_gui_app.state.state_manager.StateManager.invalid_connection_signal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to signal that no connection was successfully established.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modbus_gui_app.state.state_manager.StateManager.last_ten_dicts">
+<code class="sig-name descname">last_ten_dicts</code><a class="headerlink" href="#modbus_gui_app.state.state_manager.StateManager.last_ten_dicts" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary used to fetch and save the values from the database (ten at a time).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modbus_gui_app.state.state_manager.StateManager.database">
+<code class="sig-name descname">database</code><a class="headerlink" href="#modbus_gui_app.state.state_manager.StateManager.database" title="Permalink to this definition">¶</a></dt>
+<dd><p>An instance of the Backend class that provides the connection to the
+database and the supporting functions for interacting with said
+database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="database.html#modbus_gui_app.database.db_handler.Backend" title="modbus_gui_app.database.db_handler.Backend">database.db_handler.Backend</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modbus_gui_app.state.state_manager.StateManager.gui_request_queue">
+<code class="sig-name descname">gui_request_queue</code><a class="headerlink" href="#modbus_gui_app.state.state_manager.StateManager.gui_request_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>A queue through which the GUI sends the request data which is forwarded to the
+connection module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>queue.Queue</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modbus_gui_app.state.state_manager.StateManager.modbus_connection">
+<code class="sig-name descname">modbus_connection</code><a class="headerlink" href="#modbus_gui_app.state.state_manager.StateManager.modbus_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>An instance of the connection class
+that provides the methods needed to send and receive data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="communication.html#modbus_gui_app.communication.modbus_connection.ModbusConnection" title="modbus_gui_app.communication.modbus_connection.ModbusConnection">communication.modbus_connection.ModbusConnection</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modbus_gui_app.state.state_manager.StateManager.user_action_state">
+<code class="sig-name descname">user_action_state</code><a class="headerlink" href="#modbus_gui_app.state.state_manager.StateManager.user_action_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary that stores the current request data and, when received, the corresponding
+response data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modbus_gui_app.state.state_manager.StateManager.gui">
+<code class="sig-name descname">gui</code><a class="headerlink" href="#modbus_gui_app.state.state_manager.StateManager.gui" title="Permalink to this definition">¶</a></dt>
+<dd><p>An instance of the graphical user interface class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>gui.window.Gui</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modbus_gui_app.state.state_manager.StateManager.live_update_states">
+<code class="sig-name descname">live_update_states</code><a class="headerlink" href="#modbus_gui_app.state.state_manager.StateManager.live_update_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary that contains the information about the last valid requests and
+valid responses for every type of a request. Used to resend those requests periodically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modbus_gui_app.state.state_manager.StateManager.ws_read_loop_future">
+<code class="sig-name descname">ws_read_loop_future</code><a class="headerlink" href="#modbus_gui_app.state.state_manager.StateManager.ws_read_loop_future" title="Permalink to this definition">¶</a></dt>
+<dd><p>The future of the web socket reader. Publicly exposed to that it can be
+closed when the application is closing. By closing this read loop, other read loops also
+stop.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>asyncio.Future</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modbus_gui_app.state.state_manager.StateManager.logger">
+<code class="sig-name descname">logger</code><a class="headerlink" href="#modbus_gui_app.state.state_manager.StateManager.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>An error logger used to record any errors that might occur during the program execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>logging.logger</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modbus_gui_app.state.state_manager.StateManager.get_historian_db_dicts">
+<code class="sig-name descname">get_historian_db_dicts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#modbus_gui_app.state.state_manager.StateManager.get_historian_db_dicts" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method that reads from the database and saves the results into a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dictionary containing the read data and data read before that.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modbus_gui_app.state.state_manager.StateManager.reset_db_dict">
+<code class="sig-name descname">reset_db_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#modbus_gui_app.state.state_manager.StateManager.reset_db_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method used to reset the data that was read from the databse and is currently stored in a dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">State Module</a><ul>
+<li><a class="reference internal" href="#module-modbus_gui_app.state.state_manager">state_manager</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="communication.html"
+                        title="previous chapter">Communication module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="database.html"
+                        title="next chapter">Database Module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/state.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="database.html" title="Database Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="communication.html" title="Communication module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Modbus GUI App 2020 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">State Module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Ivan Cindric.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.0.
+    </div>
+  </body>
+</html>

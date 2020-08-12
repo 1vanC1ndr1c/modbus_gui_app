@@ -1,0 +1,160 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Database Module &#8212; Modbus GUI App 2020 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Error Logger Module" href="error%20logger.html" />
+    <link rel="prev" title="State Module" href="state.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="error%20logger.html" title="Error Logger Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="state.html" title="State Module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Modbus GUI App 2020 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Database Module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-modbus_gui_app.database.db_handler">
+<span id="database-module"></span><h1>Database Module<a class="headerlink" href="#module-modbus_gui_app.database.db_handler" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="modbus_gui_app.database.db_handler.Backend">
+<em class="property">class </em><code class="sig-prename descclassname">modbus_gui_app.database.db_handler.</code><code class="sig-name descname">Backend</code><a class="headerlink" href="#modbus_gui_app.database.db_handler.Backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is used to instantiate a connection to the database and provides the methods needed deal with
+that connection.</p>
+<dl class="py method">
+<dt id="modbus_gui_app.database.db_handler.Backend.db_close">
+<code class="sig-name descname">db_close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#modbus_gui_app.database.db_handler.Backend.db_close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method used to close the database connection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modbus_gui_app.database.db_handler.Backend.db_read">
+<code class="sig-name descname">db_read</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">current_db_index</span></em><span class="sig-paren">)</span><a class="headerlink" href="#modbus_gui_app.database.db_handler.Backend.db_read" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is used to get the information stored in the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>current_db_index</strong> (<em>int</em>) – An index used to specify the reading location in the database.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Return a dictionary that contains the information stored in the database on the location</dt><dd><p>given by the ‘current_db_index’.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modbus_gui_app.database.db_handler.Backend.db_write">
+<code class="sig-name descname">db_write</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dictionary</span></em><span class="sig-paren">)</span><a class="headerlink" href="#modbus_gui_app.database.db_handler.Backend.db_write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method used to store the input data into the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dictionary</strong> (<em>dict</em>) – The dictionary that contains the values to be stored into the database.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="state.html"
+                        title="previous chapter">State Module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="error%20logger.html"
+                        title="next chapter">Error Logger Module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/database.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="error%20logger.html" title="Error Logger Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="state.html" title="State Module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Modbus GUI App 2020 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Database Module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Ivan Cindric.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.0.
+    </div>
+  </body>
+</html>

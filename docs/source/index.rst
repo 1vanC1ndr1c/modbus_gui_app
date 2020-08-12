@@ -1,4 +1,3 @@
-
 Main Page.
 ==========================================
 
@@ -7,6 +6,9 @@ Main Page.
    :caption: Contents:
 
    communication
+   state
+   database
+   error logger
 
 
 

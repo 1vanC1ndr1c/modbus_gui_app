@@ -21,6 +21,46 @@ from modbus_gui_app.state.state_manager_live_update import _live_update_loop, \
 
 
 class StateManager(QObject):
+    """A class used to be the intermediate between the communication, database and the graphical interface of
+      the application. All message routing and current values of the information (state) goes through an instance of
+      this class.
+
+      Attributes:
+        response_signal(PySide2.QtCore.Signal):  Used to signal when there is a response ready to be shown
+                                                within the GUI.
+        periodic_update_signal(PySide2.QtCore.Signal): Used to signal when the periodic update is done refreshing
+                                            the current information and that information is ready to be shown
+                                            in the GUI.
+        connection_info_signal(PySide2.QtCore.Signal): Used to signal that the connection has a new message
+                                                        being sent or received.
+        invalid_connection_signal: Used to signal that no connection was successfully established.
+
+        last_ten_dicts(dict): A dictionary used to fetch and save the values from the database (ten at a time).
+
+        database(database.db_handler.Backend): An instance of the Backend class that provides the connection to the
+                                                database and the supporting functions for interacting with said
+                                                database.
+
+        gui_request_queue(queue.Queue): A queue through which the GUI sends the request data which is forwarded to the
+                                        connection module.
+
+        modbus_connection(communication.modbus_connection.ModbusConnection): An instance of the connection class
+                                    that provides the methods needed to send and receive data.
+
+        user_action_state(dict): A dictionary that stores the current request data and, when received, the corresponding
+                                response data.
+
+        gui(gui.window.Gui): An instance of the graphical user interface class.
+
+        live_update_states(dict): A dictionary that contains the information about the last valid requests and
+                                valid responses for every type of a request. Used to resend those requests periodically.
+
+        ws_read_loop_future(asyncio.Future): The future of the web socket reader. Publicly exposed to that it can be
+                            closed when the application is closing. By closing this read loop, other read loops also
+                            stop.
+
+        logger(logging.logger): An error logger used to record any errors that might occur during the program execution.
+    """
     response_signal = Signal(bool)
     periodic_update_signal = Signal(bool)
     connection_info_signal = Signal(str)
@@ -41,6 +81,12 @@ class StateManager(QObject):
         self.logger = init_logger(__name__)
 
     def get_historian_db_dicts(self):
+        """A method that reads from the database and saves the results into a dictionary.
+
+        Returns:
+            dict: A dictionary containing the read data and data read before that.
+
+        """
         self._read_from_db()
         return self._historian_db_dicts
 
@@ -60,7 +106,7 @@ class StateManager(QObject):
         live_update_refresh_future = asyncio.ensure_future(_live_update_loop(self))
         ws_read_loop_future = asyncio.ensure_future(self.modbus_connection.ws_read_loop())
         self.ws_read_loop_future = ws_read_loop_future
-        state_manager_to_modbus_write_future = asyncio.ensure_future(self.gui_queue_read_loop())
+        state_manager_to_modbus_write_future = asyncio.ensure_future(self._gui_queue_read_loop())
 
         await asyncio.wait([ws_read_loop_future, live_update_refresh_future, state_manager_to_modbus_write_future],
                            return_when=asyncio.FIRST_COMPLETED)
@@ -77,7 +123,7 @@ class StateManager(QObject):
 
         await self.modbus_connection.session.close()
 
-    async def gui_queue_read_loop(self):
+    async def _gui_queue_read_loop(self):
         executor = ThreadPoolExecutor(1)
         while True:
             gui_request_data = await asyncio.get_event_loop().run_in_executor(
@@ -172,5 +218,8 @@ class StateManager(QObject):
         self._historian_db_current_index = self._historian_db_current_index + 10
 
     def reset_db_dict(self):
+        """A method used to reset the data that was read from the databse and is currently stored in a dictionary.
+
+        """
         self._historian_db_dicts = {}
         self._historian_db_current_index = 0
