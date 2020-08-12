@@ -9,6 +9,7 @@ from modbus_gui_app.error_logging.error_logger import init_logger
 
 def _live_update_response_deserialize(live_update_states, bytes_response):
     """This function is used to pick the right deserialization function based on the function code.
+
     Args:
         live_update_states: The dictionary that contains the request and is updated with the deserialized values.
         bytes_response: The response that needs to be deserialized.
@@ -34,6 +35,7 @@ def _read_coils_live_update_deserialize(live_update_states, hex_response_array, 
     """This function deserializes the input response based on the information found in the live_update_states
         dictionary, calls the function that does the deserialization (deserialize()), which saves the result into
         a dictionary.
+
     Args:
         live_update_states(dict): State dictionary that contains the corresponding request and will contain deserialized
                             response.
@@ -57,6 +59,7 @@ def _read_discrete_inputs_live_update_deserialize(live_update_states, hex_respon
     """This function deserializes the input response based on the information found in the live_update_states
         dictionary, calls the function that does the deserialization (deserialize()), which saves the result into
         a dictionary.
+
     Args:
         live_update_states(dict): State dictionary that contains the corresponding request and will contain deserialized
                             response.
@@ -80,6 +83,7 @@ def _read_holding_registers_live_update_deserialize(live_update_states, hex_resp
     """This function deserializes the input response based on the information found in the live_update_states
         dictionary, calls the function that does the deserialization (deserialize()), which saves the result into
         a dictionary.
+
     Args:
         live_update_states(dict): State dictionary that contains the corresponding request and will contain deserialized
                             response.
@@ -102,6 +106,7 @@ def _read_input_registers_live_update_deserialize(live_update_states, hex_respon
     """This function deserializes the input response based on the information found in the live_update_states
         dictionary, calls the function that does the deserialization (deserialize()), which saves the result into
         a dictionary.
+
     Args:
         live_update_states(dict): State dictionary that contains the corresponding request and will contain deserialized
                             response.
