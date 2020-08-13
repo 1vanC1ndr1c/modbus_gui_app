@@ -201,6 +201,7 @@ class StateManager(QObject):
         self.periodic_update_signal.emit(False)
         _set_currently_selected_automatic_request(self, "user")
         self.connection_info_signal.emit("User Response Received.")
+        print(self.user_action_state)
 
     def _update_history_last_ten(self):
         if len(self.last_ten_dicts) >= 10:
@@ -218,7 +219,7 @@ class StateManager(QObject):
         self._historian_db_current_index = self._historian_db_current_index + 10
 
     def reset_db_dict(self):
-        """A method used to reset the data that was read from the databse and is currently stored in a dictionary.
+        """A method used to reset the data that was read from the database and is currently stored in a dictionary.
 
         """
         self._historian_db_dicts = {}

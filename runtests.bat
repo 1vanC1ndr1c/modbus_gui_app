@@ -1,0 +1,2 @@
+@set PYTHONPATH=.
+@pytest test %*

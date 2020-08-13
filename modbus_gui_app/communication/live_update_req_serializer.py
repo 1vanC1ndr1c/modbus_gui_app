@@ -14,9 +14,8 @@ def _automatic_request_serialize(live_update_states, tid):
                     about the serialization.
     """
     function_code = live_update_states["currently_selected_function"]
-    live_update_states["current_tid"] = int(str(hex(tid))[2:].rjust(4, '0'), 16)
-
     live_update_states["current_tid"] = tid
+
     if function_code == "01":
         _read_coils_automatic_request_serialize(live_update_states)
     elif function_code == "02":

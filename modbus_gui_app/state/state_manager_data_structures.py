@@ -44,7 +44,7 @@ def _init_live_update_states():
         'current_tid': 0,
         'current_unit_address': '01',
         'current_function_code': '02',
-        'current_request_name': 'Read Discrete Inputs .',
+        'current_request_name': 'Read Discrete Inputs.',
         'current_request_from_gui': [1, 20, 1, 2],
         'current_request_from_gui_is_valid': True,
         'current_request_from_gui_error_msg': '-',
