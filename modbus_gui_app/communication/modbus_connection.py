@@ -269,7 +269,10 @@ class ModbusConnection:
 
         """
         while True:
-            bytes_response = await self.ws.receive()
+            try:
+                bytes_response = await self.ws.receive()
+            except asyncio.CancelledError:
+                return
             if isinstance(bytes_response.data, bytes):
                 resp_tid = int(''.join(re.findall('..', str(bytes_response.data.hex()))[:2]), 16)
                 if resp_tid not in self._user_req_list:

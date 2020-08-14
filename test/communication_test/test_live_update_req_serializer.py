@@ -1,4 +1,3 @@
-
 import re
 
 from modbus_gui_app.communication import live_update_req_serializer

@@ -217,7 +217,8 @@ def write_single_coil_deserialize(response_dict, bytes_response):
         dict: A dictionary that contains the information about the deserialized response.
     """
     response_dict["current_response_err_msg"] = "-"
-    response_dict["current_response_returned_values"] = str(bytes_response)
+    hex_response_array = re.findall('..', str(bytes_response.hex()))
+    response_dict["current_response_returned_values"] = hex_response_array
     return response_dict
 
 
@@ -232,7 +233,8 @@ def write_single_register_deserialize(response_dict, bytes_response):
         dict: A dictionary that contains the information about the deserialized response.
     """
     response_dict["current_response_err_msg"] = "-"
-    response_dict["current_response_returned_values"] = str(bytes_response)
+    hex_response_array = re.findall('..', str(bytes_response.hex()))
+    response_dict["current_response_returned_values"] = hex_response_array
     return response_dict
 
 
