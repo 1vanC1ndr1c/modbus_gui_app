@@ -1,0 +1,2 @@
+runtests.bat -v -k TEST_NAME.py
+runtests.bat -v

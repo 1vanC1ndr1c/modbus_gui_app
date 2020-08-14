@@ -44,8 +44,6 @@ class MockWs:
         return _ResponseMock(data=self.req_resp_dict["current_response_serialized"])
 
 
-# runtests.bat -v -k test_modbus_connection.py
-
 @pytest.mark.timeout(2)
 @pytest.mark.asyncio
 async def test_ws_read_coils(connection_factory):
