@@ -1,5 +1,7 @@
 from modbus_gui_app.error_logging.error_logger import init_logger
 
+import json
+
 
 def _db_reader(current_db_index, conn):
     db_data = []
@@ -30,6 +32,7 @@ def _convert_data_into_dict(db_data):
             function_code = single_dict_db[4]
             request_name = single_dict_db[5]
             request_from_qui = single_dict_db[6]
+            request_from_qui = json.loads(request_from_qui)
             request_is_valid = single_dict_db[7]
             if request_is_valid == "1":
                 request_is_valid = True

@@ -1,5 +1,7 @@
 from modbus_gui_app.error_logging.error_logger import init_logger
 
+import json
+
 
 def _db_writer(dictionary, conn):
     logger = init_logger(__name__)
@@ -11,6 +13,7 @@ def _db_writer(dictionary, conn):
     f_code = dictionary["current_function_code"]
     req_f_code_name = dictionary["current_request_name"]
     req_from_gui = str(dictionary["current_request_from_gui"])
+    req_from_gui = json.dumps(req_from_gui)
     req_validity = dictionary["current_request_from_gui_is_valid"]
     req_err_msg = dictionary["current_request_from_gui_error_msg"]
     req_byte = dictionary["current_request_serialized"]
