@@ -12,16 +12,16 @@ def _db_writer(dictionary, conn):
     unit_address = dictionary["current_unit_address"]
     f_code = dictionary["current_function_code"]
     req_f_code_name = dictionary["current_request_name"]
-    req_from_gui = str(dictionary["current_request_from_gui"])
+    req_from_gui = dictionary["current_request_from_gui"]
     req_from_gui = json.dumps(req_from_gui)
     req_validity = dictionary["current_request_from_gui_is_valid"]
     req_err_msg = dictionary["current_request_from_gui_error_msg"]
     req_byte = dictionary["current_request_serialized"]
     resp_time_stamp = dictionary["current_response_received_time"]
     resp_type = "Response."
+    resp_byte = dictionary["current_response_serialized"]
     resp_validity = dictionary["current_response_is_valid"]
     resp_err_msg = dictionary["current_response_err_msg"]
-    resp_byte = dictionary["current_response_serialized"]
     resp_return_value = str(dictionary["current_response_returned_values"])
 
     str_ins = "INSERT INTO REQ_AND_RESP (" \
