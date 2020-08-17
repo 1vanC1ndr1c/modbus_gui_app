@@ -3,7 +3,7 @@ import asyncio
 
 async def _live_update_loop(state_manager):
     while True:
-        _set_currently_selected_automatic_request(state_manager, "automatic")
+        set_currently_selected_automatic_request(state_manager, "automatic")
         state_manager.connection_info_signal.emit("Automatic Request Sent.")
         state_manager.modbus_connection.live_update_states.update(state_manager.live_update_states)
         await state_manager.modbus_connection.ws_refresh()
@@ -13,7 +13,7 @@ async def _live_update_loop(state_manager):
         await asyncio.sleep(1)
 
 
-def _set_currently_selected_automatic_request(state_manager, source):
+def set_currently_selected_automatic_request(state_manager, source):
     current_function_code = state_manager.gui.left_side_select_operation_box.currentIndex() + 1
 
     if current_function_code == 1:

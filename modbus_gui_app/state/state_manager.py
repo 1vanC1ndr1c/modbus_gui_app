@@ -16,8 +16,8 @@ from modbus_gui_app.database.db_handler import Backend
 from modbus_gui_app.error_logging.error_logger import init_logger
 from modbus_gui_app.state.state_manager_data_structures import _init_user_action_state_dict, \
     _init_live_update_states
-from modbus_gui_app.state.state_manager_live_update import _live_update_loop, \
-    _set_currently_selected_automatic_request
+from modbus_gui_app.state.state_manager_live_update import _live_update_loop
+from modbus_gui_app.state import state_manager_live_update
 
 
 class StateManager(QObject):
@@ -199,7 +199,7 @@ class StateManager(QObject):
         self._write_to_db()
         self.response_signal.emit(False)
         self.periodic_update_signal.emit(False)
-        _set_currently_selected_automatic_request(self, "user")
+        state_manager_live_update.set_currently_selected_automatic_request(self, "user")
         self.connection_info_signal.emit("User Response Received.")
         print(self.user_action_state)
 
