@@ -81,10 +81,11 @@ class ModbusConnection:
     def tid(self):
         return self._tid
 
-    def _update_tid(self):
+    def _update_and_get_tid(self):
         if self._tid >= 0xffff:
             self._tid = 0
         self._tid = self._tid + 1
+        return self._tid
 
     async def open_session(self):
         """  Connects to a websocket. Logs an error if one occurs.
@@ -108,18 +109,18 @@ class ModbusConnection:
             dict: A dictionary that contains the deserialized response and the information about it.
 
         """
-        self._update_tid()
-        request_serialized, comm_dict = read_coils_serialize(start_addr, no_of_coils, unit_addr, self._tid)
+        newest_tid = self._update_and_get_tid()
+        request_serialized, comm_dict = read_coils_serialize(start_addr, no_of_coils, unit_addr, newest_tid)
         self._user_action_dict.update(comm_dict)
-        self._dicts_by_tid[self._tid] = self._user_action_dict
+        self._dicts_by_tid[newest_tid] = self._user_action_dict
         try:
             self._user_action_dict["current_request_sent_time"] = datetime.now()
             await self.ws.send_bytes(request_serialized)
         except:
             self.logger.exception("MODBUS_CONNECTION: Read Coils Request Error:\n")
         pending_response = asyncio.Future()
-        self._pending_responses[self._tid] = pending_response
-        self._user_req_list.append(self._tid)
+        self._pending_responses[newest_tid] = pending_response
+        self._user_req_list.append(newest_tid)
         return await pending_response
 
     async def ws_read_discrete_inputs(self, start_addr, input_count, unit_addr):
@@ -135,45 +136,45 @@ class ModbusConnection:
             dict: A dictionary that contains the deserialized response and the information about it.
 
         """
-        self._update_tid()
-        request_serialized, comm_dict = read_discrete_inputs_serialize(start_addr, input_count, unit_addr, self._tid)
+        newest_tid = self._update_and_get_tid()
+        request_serialized, comm_dict = read_discrete_inputs_serialize(start_addr, input_count, unit_addr, newest_tid)
         self._user_action_dict.update(comm_dict)
-        self._dicts_by_tid[self._tid] = self._user_action_dict
+        self._dicts_by_tid[newest_tid] = self._user_action_dict
         try:
             self._user_action_dict["current_request_sent_time"] = datetime.now()
             await self.ws.send_bytes(request_serialized)
         except:
             self.logger.exception("MODBUS_CONNECTION: Read Discrete Inputs Request Error:\n")
         pending_response = asyncio.Future()
-        self._pending_responses[self._tid] = pending_response
-        self._user_req_list.append(self._tid)
+        self._pending_responses[newest_tid] = pending_response
+        self._user_req_list.append(newest_tid)
         return await pending_response
 
-    async def ws_read_holding_registers(self, start_addr, h_regs_count, unit_addr):
+    async def ws_read_holding_registers(self, start_addr, h_regs_count, u_addr):
         """ A method that transforms the given arguments into a byte request that reads holding registers
             from a specified device. Logs an error if one occurs.
 
         Args:
             start_addr(int): The starting address from which the coils are being read.
             h_regs_count(int): The specified number of holding registers to be read.
-            unit_addr(int): The unit address on the device.
+            u_addr(int): The unit address on the device.
 
         Returns:
             dict: A dictionary that contains the deserialized response and the information about it.
 
         """
-        self._update_tid()
-        request_serialized, comm_dict = read_holding_registers_serialize(start_addr, h_regs_count, unit_addr, self._tid)
+        newest_tid = self._update_and_get_tid()
+        request_serialized, comm_dict = read_holding_registers_serialize(start_addr, h_regs_count, u_addr, newest_tid)
         self._user_action_dict.update(comm_dict)
-        self._dicts_by_tid[self._tid] = self._user_action_dict
+        self._dicts_by_tid[newest_tid] = self._user_action_dict
         try:
             self._user_action_dict["current_request_sent_time"] = datetime.now()
             await self.ws.send_bytes(request_serialized)
         except:
             self.logger.exception("MODBUS_CONNECTION: Read Holding Registers Request Error: \n")
         pending_response = asyncio.Future()
-        self._pending_responses[self._tid] = pending_response
-        self._user_req_list.append(self._tid)
+        self._pending_responses[newest_tid] = pending_response
+        self._user_req_list.append(newest_tid)
         return await pending_response
 
     async def ws_read_input_registers(self, start_addr, in_regs_count, unit_addr):
@@ -189,18 +190,18 @@ class ModbusConnection:
             dict: A dictionary that contains the deserialized response and the information about it.
 
         """
-        self._update_tid()
-        request_serialized, comm_dict = read_input_registers_serialize(start_addr, in_regs_count, unit_addr, self._tid)
+        newest_tid = self._update_and_get_tid()
+        request_serialized, comm_dict = read_input_registers_serialize(start_addr, in_regs_count, unit_addr, newest_tid)
         self._user_action_dict.update(comm_dict)
-        self._dicts_by_tid[self._tid] = self._user_action_dict
+        self._dicts_by_tid[newest_tid] = self._user_action_dict
         try:
             self._user_action_dict["current_request_sent_time"] = datetime.now()
             await self.ws.send_bytes(request_serialized)
         except:
             self.logger.exception("MODBUS_CONNECTION: Read Input Registers Request Error: \n")
         pending_response = asyncio.Future()
-        self._pending_responses[self._tid] = pending_response
-        self._user_req_list.append(self._tid)
+        self._pending_responses[newest_tid] = pending_response
+        self._user_req_list.append(newest_tid)
         return await pending_response
 
     async def ws_write_single_coil(self, start_addr, coil_state, unit_addr):
@@ -216,18 +217,18 @@ class ModbusConnection:
             dict: A dictionary that contains the deserialized response and the information about it.
 
         """
-        self._update_tid()
-        request_serialized, comm_dict = write_single_coil_serialize(start_addr, coil_state, unit_addr, self._tid)
+        newest_tid = self._update_and_get_tid()
+        request_serialized, comm_dict = write_single_coil_serialize(start_addr, coil_state, unit_addr, newest_tid)
         self._user_action_dict.update(comm_dict)
-        self._dicts_by_tid[self._tid] = self._user_action_dict
+        self._dicts_by_tid[newest_tid] = self._user_action_dict
         try:
             self._user_action_dict["current_request_sent_time"] = datetime.now()
             await self.ws.send_bytes(request_serialized)
         except:
             self.logger.exception("MODBUS_CONNECTION:  Write Single Coil Request Error:  \n")
         pending_response = asyncio.Future()
-        self._pending_responses[self._tid] = pending_response
-        self._user_req_list.append(self._tid)
+        self._pending_responses[newest_tid] = pending_response
+        self._user_req_list.append(newest_tid)
         return await pending_response
 
     async def ws_write_single_register(self, start_addr, reg_value, unit_addr):
@@ -243,18 +244,18 @@ class ModbusConnection:
               dict: A dictionary that contains the deserialized response and the information about it.
 
           """
-        self._update_tid()
-        request_serialized, comm_dict = write_single_register_serialize(start_addr, reg_value, unit_addr, self._tid)
+        newest_tid = self._update_and_get_tid()
+        request_serialized, comm_dict = write_single_register_serialize(start_addr, reg_value, unit_addr, newest_tid)
         self._user_action_dict.update(comm_dict)
-        self._dicts_by_tid[self._tid] = self._user_action_dict
+        self._dicts_by_tid[newest_tid] = self._user_action_dict
         try:
             self._user_action_dict["current_request_sent_time"] = datetime.now()
             await self.ws.send_bytes(request_serialized)
         except:
             self.logger.exception("MODBUS_CONNECTION:  Write Single Register Request Error: \n")
         pending_response = asyncio.Future()
-        self._pending_responses[self._tid] = pending_response
-        self._user_req_list.append(self._tid)
+        self._pending_responses[newest_tid] = pending_response
+        self._user_req_list.append(newest_tid)
         return await pending_response
 
     async def ws_read_loop(self):
@@ -286,13 +287,13 @@ class ModbusConnection:
            Logs an error if one occurs.
 
         """
-        self._update_tid()
-        _automatic_request_serialize(self._live_update_states, self._tid)
+        newest_tid = self._update_and_get_tid()
+        _automatic_request_serialize(self._live_update_states, newest_tid)
         automatic_request = self._live_update_states["current_request"]
         try:
             await self.ws.send_bytes(automatic_request)
         except:
             self.logger.exception("MODBUS CONNECTION: Automatic Refresh Request Error: \n")
         automatic_refresh_pending_response = asyncio.Future()
-        self._pending_responses[self._tid] = automatic_refresh_pending_response
+        self._pending_responses[newest_tid] = automatic_refresh_pending_response
         await automatic_refresh_pending_response

@@ -201,7 +201,6 @@ class StateManager(QObject):
         self.periodic_update_signal.emit(False)
         state_manager_live_update.set_currently_selected_automatic_request(self, "user")
         self.connection_info_signal.emit("User Response Received.")
-        print(self.user_action_state)
 
     def _update_history_last_ten(self):
         if len(self.last_ten_dicts) >= 10:
