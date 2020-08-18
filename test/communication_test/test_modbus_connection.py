@@ -38,8 +38,6 @@ class MockWs:
 
     async def receive(self):
         req = await self.queue.get()
-        print(req)
-        print(self.req_resp_dict["current_request_serialized"])
         assert req == self.req_resp_dict["current_request_serialized"]
         return _ResponseMock(data=self.req_resp_dict["current_response_serialized"])
 

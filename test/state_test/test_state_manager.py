@@ -87,7 +87,6 @@ def test_state_manager(monkeypatch):
     test_state_manager_obj.last_ten_dicts = deepcopy(last_ten)
     test_state_manager_obj.user_action_state = {"current_tid": 99}
     test_state_manager_obj._update_history_last_ten()
-    print(test_state_manager_obj.last_ten_dicts)
 
     with monkeypatch.context() as m:
         m.setattr(state_manager_live_update, "set_currently_selected_automatic_request",
@@ -95,7 +94,6 @@ def test_state_manager(monkeypatch):
         m.setattr(test_state_manager_obj, '_update_history_last_ten', update_history_last_ten_mock)
         m.setattr(test_state_manager_obj, '_write_to_db', write_to_db_mock)
         test_state_manager_obj._process_modbus_response({1: "OnE", 2: "FOO", 9999: "NO"})
-        print(test_state_manager_obj.user_action_state)
 
     assert True == False
     #

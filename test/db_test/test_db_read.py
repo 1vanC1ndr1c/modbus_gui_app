@@ -139,7 +139,5 @@ def test_db_reader():
         if current_dict["current_response_is_valid"] is True:
             assert current_dict["current_response_err_msg"] == "-"
 
-        print(current_dict["current_response_returned_values"])
-
         assert type(current_dict["current_response_returned_values"]) == bytes \
                or type(current_dict["current_response_returned_values"]) == str

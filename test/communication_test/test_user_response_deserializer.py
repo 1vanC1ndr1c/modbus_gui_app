@@ -144,5 +144,4 @@ def test_write_single_register_deserialize():
         assert response_dict[key] is not None
 
     for key in response_dict:
-        print(response_dict[key])
         assert response_dict[key] == write_regs_dict[key]

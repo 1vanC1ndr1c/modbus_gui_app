@@ -23,7 +23,6 @@ def test_read_coils_serialize():
     assert new_bytes == old_bytes
 
     for key in new_dict:
-        print(key)
         assert new_dict[key] == read_coils_dict[key]
 
 
@@ -44,7 +43,6 @@ def test_read_discrete_inputs_serialize():
     assert new_bytes == old_bytes
 
     for key in new_dict:
-        print(key)
         assert new_dict[key] == read_coils_dict[key]
 
 
@@ -65,7 +63,6 @@ def test_read_holding_registers_serialize():
     assert new_bytes == old_bytes
 
     for key in new_dict:
-        print(key)
         assert new_dict[key] == read_coils_dict[key]
 
 
@@ -86,7 +83,6 @@ def test_read_input_registers_serialize():
     assert new_bytes == old_bytes
 
     for key in new_dict:
-        print(key)
         assert new_dict[key] == read_coils_dict[key]
 
 
@@ -121,7 +117,6 @@ def test_write_single_coil_serialize():
     assert new_bytes == old_bytes
 
     for key in new_dict:
-        print(key)
         assert new_dict[key] == write_coils_dict[key]
 
 
@@ -154,5 +149,4 @@ def test_write_single_register_serialize():
     assert new_bytes == old_bytes
 
     for key in new_dict:
-        print(key)
         assert new_dict[key] == write_regs_dict[key]
