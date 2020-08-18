@@ -129,10 +129,6 @@ class Gui(QMainWindow):
 
     def closeEvent(self, event: QCloseEvent):
         try:
-            self._state_manager.ws_read_loop_future.cancel()
-        except Exception as close_exception:
-            self.logger.exception("WINDOW: Error When Closing The App: \n" + str(close_exception))
-        try:
             self._state_manager.database.db_close()
         except Exception as close_exception:
             self.logger.exception("WINDOW: Error When Closing The App: \n" + str(close_exception))

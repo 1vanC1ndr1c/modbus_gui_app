@@ -77,7 +77,6 @@ class StateManager(QObject):
         self._historian_db_current_index = 0
         self._historian_db_dicts = {}
         self.live_update_states = _init_live_update_states()
-        self.ws_read_loop_future = None
         self.logger = init_logger(__name__)
 
     def get_historian_db_dicts(self):
@@ -104,16 +103,14 @@ class StateManager(QObject):
         self.connection_info_signal.emit("Connection Established")
 
         live_update_refresh_future = asyncio.ensure_future(_live_update_loop(self))
-        ws_read_loop_future = self.modbus_connection.ws_read_loop_future
-        self.ws_read_loop_future = ws_read_loop_future
         state_manager_to_modbus_write_future = asyncio.ensure_future(self._gui_queue_read_loop())
 
-        await asyncio.wait([ws_read_loop_future, live_update_refresh_future, state_manager_to_modbus_write_future],
+        await asyncio.wait([live_update_refresh_future, state_manager_to_modbus_write_future],
                            return_when=asyncio.FIRST_COMPLETED)
 
         state_manager_to_modbus_write_future.cancel()
         live_update_refresh_future.cancel()
-        ws_read_loop_future.cancel()
+
         try:
             await self.modbus_connection.ws.close()
         except Exception as conn_error:
@@ -129,6 +126,7 @@ class StateManager(QObject):
             gui_request_data = await asyncio.get_event_loop().run_in_executor(
                 executor, functools.partial(self._get_msg_from_gui_queue))
             if gui_request_data == "End.":
+                self.modbus_connection.close_connection()
                 break
             await self._send_request_to_modbus(gui_request_data)
 
