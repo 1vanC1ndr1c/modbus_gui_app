@@ -104,7 +104,7 @@ class StateManager(QObject):
         self.connection_info_signal.emit("Connection Established")
 
         live_update_refresh_future = asyncio.ensure_future(_live_update_loop(self))
-        ws_read_loop_future = asyncio.ensure_future(self.modbus_connection.ws_read_loop())
+        ws_read_loop_future = self.modbus_connection.ws_read_loop_future
         self.ws_read_loop_future = ws_read_loop_future
         state_manager_to_modbus_write_future = asyncio.ensure_future(self._gui_queue_read_loop())
 

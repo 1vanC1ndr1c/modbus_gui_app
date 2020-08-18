@@ -18,7 +18,7 @@ async def connection_factory():
         test_modbus_conn = ModbusConnection()
         test_modbus_conn.ws = mock_ws
 
-        tasks.append(asyncio.ensure_future(test_modbus_conn.ws_read_loop()))
+        tasks.append(asyncio.ensure_future(test_modbus_conn._ws_read_loop()))
         return test_modbus_conn
 
     yield factory

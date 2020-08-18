@@ -64,6 +64,7 @@ class ModbusConnection:
         self._live_update_states = {}
         self.logger = init_logger(__name__)
         self._user_req_list = []
+        self.ws_read_loop_future = None
 
     @property
     def live_update_states(self):
@@ -96,6 +97,8 @@ class ModbusConnection:
             self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
         except:
             self.logger.exception("MODBUS CONNECTION: Cannot connect:\n")
+
+        self.ws_read_loop_future = asyncio.ensure_future(self._ws_read_loop())
 
     async def ws_read_coils(self, start_addr, no_of_coils, unit_addr):
         """ A method that transforms the given arguments into a byte request that reads coils from a specified device.
@@ -224,7 +227,7 @@ class ModbusConnection:
         self._user_req_list.append(newest_tid)
         return await pending_response
 
-    async def ws_read_loop(self):
+    async def _ws_read_loop(self):
         """ This method continuously reads the incoming responses and processes them.
             It ignores the start of the communication and end of the communication messages (ACK, CLOSE, CLOSED...)
             and only takes into a consideration the messages that contain byte data in their body.
