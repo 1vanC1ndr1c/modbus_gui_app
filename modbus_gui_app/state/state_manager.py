@@ -9,7 +9,7 @@ from threading import Thread
 from PySide2.QtCore import Signal, QObject
 
 from modbus_gui_app.communication.modbus_connection import ModbusConnection
-from modbus_gui_app.communication.user_request_serializer import read_coils_serialize, read_discrete_inputs_serialize, \
+from modbus_gui_app.communication.request_serializer import read_coils_serialize, read_discrete_inputs_serialize, \
     read_holding_registers_serialize, read_input_registers_serialize, write_single_coil_serialize, \
     write_single_register_serialize
 from modbus_gui_app.database.db_handler import Backend
@@ -98,21 +98,19 @@ class StateManager(QObject):
 
     async def _start_readers_and_writers(self):
         self.modbus_connection = ModbusConnection()
-        # self.modbus_connection.live_update_states.update(self.live_update_states)
         await self.modbus_connection.open_session()
         self.connection_info_signal.emit("Connection Established")
 
         live_update_refresh_future = asyncio.ensure_future(_live_update_loop(self))
         state_manager_to_modbus_write_future = asyncio.ensure_future(self._gui_queue_read_loop())
 
-        await asyncio.wait([live_update_refresh_future, state_manager_to_modbus_write_future],
+        await asyncio.wait([self.modbus_connection.ws_read_loop_future, live_update_refresh_future,
+                            state_manager_to_modbus_write_future],
                            return_when=asyncio.FIRST_COMPLETED)
 
-        try:
-            state_manager_to_modbus_write_future.cancel()
-            live_update_refresh_future.cancel()
-        except asyncio.CancelledError:
-            pass
+        state_manager_to_modbus_write_future.cancel()
+        live_update_refresh_future.cancel()
+        self.modbus_connection.close_connection()
 
         try:
             await self.modbus_connection.ws.close()

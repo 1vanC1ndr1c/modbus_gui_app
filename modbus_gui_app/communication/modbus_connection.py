@@ -4,11 +4,11 @@ from datetime import datetime
 
 import aiohttp
 
-from modbus_gui_app.communication.user_request_serializer import read_coils_serialize, \
+from modbus_gui_app.communication.request_serializer import read_coils_serialize, \
     read_discrete_inputs_serialize, read_holding_registers_serialize, read_input_registers_serialize
-from modbus_gui_app.communication.user_request_serializer import write_single_coil_serialize, \
+from modbus_gui_app.communication.request_serializer import write_single_coil_serialize, \
     write_single_register_serialize
-from modbus_gui_app.communication.user_response_deserializer import user_response_deserialize
+from modbus_gui_app.communication.response_deserializer import response_deserialize
 from modbus_gui_app.error_logging.error_logger import init_logger
 
 
@@ -16,12 +16,12 @@ class ModbusConnection:
     """ A class that is used for the communication between the application and modbus devices.
 
     Attributes:
-        _user_action_dict(dict): A dictionary that contains the current information being exchanged between
-                                the device and user generated actions (i.e. requests and responses).
+        _req_resp_dict(dict): A dictionary that contains the current information being exchanged between
+                                the device and the application (i.e. requests and responses).
 
-        _dicts_by_tid(dict): A dictionary that contains the aforementioned user action dictionaries that get assigned
-                            with a transaction id (tid) when the request is being generated. That TID is used to
-                            differentiate between user actions (transaction IDs are unique).
+        _dicts_by_tid(dict): A dictionary that contains the aforementioned request and response dictionaries that get
+                            assigned with a transaction id (tid) when the request is being generated. That TID is
+                            used to differentiate between requests (transaction IDs are unique).
 
         _tid(int): A unique transaction ID that incrementally changes whenever a request is being generated. Every
                   pair of request and response is saved to a dictionary that contains that ID. When the ID reaches
@@ -35,7 +35,7 @@ class ModbusConnection:
     """
 
     def __init__(self):
-        self._user_action_dict = {
+        self._req_resp_dict = {
             "current_tid": 0,
             "current_unit_address": "00",
             "current_function_code": "00",
@@ -80,16 +80,13 @@ class ModbusConnection:
         self.session = aiohttp.ClientSession()
         try:
             self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
-        except:
+        except asyncio.CancelledError:
             self.logger.exception("MODBUS CONNECTION: Cannot connect:\n")
 
         self.ws_read_loop_future = asyncio.ensure_future(self._ws_read_loop())
 
     def close_connection(self):
-        try:
-            self.ws_read_loop_future.cancel()
-        except asyncio.CancelledError:
-            pass
+        self.ws_read_loop_future.cancel()
 
     async def ws_read_coils(self, start_addr, no_of_coils, unit_addr):
         """ A method that transforms the given arguments into a byte request that reads coils from a specified device.
@@ -206,10 +203,10 @@ class ModbusConnection:
 
     async def _ws_send_request(self, req_name, request_serialized, comm_dict, newest_tid):
 
-        self._user_action_dict.update(comm_dict)
-        self._dicts_by_tid[newest_tid] = self._user_action_dict
+        self._req_resp_dict.update(comm_dict)
+        self._dicts_by_tid[newest_tid] = self._req_resp_dict
         try:
-            self._user_action_dict["current_request_sent_time"] = datetime.now()
+            self._req_resp_dict["current_request_sent_time"] = datetime.now()
             await self.ws.send_bytes(request_serialized)
         except:
             self.logger.exception("MODBUS_CONNECTION: " + req_name + " Request Error:\n")
@@ -231,5 +228,5 @@ class ModbusConnection:
             if isinstance(bytes_response.data, bytes):
                 resp_tid = int(''.join(re.findall('..', str(bytes_response.data.hex()))[:2]), 16)
                 req_dict = self._dicts_by_tid[resp_tid]
-                deserialized_dict = user_response_deserialize(bytes_response.data, req_dict)
+                deserialized_dict = response_deserialize(bytes_response.data, req_dict)
                 self._pending_responses[resp_tid].set_result(deserialized_dict)

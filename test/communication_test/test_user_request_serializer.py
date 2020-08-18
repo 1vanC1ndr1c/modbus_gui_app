@@ -1,7 +1,7 @@
 from copy import deepcopy
 from datetime import datetime
 
-from modbus_gui_app.communication import user_request_serializer
+from modbus_gui_app.communication import request_serializer
 from modbus_gui_app.state.state_manager_data_structures import _init_live_update_states
 
 live_update_states_test_dict = _init_live_update_states()
@@ -18,7 +18,7 @@ def test_read_coils_serialize():
     no_of_coils = data[1]
     unit_addr = data[2]
     tid = 1
-    new_bytes, new_dict = user_request_serializer.read_coils_serialize(start_addr, no_of_coils, unit_addr, tid)
+    new_bytes, new_dict = request_serializer.read_coils_serialize(start_addr, no_of_coils, unit_addr, tid)
 
     assert new_bytes == old_bytes
 
@@ -37,8 +37,8 @@ def test_read_discrete_inputs_serialize():
     no_of_coils = data[1]
     unit_addr = data[2]
     tid = 1
-    new_bytes, new_dict = user_request_serializer.read_discrete_inputs_serialize(start_addr, no_of_coils, unit_addr,
-                                                                                 tid)
+    new_bytes, new_dict = request_serializer.read_discrete_inputs_serialize(start_addr, no_of_coils, unit_addr,
+                                                                            tid)
 
     assert new_bytes == old_bytes
 
@@ -57,8 +57,8 @@ def test_read_holding_registers_serialize():
     no_of_coils = data[1]
     unit_addr = data[2]
     tid = 1
-    new_bytes, new_dict = user_request_serializer.read_holding_registers_serialize(start_addr, no_of_coils, unit_addr,
-                                                                                   tid)
+    new_bytes, new_dict = request_serializer.read_holding_registers_serialize(start_addr, no_of_coils, unit_addr,
+                                                                              tid)
 
     assert new_bytes == old_bytes
 
@@ -77,8 +77,8 @@ def test_read_input_registers_serialize():
     no_of_coils = data[1]
     unit_addr = data[2]
     tid = 1
-    new_bytes, new_dict = user_request_serializer.read_input_registers_serialize(start_addr, no_of_coils, unit_addr,
-                                                                                 tid)
+    new_bytes, new_dict = request_serializer.read_input_registers_serialize(start_addr, no_of_coils, unit_addr,
+                                                                            tid)
 
     assert new_bytes == old_bytes
 
@@ -111,8 +111,8 @@ def test_write_single_coil_serialize():
     no_of_coils = data[1]
     unit_addr = data[2]
     tid = 1
-    new_bytes, new_dict = user_request_serializer.write_single_coil_serialize(start_addr, no_of_coils, unit_addr,
-                                                                              tid)
+    new_bytes, new_dict = request_serializer.write_single_coil_serialize(start_addr, no_of_coils, unit_addr,
+                                                                         tid)
 
     assert new_bytes == old_bytes
 
@@ -143,8 +143,8 @@ def test_write_single_register_serialize():
     no_of_coils = data[1]
     unit_addr = data[2]
     tid = 1
-    new_bytes, new_dict = user_request_serializer.write_single_register_serialize(start_addr, no_of_coils, unit_addr,
-                                                                                  tid)
+    new_bytes, new_dict = request_serializer.write_single_register_serialize(start_addr, no_of_coils, unit_addr,
+                                                                             tid)
 
     assert new_bytes == old_bytes
 

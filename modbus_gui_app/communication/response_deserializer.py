@@ -3,7 +3,7 @@ import re
 from modbus_gui_app.error_logging.error_logger import init_logger
 
 
-def user_response_deserialize(bytes_response, communication_dictionary):
+def response_deserialize(bytes_response, communication_dictionary):
     """ This function deserializes chooses the correct deserialization function (based on the function code).
 
     Args:
@@ -33,6 +33,7 @@ def user_response_deserialize(bytes_response, communication_dictionary):
     start_addr = hex(start_addr)
 
     if func_code == 1:
+        return read_coils_deserialize(modbus_resp, start_addr, response_dict)
         return read_coils_deserialize(modbus_resp, start_addr, response_dict)
     elif func_code == 2:
         return read_discrete_inputs_deserialize(modbus_resp, start_addr, response_dict)
@@ -141,7 +142,7 @@ def read_holding_registers_deserialize(modbus_response, start_add, response_dict
         try:
             values.append((modbus_response[i] + modbus_response[i + 1]).replace("\'", ""))
         except:
-            logger.exception("USER  RESPONSE DESERIALIZER: Deserialization Error: \n")
+            logger.exception("RESPONSE DESERIALIZER: Deserialization Error: \n")
             pass
     if len(values) == 0:
         values = "-"
@@ -183,7 +184,7 @@ def read_input_registers_deserialize(modbus_response, start_add, response_dict, 
         try:
             values.append((modbus_response[i] + modbus_response[i + 1]).replace("\'", ""))
         except:
-            logger.exception("USER  RESPONSE DESERIALIZER: Deserialization Error: \n")
+            logger.exception("RESPONSE DESERIALIZER: Deserialization Error: \n")
             pass
     if len(values) == 0:
         values = "-"
@@ -264,7 +265,7 @@ def check_for_response_errors(response_dict, hex_response_array, logger):
             response_dict["current_response_err_msg"] = err_msg
             return False
     except:
-        logger.exception("USER  RESPONSE DESERIALIZER: Error when checking for errors: \n")
+        logger.exception("RESPONSE DESERIALIZER: Error when checking for errors: \n")
         response_dict["current_response_is_valid"] = False
         response_dict["current_response_err_msg"] = "Error with the request processing!"
         response_dict["current_response_serialized"] = "-"

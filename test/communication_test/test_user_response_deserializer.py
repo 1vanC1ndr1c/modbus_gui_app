@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 
-from modbus_gui_app.communication import user_response_deserializer
+from modbus_gui_app.communication import response_deserializer
 from modbus_gui_app.error_logging.error_logger import init_logger
 from modbus_gui_app.state.state_manager_data_structures import _init_live_update_states
 
@@ -16,7 +16,7 @@ def test_read_coils_deserialize():
     start_addr = str(1)
     response_dict = {}
 
-    user_response_deserializer.read_coils_deserialize(modbus_response, start_addr, response_dict)
+    response_deserializer.read_coils_deserialize(modbus_response, start_addr, response_dict)
 
     assert len(response_dict) != 0
 
@@ -35,7 +35,7 @@ def test_read_discrete_inputs_deserialize():
     start_addr = str(1)
     response_dict = {}
 
-    user_response_deserializer.read_discrete_inputs_deserialize(modbus_response, start_addr, response_dict)
+    response_deserializer.read_discrete_inputs_deserialize(modbus_response, start_addr, response_dict)
 
     assert len(response_dict) != 0
 
@@ -55,7 +55,7 @@ def test_read_holding_registers_deserialize():
     response_dict = {}
 
     lg = init_logger(__name__)
-    user_response_deserializer.read_holding_registers_deserialize(modbus_response, start_addr, response_dict, lg)
+    response_deserializer.read_holding_registers_deserialize(modbus_response, start_addr, response_dict, lg)
 
     assert len(response_dict) != 0
 
@@ -75,7 +75,7 @@ def test_read_input_registers_deserialize():
     response_dict = {}
 
     lg = init_logger(__name__)
-    user_response_deserializer.read_holding_registers_deserialize(modbus_response, start_addr, response_dict, lg)
+    response_deserializer.read_holding_registers_deserialize(modbus_response, start_addr, response_dict, lg)
 
     assert len(response_dict) != 0
 
@@ -106,7 +106,7 @@ def test_write_single_coil_deserialize():
     modbus_response = write_coils_dict["current_response_serialized"]
     response_dict = {}
 
-    user_response_deserializer.write_single_coil_deserialize(response_dict, modbus_response)
+    response_deserializer.write_single_coil_deserialize(response_dict, modbus_response)
 
     assert len(response_dict) != 0
 
@@ -136,7 +136,7 @@ def test_write_single_register_deserialize():
     modbus_response = write_regs_dict["current_response_serialized"]
     response_dict = {}
 
-    user_response_deserializer.write_single_register_deserialize(response_dict, modbus_response)
+    response_deserializer.write_single_register_deserialize(response_dict, modbus_response)
 
     assert len(response_dict) != 0
 
