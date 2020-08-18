@@ -108,8 +108,11 @@ class StateManager(QObject):
         await asyncio.wait([live_update_refresh_future, state_manager_to_modbus_write_future],
                            return_when=asyncio.FIRST_COMPLETED)
 
-        state_manager_to_modbus_write_future.cancel()
-        live_update_refresh_future.cancel()
+        try:
+            state_manager_to_modbus_write_future.cancel()
+            live_update_refresh_future.cancel()
+        except asyncio.CancelledError:
+            pass
 
         try:
             await self.modbus_connection.ws.close()

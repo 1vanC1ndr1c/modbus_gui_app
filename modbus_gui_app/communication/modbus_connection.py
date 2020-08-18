@@ -101,7 +101,10 @@ class ModbusConnection:
         self.ws_read_loop_future = asyncio.ensure_future(self._ws_read_loop())
 
     def close_connection(self):
-        self.ws_read_loop_future.cancel()
+        try:
+            self.ws_read_loop_future.cancel()
+        except asyncio.CancelledError:
+            pass
 
     async def ws_read_coils(self, start_addr, no_of_coils, unit_addr):
         """ A method that transforms the given arguments into a byte request that reads coils from a specified device.
