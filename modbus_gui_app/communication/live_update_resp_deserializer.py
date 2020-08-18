@@ -13,6 +13,7 @@ def _live_update_response_deserialize(live_update_states, bytes_response):
     Args:
         live_update_states: The dictionary that contains the request and is updated with the deserialized values.
         bytes_response: The response that needs to be deserialized.
+
     """
     deser_dict = {"current_response_serialized": bytes_response, "current_response_is_valid": True}
     hex_response_array = re.findall('..', str(bytes_response.hex()))
@@ -42,7 +43,7 @@ def _read_coils_live_update_deserialize(live_update_states, hex_response_array, 
         hex_response_array(list): Response bytes that are split into an array
         deserialize_dict(dict): A dictionary that contains the information about the request and response (both
                                 serialized and unserialized).
-    Returns:
+
     """
     modbus_response = hex_response_array[9:]
     start_add = hex(live_update_states["current_read_coils"]["current_request_from_gui"][0])
@@ -66,7 +67,7 @@ def _read_discrete_inputs_live_update_deserialize(live_update_states, hex_respon
         hex_response_array(list): Response bytes that are split into an array
         deserialize_dict(dict): A dictionary that contains the information about the request and response (both
                                 serialized and unserialized).
-    Returns:
+
     """
     modbus_response = hex_response_array[9:]
     start_add = hex(live_update_states["current_read_discrete_inputs"]["current_request_from_gui"][0])
@@ -90,7 +91,7 @@ def _read_holding_registers_live_update_deserialize(live_update_states, hex_resp
         hex_response_array(list): Response bytes that are split into an array
         deserialize_dict(dict): A dictionary that contains the information about the request and response (both
                                 serialized and unserialized).
-    Returns:
+
     """
     modbus_response = hex_response_array[9:]
     start_add = hex(live_update_states["current_read_holding_registers"]["current_request_from_gui"][0])
@@ -113,7 +114,7 @@ def _read_input_registers_live_update_deserialize(live_update_states, hex_respon
         hex_response_array(list): Response bytes that are split into an array
         deserialize_dict(dict): A dictionary that contains the information about the request and response (both
                                 serialized and unserialized).
-    Returns:
+
     """
     modbus_response = hex_response_array[9:]
     start_add = hex(live_update_states["current_read_input_registers"]["current_request_from_gui"][0])

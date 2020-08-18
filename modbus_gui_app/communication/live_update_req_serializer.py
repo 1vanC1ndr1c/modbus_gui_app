@@ -31,7 +31,9 @@ def _read_coils_automatic_request_serialize(live_update_states):
         It then updates the dictionary with new values.
 
     Args:
-        live_update_states(dict): The dictionary that contains the previous request. The updated request is saved into it.
+        live_update_states(dict): The dictionary that contains the previous request.
+        The updated request is saved into it.
+
     """
     old_request = live_update_states["current_request"]
     current_tid = str(hex(live_update_states["current_tid"]))[2:].rjust(4, '0')
@@ -52,7 +54,9 @@ def _read_discrete_inputs_automatic_request_serialize(live_update_states):
         It then updates the dictionary with new values.
 
     Args:
-        live_update_states(dict): The dictionary that contains the previous request. The updated request is saved into it.
+        live_update_states(dict): The dictionary that contains the previous request.
+        The updated request is saved into it.
+
     """
     old_request = live_update_states["current_request"]
     current_tid = str(hex(live_update_states["current_tid"]))[2:].rjust(4, '0')

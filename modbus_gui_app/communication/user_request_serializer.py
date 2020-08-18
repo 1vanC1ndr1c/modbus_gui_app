@@ -11,6 +11,7 @@ def read_coils_serialize(start_addr, no_of_coils, unit_addr, tid):
     Returns:
         bytes, dict: Bytes of the request that is serialized, and the dictionary that contains the information
                     about the serialization.
+
     """
     func_code = "01"
     protocol = '0000'
@@ -39,6 +40,7 @@ def read_discrete_inputs_serialize(start_addr, input_count, unit_addr, tid):
      Returns:
         bytes, dict: Bytes of the request that is serialized, and the dictionary that contains the information
                     about the serialization.
+
     """
     func_code = "02"
     protocol = '0000'
@@ -69,6 +71,7 @@ def read_holding_registers_serialize(start_addr, h_regs_count, unit_addr, tid):
     Returns:
         bytes, dict: Bytes of the request that is serialized, and the dictionary that contains the information
                     about the serialization.
+
     """
     func_code = "03"
     protocol = '0000'
@@ -99,6 +102,7 @@ def read_input_registers_serialize(start_addr, in_regs_count, unit_addr, tid):
     Returns:
         bytes, dict: Bytes of the request that is serialized, and the dictionary that contains the information
                     about the serialization.
+
     """
     func_code = "04"
     protocol = '0000'
@@ -129,6 +133,7 @@ def write_single_coil_serialize(start_addr, coil_state, unit_addr, tid):
     Returns:
         bytes, dict: Bytes of the request that is serialized, and the dictionary that contains the information
                     about the serialization.
+
     """
     func_code = "05"
     protocol = '0000'
@@ -162,6 +167,7 @@ def write_single_register_serialize(start_addr, reg_value, unit_addr, tid):
     Returns:
         bytes, dict: Bytes of the request that is serialized, and the dictionary that contains the information
                     about the serialization.
+
     """
     func_code = "06"
     protocol = '0000'

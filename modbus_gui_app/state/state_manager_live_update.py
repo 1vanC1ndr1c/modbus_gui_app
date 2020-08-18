@@ -1,11 +1,12 @@
 import asyncio
+from copy import deepcopy
 
 
 async def _live_update_loop(state_manager):
     while True:
         set_currently_selected_automatic_request(state_manager, "automatic")
         state_manager.connection_info_signal.emit("Automatic Request Sent.")
-        state_manager.modbus_connection.live_update_states.update(state_manager.live_update_states)
+        state_manager.modbus_connection.live_update_states = deepcopy(state_manager.live_update_states)
         await state_manager.modbus_connection.ws_refresh()
         state_manager.live_update_states.update(state_manager.modbus_connection.live_update_states)
         state_manager.periodic_update_signal.emit(False)

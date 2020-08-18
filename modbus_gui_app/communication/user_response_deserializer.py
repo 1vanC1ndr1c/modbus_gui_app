@@ -13,6 +13,7 @@ def user_response_deserialize(bytes_response, communication_dictionary):
 
     Returns:
         dict: A dictionary that contains the information about the deserialized response.
+
     """
     logger = init_logger(__name__)
 
@@ -62,6 +63,7 @@ def read_coils_deserialize(modbus_response, start_addr, response_dict):
 
     Returns:
         dict: A dictionary that contains the information about the deserialized response.
+
     """
     binary_data = ""
     for byte in modbus_response:
@@ -95,6 +97,7 @@ def read_discrete_inputs_deserialize(modbus_response, start_add, response_dict):
 
     Returns:
         dict: A dictionary that contains the information about the deserialized response.
+
     """
     binary_data = ""
     for byte in modbus_response:
@@ -121,6 +124,7 @@ def read_discrete_inputs_deserialize(modbus_response, start_add, response_dict):
 
 def read_holding_registers_deserialize(modbus_response, start_add, response_dict, logger):
     """This function deserializes the input data into information that is stored in a dictionary.
+       Logs an error if one occurs.
 
     Args:
         modbus_response(byte): The part of the request that contains information about the request result.
@@ -131,16 +135,13 @@ def read_holding_registers_deserialize(modbus_response, start_add, response_dict
     Returns:
         dict: A dictionary that contains the information about the deserialized response.
 
-    Raises:
-        Exception: Number of bytes in the response that represent register values needs to be an even number.
-                   If it isn't, an exception is raised and logged.
     """
     values = []
     for i in range(0, len(modbus_response), 2):
         try:
             values.append((modbus_response[i] + modbus_response[i + 1]).replace("\'", ""))
-        except Exception as e:
-            logger.exception("USER  RESPONSE DESERIALIZER: Deserialization Error: \n" + str(e))
+        except:
+            logger.exception("USER  RESPONSE DESERIALIZER: Deserialization Error: \n")
             pass
     if len(values) == 0:
         values = "-"
@@ -165,6 +166,7 @@ def read_holding_registers_deserialize(modbus_response, start_add, response_dict
 
 def read_input_registers_deserialize(modbus_response, start_add, response_dict, logger):
     """This function deserializes the input data into information that is stored in a dictionary.
+       Logs an error if one occurs.
 
     Args:
         modbus_response: The part of the request that contains information about the request result.
@@ -175,16 +177,13 @@ def read_input_registers_deserialize(modbus_response, start_add, response_dict, 
     Returns:
         dict: A dictionary that contains the information about the deserialized response.
 
-    Raises:
-        Exception: Number of bytes in the response that represent register values needs to be an even number.
-                   If it isn't, an exception is raised and logged.
     """
     values = []
     for i in range(0, len(modbus_response), 2):
         try:
             values.append((modbus_response[i] + modbus_response[i + 1]).replace("\'", ""))
-        except Exception as e:
-            logger.exception("USER  RESPONSE DESERIALIZER: Deserialization Error: \n" + str(e))
+        except:
+            logger.exception("USER  RESPONSE DESERIALIZER: Deserialization Error: \n")
             pass
     if len(values) == 0:
         values = "-"
@@ -264,8 +263,8 @@ def check_for_response_errors(response_dict, hex_response_array, logger):
             response_dict["current_response_is_valid"] = False
             response_dict["current_response_err_msg"] = err_msg
             return False
-    except Exception as error_check_exception:
-        logger.exception("USER  RESPONSE DESERIALIZER: Error when checking for errors: \n" + str(error_check_exception))
+    except:
+        logger.exception("USER  RESPONSE DESERIALIZER: Error when checking for errors: \n")
         response_dict["current_response_is_valid"] = False
         response_dict["current_response_err_msg"] = "Error with the request processing!"
         response_dict["current_response_serialized"] = "-"
