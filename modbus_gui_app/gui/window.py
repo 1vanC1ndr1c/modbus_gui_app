@@ -104,7 +104,7 @@ class Gui(QMainWindow):
         function_code = index + 1
         is_valid, validation_result = request_validation.get_request_validation_result(function_code, stacked_widget)
         if is_valid is True:
-            self.gui_request_queue.put(validation_result)
+            self.gui_request_queue.put([validation_result, "User Request."])
 
         elif is_valid is False:
             _init_error_window(validation_result)

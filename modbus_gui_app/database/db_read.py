@@ -1,6 +1,6 @@
-from modbus_gui_app.error_logging.error_logger import init_logger
-
 import json
+
+from modbus_gui_app.error_logging.error_logger import init_logger
 
 
 def _db_reader(current_db_index, conn):

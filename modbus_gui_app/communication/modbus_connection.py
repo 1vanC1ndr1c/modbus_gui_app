@@ -4,8 +4,6 @@ from datetime import datetime
 
 import aiohttp
 
-from modbus_gui_app.communication.live_update_req_serializer import _automatic_request_serialize
-from modbus_gui_app.communication.live_update_resp_deserializer import _live_update_response_deserialize
 from modbus_gui_app.communication.user_request_serializer import read_coils_serialize, \
     read_discrete_inputs_serialize, read_holding_registers_serialize, read_input_registers_serialize
 from modbus_gui_app.communication.user_request_serializer import write_single_coil_serialize, \
@@ -31,9 +29,6 @@ class ModbusConnection:
 
         session(aiohttp.ClientSession()): A variable that is used so that the session can be opened and close by an
                                           outside actor.
-
-        _live_update_states(dict): A dictionary that contains the current information being exchanged between the
-                                  device and automatically generated requests (live update of the information).
 
         logger(modbus_gui_app.error_logging.error_logger): A custom logger object that writes any exceptions raised
                                                            into a file.
@@ -61,18 +56,8 @@ class ModbusConnection:
         self._pending_responses = {}
         self.session = None
         self.ws = None
-        self._live_update_states = {}
         self.logger = init_logger(__name__)
-        self._user_req_list = []
         self.ws_read_loop_future = None
-
-    @property
-    def live_update_states(self):
-        return self._live_update_states
-
-    @live_update_states.setter
-    def live_update_states(self, value):
-        self._live_update_states.update(value)
 
     @property
     def dicts_by_tid(self):
@@ -230,14 +215,12 @@ class ModbusConnection:
             self.logger.exception("MODBUS_CONNECTION: " + req_name + " Request Error:\n")
         pending_response = asyncio.Future()
         self._pending_responses[newest_tid] = pending_response
-        self._user_req_list.append(newest_tid)
         return await pending_response
 
     async def _ws_read_loop(self):
         """ This method continuously reads the incoming responses and processes them.
             It ignores the start of the communication and end of the communication messages (ACK, CLOSE, CLOSED...)
             and only takes into a consideration the messages that contain byte data in their body.
-            Those messages are split into responses to the automatic requests and responses to a user request.
 
         """
         while True:
@@ -247,28 +230,6 @@ class ModbusConnection:
                 return
             if isinstance(bytes_response.data, bytes):
                 resp_tid = int(''.join(re.findall('..', str(bytes_response.data.hex()))[:2]), 16)
-                if resp_tid not in self._user_req_list:
-                    _live_update_response_deserialize(self._live_update_states, bytes_response.data)
-                    self._pending_responses[resp_tid].set_result("Done.")
-                else:
-                    self._user_req_list.remove(resp_tid)
-                    req_dict = self._dicts_by_tid[resp_tid]
-                    deserialized_dict = user_response_deserialize(bytes_response.data, req_dict)
-                    self._pending_responses[resp_tid].set_result(deserialized_dict)
-
-    async def ws_refresh(self):
-        """This is a generic method that is called by an outside live-update handler.
-           It is used to serialize and send a request for the automatic refresh of the data being used in the program.
-           Logs an error if one occurs.
-
-        """
-        newest_tid = self._update_and_get_tid()
-        _automatic_request_serialize(self._live_update_states, newest_tid)
-        automatic_request = self._live_update_states["current_request"]
-        try:
-            await self.ws.send_bytes(automatic_request)
-        except:
-            self.logger.exception("MODBUS CONNECTION: Automatic Refresh Request Error: \n")
-        automatic_refresh_pending_response = asyncio.Future()
-        self._pending_responses[newest_tid] = automatic_refresh_pending_response
-        await automatic_refresh_pending_response
+                req_dict = self._dicts_by_tid[resp_tid]
+                deserialized_dict = user_response_deserialize(bytes_response.data, req_dict)
+                self._pending_responses[resp_tid].set_result(deserialized_dict)
