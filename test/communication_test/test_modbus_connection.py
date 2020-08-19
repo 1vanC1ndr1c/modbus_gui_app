@@ -5,7 +5,7 @@ from datetime import datetime
 import pytest
 
 from modbus_gui_app.communication.modbus_connection import ModbusConnection
-from modbus_gui_app.state.state_manager_data_structures import _init_live_update_states
+from modbus_gui_app.state.data_structures import _init_live_update_states
 
 _ResponseMock = namedtuple("_ResponseMock", ["data"])
 

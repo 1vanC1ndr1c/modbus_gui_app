@@ -2,7 +2,7 @@ import queue
 from copy import deepcopy
 
 from modbus_gui_app.database.db_handler import Backend
-from modbus_gui_app.state import state_manager_live_update
+from modbus_gui_app.state import live_update
 from modbus_gui_app.state.state_manager import StateManager
 
 
@@ -85,7 +85,7 @@ def test_state_manager(monkeypatch):
     test_state_manager_obj._update_history_last_ten()
 
     with monkeypatch.context() as m:
-        m.setattr(state_manager_live_update, "set_currently_selected_automatic_request",
+        m.setattr(live_update, "set_currently_selected_automatic_request",
                   mock_set_currently_selected_automatic_request)
         m.setattr(test_state_manager_obj, '_update_history_last_ten', update_history_last_ten_mock)
         m.setattr(test_state_manager_obj, '_write_to_db', write_to_db_mock)

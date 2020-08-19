@@ -2,7 +2,6 @@ import logging
 import re
 
 
-
 def response_deserialize(bytes_response, communication_dictionary):
     """ This function deserializes chooses the correct deserialization function (based on the function code).
 

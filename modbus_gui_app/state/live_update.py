@@ -94,7 +94,7 @@ def process_live_update_response(new_dict, old_dict):
 def _update_current_coils_state(state_manager, source):
     state_manager.live_update_states["currently_selected_function"] = "01"
     if source == "user":
-        current_state = state_manager._user_action_state
+        current_state = state_manager.user_action_state
         state_manager.live_update_states["current_read_coils"] = current_state.copy()
         state_manager.live_update_states["current_request"] = current_state["current_request_serialized"]
     elif source == "automatic":
@@ -106,7 +106,7 @@ def _update_current_coils_state(state_manager, source):
 def _update_current_discrete_inputs_state(state_manager, source):
     state_manager.live_update_states["currently_selected_function"] = "02"
     if source == "user":
-        current_state = state_manager._user_action_state
+        current_state = state_manager.user_action_state
         state_manager.live_update_states["current_read_discrete_inputs"] = current_state.copy()
         state_manager.live_update_states["current_request"] = current_state["current_request_serialized"]
     elif source == "automatic":
@@ -118,7 +118,7 @@ def _update_current_discrete_inputs_state(state_manager, source):
 def _update_current_holding_registers_state(state_manager, source):
     state_manager.live_update_states["currently_selected_function"] = "03"
     if source == "user":
-        current_state = state_manager._user_action_state
+        current_state = state_manager.user_action_state
         state_manager.live_update_states["current_read_holding_registers"] = current_state.copy()
         state_manager.live_update_states["current_request"] = current_state["current_request_serialized"]
     elif source == "automatic":
@@ -130,7 +130,7 @@ def _update_current_holding_registers_state(state_manager, source):
 def _update_current_input_registers_state(state_manager, source):
     state_manager.live_update_states["currently_selected_function"] = "04"
     if source == "user":
-        current_state = state_manager._user_action_state
+        current_state = state_manager.user_action_state
         state_manager.live_update_states["current_read_input_registers"] = current_state.copy()
         state_manager.live_update_states["current_request"] = current_state["current_request_serialized"]
     elif source == "automatic":

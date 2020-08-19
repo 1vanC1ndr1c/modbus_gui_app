@@ -18,8 +18,6 @@ def get_request_validation_result(function_code, stacked_widget):
         return False, "Invalid Function Code!"
 
 
-# function specific validations
-
 def validate_read_coils(function_code, stacked_widget):
     inputs = stacked_widget.findChildren(QLineEdit)
     start_address_hex = inputs[0].text()

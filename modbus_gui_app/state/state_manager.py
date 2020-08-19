@@ -4,7 +4,6 @@ import queue
 from concurrent.futures.thread import ThreadPoolExecutor
 from copy import deepcopy
 from datetime import datetime
-from threading import Thread
 
 from PySide2.QtCore import Signal, QObject
 
@@ -13,10 +12,10 @@ from modbus_gui_app.communication.request_serializer import read_coils_serialize
     read_holding_registers_serialize, read_input_registers_serialize, write_single_coil_serialize, \
     write_single_register_serialize
 from modbus_gui_app.database.db_handler import Backend
-from modbus_gui_app.state import state_manager_live_update
-from modbus_gui_app.state.state_manager_data_structures import _init_user_action_state_dict, \
+from modbus_gui_app.state import live_update
+from modbus_gui_app.state.data_structures import _init_user_action_state_dict, \
     _init_live_update_states
-from modbus_gui_app.state.state_manager_live_update import _live_update_loop
+from modbus_gui_app.state.live_update import _live_update_loop
 
 
 class StateManager(QObject):
@@ -100,14 +99,12 @@ class StateManager(QObject):
         """
         return self._historian_db_dicts
 
-    def start_communications_thread(self):
-        communications_thread = Thread(
-            daemon=True,
-            target=lambda: asyncio.new_event_loop().run_until_complete(
-                self._start_readers_and_writers()))
-        communications_thread.start()
+    async def start_readers_and_writers(self):
+        """
 
-    async def _start_readers_and_writers(self):
+        Returns:
+
+        """
         await self._database.db_init()
         self._modbus_connection = ModbusConnection()
         await self._modbus_connection.open_session()
@@ -239,7 +236,7 @@ class StateManager(QObject):
                     live_dict = self._live_update_states["current_read_input_registers"]
                 if len(live_dict) > 0:
                     live_dict.update(self._modbus_connection.dicts_by_tid[tid])
-                    state_manager_live_update.process_live_update_response(response, live_dict)
+                    live_update.process_live_update_response(response, live_dict)
 
     async def _process_modbus_response(self, new_dict):
         self.user_action_state["current_response_received_time"] = datetime.now()
@@ -251,7 +248,7 @@ class StateManager(QObject):
         await self._write_to_db()
         self.response_signal.emit(False)
         self.periodic_update_signal.emit(False)
-        state_manager_live_update.set_currently_selected_automatic_request(self, "user")
+        live_update.set_currently_selected_automatic_request(self, "user")
         self.connection_info_signal.emit("User Response Received.")
 
     def _update_history_last_ten(self):
