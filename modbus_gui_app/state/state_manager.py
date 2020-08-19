@@ -1,5 +1,4 @@
 import asyncio
-import functools
 import logging
 import queue
 from concurrent.futures.thread import ThreadPoolExecutor
@@ -35,31 +34,27 @@ class StateManager(QObject):
                                                         being sent or received.
         invalid_connection_signal: Used to signal that no connection was successfully established.
 
-        last_ten_dicts(dict): A dictionary used to fetch and save the values from the database (ten at a time).
+        _last_ten_dicts(dict): A dictionary used to fetch and save the values from the database (ten at a time).
 
-        database(database.db_handler.Backend): An instance of the Backend class that provides the connection to the
+        _database(database.db_handler.Backend): An instance of the Backend class that provides the connection to the
                                                 database and the supporting functions for interacting with said
                                                 database.
 
         gui_request_queue(queue.Queue): A queue through which the GUI sends the request data which is forwarded to the
                                         connection module.
 
-        modbus_connection(communication.modbus_connection.ModbusConnection): An instance of the connection class
+        _modbus_connection(communication.modbus_connection.ModbusConnection): An instance of the connection class
                                     that provides the methods needed to send and receive data.
 
-        user_action_state(dict): A dictionary that stores the current request data and, when received, the corresponding
-                                response data.
+        _user_action_state(dict): A dictionary that stores the current request data and, when received, the
+                                    corresponding response data.
 
         gui(gui.window.Gui): An instance of the graphical user interface class.
 
-        live_update_states(dict): A dictionary that contains the information about the last valid requests and
+        _live_update_states(dict): A dictionary that contains the information about the last valid requests and
                                 valid responses for every type of a request. Used to resend those requests periodically.
 
-        ws_read_loop_future(asyncio.Future): The future of the web socket reader. Publicly exposed to that it can be
-                            closed when the application is closing. By closing this read loop, other read loops also
-                            stop.
-
-        logger(logging.logger): An error logger used to record any errors that might occur during the program execution.
+        _logger(logging.logger): An error logger used to record any errors that might occur during the program execution.
     """
     response_signal = Signal(bool)
     periodic_update_signal = Signal(bool)
@@ -69,19 +64,35 @@ class StateManager(QObject):
 
     def __init__(self):
         super().__init__()
-        self.last_ten_dicts = {}
-        self.database = Backend()
+        self._last_ten_dicts = {}
+        self._database = Backend()
         self.gui_request_queue = queue.Queue()
-        self.modbus_connection = None
-        self.user_action_state = _init_user_action_state_dict()
+        self._modbus_connection = None
+        self._user_action_state = _init_user_action_state_dict()
         self.gui = None
         self._historian_db_current_index = 0
         self._historian_db_dicts = {}
-        self.live_update_states = _init_live_update_states()
-        self.logger = logging.getLogger()
+        self._live_update_states = _init_live_update_states()
+        self._logger = logging.getLogger()
+
+    @property
+    def last_ten_dicts(self):
+        return self._last_ten_dicts
+
+    @property
+    def user_action_state(self):
+        return self._user_action_state
+
+    @property
+    def live_update_states(self):
+        return self._live_update_states
+
+    @live_update_states.setter
+    def live_update_states(self, value):
+        self._live_update_states.update(value)
 
     def get_historian_db_dicts(self):
-        """A method that returns databse dictionary.
+        """A method that returns database dictionary.
 
         Returns:
             dict: A dictionary containing the read data and data read before that.
@@ -97,30 +108,30 @@ class StateManager(QObject):
         communications_thread.start()
 
     async def _start_readers_and_writers(self):
-        await self.database.db_init()
-        self.modbus_connection = ModbusConnection()
-        await self.modbus_connection.open_session()
+        await self._database.db_init()
+        self._modbus_connection = ModbusConnection()
+        await self._modbus_connection.open_session()
         self.connection_info_signal.emit("Connection Established")
 
         live_update_refresh_future = asyncio.ensure_future(_live_update_loop(self))
         state_manager_to_modbus_write_future = asyncio.ensure_future(self._gui_queue_read_loop())
 
-        await asyncio.wait([self.modbus_connection.ws_read_loop_future, live_update_refresh_future,
+        await asyncio.wait([self._modbus_connection.ws_read_loop_future, live_update_refresh_future,
                             state_manager_to_modbus_write_future],
                            return_when=asyncio.FIRST_COMPLETED)
 
         state_manager_to_modbus_write_future.cancel()
         live_update_refresh_future.cancel()
-        self.modbus_connection.close_connection()
+        self._modbus_connection.close_connection()
 
         try:
-            await self.modbus_connection.ws.close()
-        except Exception as conn_error:
-            self.logger.exception("STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.\n")
+            await self._modbus_connection.ws.close()
+        except:
+            self._logger.exception("STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.\n")
             self.invalid_connection_signal.emit("No Connection.")
             self.connection_info_signal.emit("No Connection.")
 
-        await self.modbus_connection.session.close()
+        await self._modbus_connection.session.close()
 
     async def _gui_queue_read_loop(self):
         executor = ThreadPoolExecutor(1)
@@ -128,11 +139,11 @@ class StateManager(QObject):
             gui_request_data = await asyncio.get_event_loop().run_in_executor(executor, self._get_msg_from_gui_queue)
 
             if gui_request_data == "End.":
-                self.modbus_connection.close_connection()
+                self._modbus_connection.close_connection()
                 try:
-                    self._state_manager.database.db_close()
-                except Exception as close_exception:
-                    self.logger.exception("WINDOW: Error When Closing The App: \n")
+                    self._database.db_close()
+                except:
+                    self._logger.exception("WINDOW: Error When Closing The App: \n")
                 break
 
             elif gui_request_data == "Read DB.":
@@ -150,7 +161,7 @@ class StateManager(QObject):
         request_source = gui_request_data[1]
         gui_request_data = gui_request_data[0]
         function_code = gui_request_data[-1]
-        tid = self.modbus_connection.tid + 1
+        tid = self._modbus_connection.tid + 1
         start_addr = gui_request_data[0]
         unit_addr = gui_request_data[2]
         response = None
@@ -162,8 +173,8 @@ class StateManager(QObject):
                 self.user_action_state.update(results_dict)
                 self.connection_info_signal.emit("User Request Sent.")
             else:
-                self.live_update_states["current_read_coils"].update(results_dict)
-            response = await self.modbus_connection.ws_read_coils(start_addr, no_of_coils, unit_addr)
+                self._live_update_states["current_read_coils"].update(results_dict)
+            response = await self._modbus_connection.ws_read_coils(start_addr, no_of_coils, unit_addr)
 
         elif function_code == 2:
             input_count = gui_request_data[1]
@@ -172,8 +183,8 @@ class StateManager(QObject):
                 self.user_action_state.update(results_dict)
                 self.connection_info_signal.emit("User Request Sent.")
             else:
-                self.live_update_states["current_read_discrete_inputs"].update(results_dict)
-            response = await self.modbus_connection.ws_read_discrete_inputs(start_addr, input_count, unit_addr)
+                self._live_update_states["current_read_discrete_inputs"].update(results_dict)
+            response = await self._modbus_connection.ws_read_discrete_inputs(start_addr, input_count, unit_addr)
 
         elif function_code == 3:
             h_regs_count = gui_request_data[1]
@@ -182,8 +193,8 @@ class StateManager(QObject):
                 self.user_action_state.update(results_dict)
                 self.connection_info_signal.emit("User Request Sent.")
             else:
-                self.live_update_states["current_read_holding_registers"].update(results_dict)
-            response = await self.modbus_connection.ws_read_holding_registers(start_addr, h_regs_count, unit_addr)
+                self._live_update_states["current_read_holding_registers"].update(results_dict)
+            response = await self._modbus_connection.ws_read_holding_registers(start_addr, h_regs_count, unit_addr)
 
         elif function_code == 4:
             in_regs_count = gui_request_data[1]
@@ -192,8 +203,8 @@ class StateManager(QObject):
                 self.user_action_state.update(results_dict)
                 self.connection_info_signal.emit("User Request Sent.")
             else:
-                self.live_update_states["current_read_input_registers"].update(results_dict)
-            response = await self.modbus_connection.ws_read_input_registers(start_addr, in_regs_count, unit_addr)
+                self._live_update_states["current_read_input_registers"].update(results_dict)
+            response = await self._modbus_connection.ws_read_input_registers(start_addr, in_regs_count, unit_addr)
 
         elif function_code == 5:
             coil_state = gui_request_data[1]
@@ -201,7 +212,7 @@ class StateManager(QObject):
             if request_source == "User Request.":
                 self.user_action_state.update(results_dict)
                 self.connection_info_signal.emit("User Request Sent.")
-            response = await self.modbus_connection.ws_write_single_coil(start_addr, coil_state, unit_addr)
+            response = await self._modbus_connection.ws_write_single_coil(start_addr, coil_state, unit_addr)
 
         elif function_code == 6:
             reg_value = gui_request_data[1]
@@ -209,25 +220,25 @@ class StateManager(QObject):
             if request_source == "User Request.":
                 self.user_action_state.update(results_dict)
                 self.connection_info_signal.emit("User Request Sent.")
-            response = await self.modbus_connection.ws_write_single_register(start_addr, reg_value, unit_addr)
+            response = await self._modbus_connection.ws_write_single_register(start_addr, reg_value, unit_addr)
 
         if response is not None:
             if request_source == "User Request.":
-                self.user_action_state.update(self.modbus_connection.dicts_by_tid[tid])
+                self.user_action_state.update(self._modbus_connection.dicts_by_tid[tid])
                 await self._process_modbus_response(response)
 
             else:
                 live_dict = {}
                 if function_code == 1:
-                    live_dict = self.live_update_states["current_read_coils"]
+                    live_dict = self._live_update_states["current_read_coils"]
                 elif function_code == 2:
-                    live_dict = self.live_update_states["current_read_discrete_inputs"]
+                    live_dict = self._live_update_states["current_read_discrete_inputs"]
                 elif function_code == 3:
-                    live_dict = self.live_update_states["current_read_holding_registers"]
+                    live_dict = self._live_update_states["current_read_holding_registers"]
                 elif function_code == 4:
-                    live_dict = self.live_update_states["current_read_input_registers"]
+                    live_dict = self._live_update_states["current_read_input_registers"]
                 if len(live_dict) > 0:
-                    live_dict.update(self.modbus_connection.dicts_by_tid[tid])
+                    live_dict.update(self._modbus_connection.dicts_by_tid[tid])
                     state_manager_live_update.process_live_update_response(response, live_dict)
 
     async def _process_modbus_response(self, new_dict):
@@ -251,10 +262,10 @@ class StateManager(QObject):
         self.last_ten_dicts[tid] = deepcopy(self.user_action_state)
 
     async def _write_to_db(self):
-        await self.database.db_write(self.user_action_state)
+        await self._database.db_write(self.user_action_state)
 
     async def _read_from_db(self):
-        db_returned_values = (await self.database.db_read(self._historian_db_current_index))
+        db_returned_values = (await self._database.db_read(self._historian_db_current_index))
         self._historian_db_dicts = db_returned_values
         self._historian_db_current_index = self._historian_db_current_index + 10
 

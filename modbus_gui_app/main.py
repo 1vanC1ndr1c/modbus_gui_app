@@ -1,8 +1,8 @@
+import logging
 import sys
 
 from modbus_gui_app.gui import window
 from modbus_gui_app.state.state_manager import StateManager
-import logging
 
 
 def main():
