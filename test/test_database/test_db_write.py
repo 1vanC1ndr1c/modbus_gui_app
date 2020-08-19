@@ -1,7 +1,9 @@
 import json
 from datetime import datetime
 
-from modbus_gui_app.database.db_write import _db_writer
+import pytest
+
+from modbus_gui_app.database.db_handler import Backend
 
 executed_data = []
 
@@ -22,7 +24,9 @@ class MockDBConnection:
         assert len(executed_data) > 0
 
 
-def test_db_write():
+@pytest.mark.timeout(2)
+@pytest.mark.asyncio
+async def test_db_write():
     input_dict = {
         'current_tid': 2,
         'current_unit_address': '3',
@@ -58,7 +62,11 @@ def test_db_write():
                  "RESP_RET_VAL) " \
                  "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
-    _db_writer(input_dict, MockDBConnection)
+    connection = MockDBConnection()
+
+    database = Backend()
+    database._conn = connection
+    await database.db_write(input_dict)
 
     global executed_data
     assert test_query == executed_data[0]

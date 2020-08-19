@@ -1,6 +1,8 @@
 import queue
 from copy import deepcopy
 
+import pytest
+
 from modbus_gui_app.database.db_handler import Backend
 from modbus_gui_app.state import live_update
 from modbus_gui_app.state.state_manager import StateManager
@@ -25,18 +27,18 @@ class MockDatabase:
     def __init__(self):
         self.name = "MockDB"
 
-    def db_read(self, index):
-        return "DB VALUES"
+    async def db_read(self, index):
+        return {1: "DB VALUES"}
 
-    def db_write(self, data):
-        assert data == "DATA TO WRITE."
+    async def db_write(self, data):
+        assert data[1] == "ACTION STATE"
 
 
 def update_history_last_ten_mock():
     pass
 
 
-def write_to_db_mock():
+async def write_to_db_mock():
     pass
 
 
@@ -44,7 +46,9 @@ def mock_set_currently_selected_automatic_request(*args):
     pass
 
 
-def test_state_manager(monkeypatch):
+@pytest.mark.timeout(2)
+@pytest.mark.asyncio
+async def test_state_manager(monkeypatch):
     test_state_manager_obj = StateManager()
 
     assert type(test_state_manager_obj.last_ten_dicts) == dict
@@ -58,15 +62,16 @@ def test_state_manager(monkeypatch):
     test_state_manager_obj.gui = MockGui()
 
     test_state_manager_obj._database = MockDatabase()
-    test_state_manager_obj._read_from_db()
-    assert test_state_manager_obj._historian_db_dicts == "DB VALUES"
+    await test_state_manager_obj._read_from_db()
+    assert test_state_manager_obj._historian_db_dicts == {1: "DB VALUES"}
 
     test_state_manager_obj.reset_db_dict()
     assert len(test_state_manager_obj._historian_db_dicts) == 0
     assert test_state_manager_obj._historian_db_current_index == 0
 
-    test_state_manager_obj.user_action_state = "DATA TO WRITE."
-    test_state_manager_obj._write_to_db()
+    test_state_manager_obj.user_action_state = {1: "ACTION STATE"}
+
+    await test_state_manager_obj._write_to_db()
 
     last_ten = {
         1: "one",
@@ -89,10 +94,10 @@ def test_state_manager(monkeypatch):
                   mock_set_currently_selected_automatic_request)
         m.setattr(test_state_manager_obj, '_update_history_last_ten', update_history_last_ten_mock)
         m.setattr(test_state_manager_obj, '_write_to_db', write_to_db_mock)
-        test_state_manager_obj._process_modbus_response({1: "OnE", 2: "FOO", 9999: "NO"})
+        await test_state_manager_obj._process_modbus_response({1: "OnE", 2: "FOO", 9999: "NO"})
 
-    assert True == False
+    #assert True == False
     #
     # test_state_manager_obj.user_action_state = _init_user_action_state_dict()
 
-    # runtests.bat - v - k test_user_request_serializer.py
+    # runtests.bat - v - k test_request_serializer.py

@@ -72,4 +72,5 @@ fabric.properties
 /modbus_gui_app/test.db
 /modbus_gui_app/req_and_resp.db
 /venv/
-/venv/
+/docs/build/
+/build/

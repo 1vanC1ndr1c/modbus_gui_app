@@ -1,6 +1,8 @@
 from datetime import datetime
 
-from modbus_gui_app.database.db_read import _db_reader
+import pytest
+
+from modbus_gui_app.database.db_handler import Backend
 
 
 class MockDBConnection:
@@ -98,11 +100,16 @@ class MockCursor:
         return self.mock_data
 
 
-def test_db_reader():
+@pytest.mark.timeout(2)
+@pytest.mark.asyncio
+async def test_db_reader():
     current_db_index = 30
     connection = MockDBConnection()
 
-    db_dicts = _db_reader(current_db_index, connection)
+    database = Backend()
+    database._conn = connection
+
+    db_dicts = (await database.db_read(current_db_index))
 
     for time_stamp_dict_key in db_dicts:
         datetime.strptime(time_stamp_dict_key, "%Y-%m-%d %H:%M:%S.%f")

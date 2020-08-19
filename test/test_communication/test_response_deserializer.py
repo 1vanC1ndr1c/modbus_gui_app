@@ -1,7 +1,6 @@
+import logging
 import re
 from datetime import datetime
-
-from modbus_gui_app.error_logging.error_logger import init_logger
 
 from modbus_gui_app.communication import response_deserializer
 from modbus_gui_app.state.data_structures import _init_live_update_states
@@ -55,8 +54,8 @@ def test_read_holding_registers_deserialize():
     start_addr = str(1)
     response_dict = {}
 
-    lg = init_logger(__name__)
-    response_deserializer.read_holding_registers_deserialize(modbus_response, start_addr, response_dict, lg)
+    logger = logging.getLogger()
+    response_deserializer.read_holding_registers_deserialize(modbus_response, start_addr, response_dict, logger)
 
     assert len(response_dict) != 0
 
@@ -75,8 +74,8 @@ def test_read_input_registers_deserialize():
     start_addr = str(1)
     response_dict = {}
 
-    lg = init_logger(__name__)
-    response_deserializer.read_holding_registers_deserialize(modbus_response, start_addr, response_dict, lg)
+    logger = logging.getLogger()
+    response_deserializer.read_holding_registers_deserialize(modbus_response, start_addr, response_dict, logger)
 
     assert len(response_dict) != 0
 

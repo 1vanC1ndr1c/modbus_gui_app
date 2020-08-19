@@ -78,9 +78,17 @@ class StateManager(QObject):
     def last_ten_dicts(self):
         return self._last_ten_dicts
 
+    @last_ten_dicts.setter
+    def last_ten_dicts(self, value):
+        self._last_ten_dicts.update(value)
+
     @property
     def user_action_state(self):
         return self._user_action_state
+
+    @user_action_state.setter
+    def user_action_state(self, value):
+        self._user_action_state.update(value)
 
     @property
     def live_update_states(self):
