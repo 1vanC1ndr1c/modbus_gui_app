@@ -1,13 +1,9 @@
-from copy import deepcopy
-from unittest import mock
-from unittest.mock import patch
-
-from modbus_gui_app.state.state_manager import StateManager
-from modbus_gui_app.state.state_manager_data_structures import _init_user_action_state_dict
-from modbus_gui_app.state.state_manager_live_update import set_currently_selected_automatic_request
-from modbus_gui_app.state import state_manager_live_update
-from modbus_gui_app.database.db_handler import Backend
 import queue
+from copy import deepcopy
+
+from modbus_gui_app.database.db_handler import Backend
+from modbus_gui_app.state import state_manager_live_update
+from modbus_gui_app.state.state_manager import StateManager
 
 
 class MockGui:

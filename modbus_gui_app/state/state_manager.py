@@ -65,6 +65,7 @@ class StateManager(QObject):
     periodic_update_signal = Signal(bool)
     connection_info_signal = Signal(str)
     invalid_connection_signal = Signal(str)
+    db_window_signal = Signal(str)
 
     def __init__(self):
         super().__init__()
@@ -80,13 +81,12 @@ class StateManager(QObject):
         self.logger = init_logger(__name__)
 
     def get_historian_db_dicts(self):
-        """A method that reads from the database and saves the results into a dictionary.
+        """A method that returns databse dictionary.
 
         Returns:
             dict: A dictionary containing the read data and data read before that.
 
         """
-        self._read_from_db()
         return self._historian_db_dicts
 
     def start_communications_thread(self):
@@ -97,6 +97,7 @@ class StateManager(QObject):
         communications_thread.start()
 
     async def _start_readers_and_writers(self):
+        await self.database.db_init()
         self.modbus_connection = ModbusConnection()
         await self.modbus_connection.open_session()
         self.connection_info_signal.emit("Connection Established")
@@ -126,10 +127,17 @@ class StateManager(QObject):
         while True:
             gui_request_data = await asyncio.get_event_loop().run_in_executor(
                 executor, functools.partial(self._get_msg_from_gui_queue))
-            if gui_request_data[0] == "End.":
+
+            if gui_request_data == "End.":
                 self.modbus_connection.close_connection()
                 break
-            await self.send_request_to_modbus(gui_request_data)
+
+            elif gui_request_data == "Read DB.":
+                await self._read_from_db()
+                self.db_window_signal.emit("DB Data Ready")
+
+            else:
+                await self.send_request_to_modbus(gui_request_data)
 
     def _get_msg_from_gui_queue(self):
         request = self.gui_request_queue.get()
@@ -203,7 +211,7 @@ class StateManager(QObject):
         if response is not None:
             if request_source == "User Request.":
                 self.user_action_state.update(self.modbus_connection.dicts_by_tid[tid])
-                self._process_modbus_response(response)
+                await self._process_modbus_response(response)
 
             else:
                 live_dict = {}
@@ -219,14 +227,14 @@ class StateManager(QObject):
                     live_dict.update(self.modbus_connection.dicts_by_tid[tid])
                     state_manager_live_update.process_live_update_response(response, live_dict)
 
-    def _process_modbus_response(self, new_dict):
+    async def _process_modbus_response(self, new_dict):
         self.user_action_state["current_response_received_time"] = datetime.now()
         if new_dict != "-":
             for key in new_dict:
                 if key in self.user_action_state:
                     self.user_action_state[key] = new_dict[key]
         self._update_history_last_ten()
-        self._write_to_db()
+        await self._write_to_db()
         self.response_signal.emit(False)
         self.periodic_update_signal.emit(False)
         state_manager_live_update.set_currently_selected_automatic_request(self, "user")
@@ -239,11 +247,11 @@ class StateManager(QObject):
         tid = deepcopy(self.user_action_state["current_tid"])
         self.last_ten_dicts[tid] = deepcopy(self.user_action_state)
 
-    def _write_to_db(self):
-        self.database.db_write(self.user_action_state)
+    async def _write_to_db(self):
+        await self.database.db_write(self.user_action_state)
 
-    def _read_from_db(self):
-        db_returned_values = self.database.db_read(self._historian_db_current_index)
+    async def _read_from_db(self):
+        db_returned_values = (await self.database.db_read(self._historian_db_current_index))
         self._historian_db_dicts = db_returned_values
         self._historian_db_current_index = self._historian_db_current_index + 10
 

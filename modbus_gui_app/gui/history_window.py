@@ -12,7 +12,7 @@ class HistoryWindow:
         self._last_ten_dicts = []
         self._rows = QStandardItemModel()
         self._table_view = QTableView()
-
+        self._state_manager.db_window_signal.connect(self.load_db_data)
 
     def init_history_window(self):
         self._rows = QStandardItemModel()
@@ -68,7 +68,7 @@ class HistoryWindow:
         button_submit.setFont(button_font)
         history_parent_layout.addWidget(button_submit)
 
-        button_submit.clicked.connect(lambda c: self._get_more_data(self._state_manager))
+        button_submit.clicked.connect(lambda c: self._get_more_data())
 
         history_dlg_window.setLayout(history_parent_layout)
         history_dlg_window.exec_()
@@ -122,13 +122,16 @@ class HistoryWindow:
             self._rows.appendRow(resp_data_list)
             self._table_view.resizeRowsToContents()
 
-    def _get_more_data(self, state_manager):
+    def _get_more_data(self):
         if self._is_first is True:
             self._is_first = False
-            state_manager.reset_db_dict()
             self._rows.removeRow(0)
+            self._state_manager.reset_db_dict()
 
-        self._more_data = state_manager.get_historian_db_dicts()
+        self._state_manager.gui_request_queue.put("Read DB.")
+
+    def load_db_data(self):
+        self._more_data = self._state_manager.get_historian_db_dicts()
         self._table_view.setSortingEnabled(False)
         self._set_history_data(self._more_data)
         self._table_view.setSortingEnabled(True)

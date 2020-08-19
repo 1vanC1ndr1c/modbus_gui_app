@@ -80,7 +80,7 @@ class ModbusConnection:
         self.session = aiohttp.ClientSession()
         try:
             self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
-        except asyncio.CancelledError:
+        except:
             self.logger.exception("MODBUS CONNECTION: Cannot connect:\n")
 
         self.ws_read_loop_future = asyncio.ensure_future(self._ws_read_loop())

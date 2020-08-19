@@ -1,5 +1,7 @@
+import asyncio
 import json
 import sqlite3
+from concurrent.futures.thread import ThreadPoolExecutor
 
 from modbus_gui_app.error_logging.error_logger import init_logger
 
@@ -12,10 +14,22 @@ class Backend:
 
     def __init__(self):
         self._conn = sqlite3.connect('req_and_resp.db', check_same_thread=False)
-        self._db_init()
+        self.backend_executor = ThreadPoolExecutor(max_workers=1)
 
-    def _db_init(self):
-        self._conn.execute('''CREATE TABLE IF NOT EXISTS REQ_AND_RESP(
+    def _ext_conn_execute(self, request):
+        self._conn.execute(request)
+
+    def _ext_cursor_execute(self, request):
+        cursor = self._conn.cursor()
+        cursor.execute(request)
+        return cursor.fetchall()
+
+    def _ext_conn_execute_and_commit(self, str_req, values):
+        self._conn.execute(str_req, values)
+        self._conn.commit()
+
+    async def db_init(self):
+        db_init_query = '''CREATE TABLE IF NOT EXISTS REQ_AND_RESP(
                 REQ_SENT_TIME   TIMESTAMP PRIMARY KEY   NOT NULL,
                 TID             INT     NOT NULL,
                 REQ_TYPE        TEXT    NOT NULL,
@@ -31,9 +45,11 @@ class Backend:
                 RESP_BYTE       BLOB    NOT NULL,
                 RESP_VALID      TEXT    NOT NULL,
                 RESP_ERR_MSG    TEXT    NOT NULL,
-                RESP_RET_VAL    TEXT    NOT NULL);''')
+                RESP_RET_VAL    TEXT    NOT NULL);'''
 
-    def db_read(self, current_db_index):
+        await asyncio.get_event_loop().run_in_executor(self.backend_executor, self._ext_conn_execute, db_init_query)
+
+    async def db_read(self, current_db_index):
         """This method is used to get the information stored in the database.
 
         Args:
@@ -45,15 +61,19 @@ class Backend:
 
         """
         db_data = []
-        cursor = self._conn.cursor()
+
         logger = init_logger(__name__)
 
         try:
-            cursor.execute("SELECT * FROM req_and_resp "
-                           "ORDER BY REQ_SENT_TIME DESC "
-                           "LIMIT 10 "
-                           "OFFSET " + str(current_db_index))
-            db_data.append(cursor.fetchall())
+            db_read_query = "SELECT * FROM req_and_resp " + \
+                            "ORDER BY REQ_SENT_TIME DESC " + \
+                            "LIMIT 10 " + \
+                            "OFFSET " + str(current_db_index)
+
+            cursor_data = await asyncio.get_event_loop().run_in_executor(self.backend_executor,
+                                                                         self._ext_cursor_execute,
+                                                                         db_read_query)
+            db_data.append(cursor_data)
             db_dict = self._convert_data_into_dict(db_data)
         except:
             logger.exception("DB_READ: Database Read Error:  \n")
@@ -61,7 +81,7 @@ class Backend:
 
         return db_dict
 
-    def db_write(self, dictionary):
+    async def db_write(self, dictionary):
         """Method used to store the input data into the database.
 
         Args:
@@ -106,12 +126,14 @@ class Backend:
                   "RESP_ERR_MSG, " \
                   "RESP_RET_VAL) "
         try:
-            self._conn.execute(str_ins + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                               (req_time_stamp, tid, req_type, unit_address, f_code,
-                                req_f_code_name, req_from_gui, req_validity, req_err_msg,
-                                req_byte, resp_time_stamp, resp_type, resp_byte, resp_validity,
-                                resp_err_msg, resp_return_value))
-            self._conn.commit()
+            str_ins = str_ins + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            values = [req_time_stamp, tid, req_type, unit_address, f_code,
+                      req_f_code_name, req_from_gui, req_validity, req_err_msg,
+                      req_byte, resp_time_stamp, resp_type, resp_byte, resp_validity,
+                      resp_err_msg, resp_return_value]
+            await asyncio.get_event_loop().run_in_executor(self.backend_executor, self._ext_conn_execute_and_commit,
+                                                           str_ins, values)
+            self._ext_conn_execute_and_commit(str_ins, values)
         except:
             logger.exception("DB_WRITE: Database Writing Error:  \n")
 

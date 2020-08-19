@@ -1,7 +1,7 @@
+import json
 from datetime import datetime
 
 from modbus_gui_app.database.db_write import _db_writer
-import json
 
 executed_data = []
 
