@@ -8,8 +8,6 @@ Main Page.
    communication
    state
    database
-   error logger
-
 
 
 Indices and tables

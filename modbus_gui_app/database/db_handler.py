@@ -7,7 +7,7 @@ from concurrent.futures.thread import ThreadPoolExecutor
 
 class Backend:
     """
-    This class is used to instantiate a connection to the database and provides the methods needed deal with
+    This class is used to instantiate a connection to the database and provides the methods needed to deal with
     that connection.
     """
 
@@ -28,6 +28,9 @@ class Backend:
         self._conn.commit()
 
     async def db_init(self):
+        """Initializes the database structure (rows).
+
+        """
         db_init_query = '''CREATE TABLE IF NOT EXISTS REQ_AND_RESP(
                 REQ_SENT_TIME   TIMESTAMP PRIMARY KEY   NOT NULL,
                 TID             INT     NOT NULL,
