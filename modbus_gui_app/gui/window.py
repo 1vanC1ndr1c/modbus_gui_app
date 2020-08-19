@@ -1,3 +1,4 @@
+import logging
 import sys
 
 from PySide2 import QtCore
@@ -5,7 +6,6 @@ from PySide2.QtGui import QFont, QIcon, Qt, QCloseEvent
 from PySide2.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, \
     QHBoxLayout, QSizePolicy, QFrame, QMenu, QMainWindow, QAction, QGroupBox
 
-from modbus_gui_app.error_logging.error_logger import init_logger
 from modbus_gui_app.gui import request_validation
 from modbus_gui_app.gui.current_state_window import CurrentStateWindow
 from modbus_gui_app.gui.error_window import _init_error_window
@@ -28,7 +28,7 @@ class Gui(QMainWindow):
 
     def __init__(self, state_manager):
         super().__init__()
-        self.logger = init_logger(__name__)
+        self.logger = logging.getLogger()
         self._state_manager = state_manager
         self._state_manager.response_signal.connect(self._update_response_layout)
         self._state_manager.periodic_update_signal.connect(self._update_current_state_window)
@@ -128,10 +128,6 @@ class Gui(QMainWindow):
         _init_error_window("No Connection Established.")
 
     def closeEvent(self, event: QCloseEvent):
-        try:
-            self._state_manager.database.db_close()
-        except Exception as close_exception:
-            self.logger.exception("WINDOW: Error When Closing The App: \n" + str(close_exception))
         self._state_manager.gui_request_queue.put("End.")
         event.accept()
 

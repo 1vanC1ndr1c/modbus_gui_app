@@ -1,5 +1,6 @@
 import asyncio
 import functools
+import logging
 import queue
 from concurrent.futures.thread import ThreadPoolExecutor
 from copy import deepcopy
@@ -13,7 +14,6 @@ from modbus_gui_app.communication.request_serializer import read_coils_serialize
     read_holding_registers_serialize, read_input_registers_serialize, write_single_coil_serialize, \
     write_single_register_serialize
 from modbus_gui_app.database.db_handler import Backend
-from modbus_gui_app.error_logging.error_logger import init_logger
 from modbus_gui_app.state import state_manager_live_update
 from modbus_gui_app.state.state_manager_data_structures import _init_user_action_state_dict, \
     _init_live_update_states
@@ -78,7 +78,7 @@ class StateManager(QObject):
         self._historian_db_current_index = 0
         self._historian_db_dicts = {}
         self.live_update_states = _init_live_update_states()
-        self.logger = init_logger(__name__)
+        self.logger = logging.getLogger()
 
     def get_historian_db_dicts(self):
         """A method that returns databse dictionary.
@@ -116,7 +116,7 @@ class StateManager(QObject):
         try:
             await self.modbus_connection.ws.close()
         except Exception as conn_error:
-            self.logger.exception("STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.\n" + str(conn_error))
+            self.logger.exception("STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.\n")
             self.invalid_connection_signal.emit("No Connection.")
             self.connection_info_signal.emit("No Connection.")
 
@@ -125,11 +125,14 @@ class StateManager(QObject):
     async def _gui_queue_read_loop(self):
         executor = ThreadPoolExecutor(1)
         while True:
-            gui_request_data = await asyncio.get_event_loop().run_in_executor(
-                executor, functools.partial(self._get_msg_from_gui_queue))
+            gui_request_data = await asyncio.get_event_loop().run_in_executor(executor, self._get_msg_from_gui_queue)
 
             if gui_request_data == "End.":
                 self.modbus_connection.close_connection()
+                try:
+                    self._state_manager.database.db_close()
+                except Exception as close_exception:
+                    self.logger.exception("WINDOW: Error When Closing The App: \n")
                 break
 
             elif gui_request_data == "Read DB.":

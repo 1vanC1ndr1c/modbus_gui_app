@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import re
 from datetime import datetime
 
@@ -9,7 +10,6 @@ from modbus_gui_app.communication.request_serializer import read_coils_serialize
 from modbus_gui_app.communication.request_serializer import write_single_coil_serialize, \
     write_single_register_serialize
 from modbus_gui_app.communication.response_deserializer import response_deserialize
-from modbus_gui_app.error_logging.error_logger import init_logger
 
 
 class ModbusConnection:
@@ -56,7 +56,7 @@ class ModbusConnection:
         self._pending_responses = {}
         self.session = None
         self.ws = None
-        self.logger = init_logger(__name__)
+        self.logger = logging.getLogger()
         self.ws_read_loop_future = None
 
     @property

@@ -1,9 +1,8 @@
 import asyncio
 import json
+import logging
 import sqlite3
 from concurrent.futures.thread import ThreadPoolExecutor
-
-from modbus_gui_app.error_logging.error_logger import init_logger
 
 
 class Backend:
@@ -62,7 +61,7 @@ class Backend:
         """
         db_data = []
 
-        logger = init_logger(__name__)
+        logger = logging.getLogger()
 
         try:
             db_read_query = "SELECT * FROM req_and_resp " + \
@@ -88,7 +87,7 @@ class Backend:
             dictionary(dict): The dictionary that contains the values to be stored into the database.
 
         """
-        logger = init_logger(__name__)
+        logger = logging.getLogger()
 
         req_time_stamp = dictionary["current_request_sent_time"]
         tid = dictionary["current_tid"]

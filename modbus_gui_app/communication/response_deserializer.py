@@ -1,6 +1,6 @@
+import logging
 import re
 
-from modbus_gui_app.error_logging.error_logger import init_logger
 
 
 def response_deserialize(bytes_response, communication_dictionary):
@@ -15,7 +15,7 @@ def response_deserialize(bytes_response, communication_dictionary):
         dict: A dictionary that contains the information about the deserialized response.
 
     """
-    logger = init_logger(__name__)
+    logger = logging.getLogger()
 
     response_dict = {"current_response_serialized": bytes_response, "current_response_is_valid": True}
 
@@ -33,7 +33,6 @@ def response_deserialize(bytes_response, communication_dictionary):
     start_addr = hex(start_addr)
 
     if func_code == 1:
-        return read_coils_deserialize(modbus_resp, start_addr, response_dict)
         return read_coils_deserialize(modbus_resp, start_addr, response_dict)
     elif func_code == 2:
         return read_discrete_inputs_deserialize(modbus_resp, start_addr, response_dict)
