@@ -1,8 +1,9 @@
 import re
 from datetime import datetime
 
-from modbus_gui_app.communication import response_deserializer
 from modbus_gui_app.error_logging.error_logger import init_logger
+
+from modbus_gui_app.communication import response_deserializer
 from modbus_gui_app.state.state_manager_data_structures import _init_live_update_states
 
 live_update_states_test_dict = _init_live_update_states()

@@ -48,16 +48,16 @@ def test_state_manager(monkeypatch):
     test_state_manager_obj = StateManager()
 
     assert type(test_state_manager_obj.last_ten_dicts) == dict
-    assert type(test_state_manager_obj.database) == Backend
+    assert type(test_state_manager_obj._database) == Backend
     assert type(test_state_manager_obj.gui_request_queue) == queue.Queue
     assert type(test_state_manager_obj.user_action_state) == dict
     assert type(test_state_manager_obj._historian_db_current_index) == int
     assert type(test_state_manager_obj._historian_db_dicts) == dict
-    assert type(test_state_manager_obj.live_update_states) == dict
+    assert type(test_state_manager_obj._live_update_states) == dict
 
     test_state_manager_obj.gui = MockGui()
 
-    test_state_manager_obj.database = MockDatabase()
+    test_state_manager_obj._database = MockDatabase()
     test_state_manager_obj._read_from_db()
     assert test_state_manager_obj._historian_db_dicts == "DB VALUES"
 
