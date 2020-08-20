@@ -108,9 +108,8 @@ class StateManager(QObject):
         return self._historian_db_dicts
 
     async def start_readers_and_writers(self):
-        """
 
-        Returns:
+        """ A method that initializes the database, modbus connection, and their read loops.
 
         """
         await self._database.db_init()

@@ -36,6 +36,12 @@ async def _live_update_loop(state_manager):
 
 
 def set_currently_selected_automatic_request(state_manager, source):
+    """A method that updates the states of the currently used valid user requests.
+
+    Args:
+        state_manager: An object that contains the state that needs updating
+        source: The source that triggered the update ("user" or an "automatic" update).
+    """
     current_function_code = state_manager.gui.left_side_select_operation_box.currentIndex() + 1
 
     if current_function_code == 1:
@@ -84,6 +90,13 @@ def set_currently_selected_automatic_request(state_manager, source):
 
 
 def process_live_update_response(new_dict, old_dict):
+    """Function that updated the existing dictionary with new values, if the keys of such values already exist
+            in the existing dictionary.
+
+    Args:
+        new_dict: A dictionary with new values that need to be added.
+        old_dict: An existing dictionary that will be updated.
+    """
     old_dict["current_response_received_time"] = datetime.now()
     if new_dict != "-":
         for key in new_dict:
