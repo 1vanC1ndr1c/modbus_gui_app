@@ -3,7 +3,7 @@ from datetime import datetime
 
 import pytest
 
-from modbus_gui_app.database.db_handler import Backend
+from db_handler import Backend
 
 executed_data = []
 

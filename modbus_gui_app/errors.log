@@ -1,0 +1,1599 @@
+===================================================================================================
+2020-08-07 15:57:34,219 
+ MODBUS CONNECTION: Cannot connect:
+Cannot connect to host localhost:3456 ssl:default [Connect call failed ('127.0.0.1', 3456)]
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 936, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)  # type: ignore  # noqa
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 962, in create_connection
+    raise exceptions[0]
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 949, in create_connection
+    await self.sock_connect(sock, address)
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 473, in sock_connect
+    return await fut
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 503, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 10061] Connect call failed ('127.0.0.1', 3456)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 54, in open_session
+    self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 728, in _ws_connect
+    proxy_headers=proxy_headers)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 483, in _request
+    timeout=real_timeout
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 523, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 859, in _create_connection
+    req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 1004, in _create_direct_connection
+    raise last_exc
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 986, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 943, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host localhost:3456 ssl:default [Connect call failed ('127.0.0.1', 3456)]
+===================================================================================================
+2020-08-07 15:57:34,234 
+ MODBUS CONNECTION: Automatic Refresh Request Error: 
+'NoneType' object has no attribute 'send_bytes'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 168, in ws_refresh
+    await self.ws.send_bytes(automatic_request)
+AttributeError: 'NoneType' object has no attribute 'send_bytes'
+===================================================================================================
+2020-08-07 15:57:34,234 
+ STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.
+'NoneType' object has no attribute 'close'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 74, in _start_readers_and_writers
+    await self.modbus_connection.ws.close()
+AttributeError: 'NoneType' object has no attribute 'close'
+===================================================================================================
+2020-08-07 16:09:55,409 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 133, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-07 16:10:47,981 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 135, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-10 09:14:10,784 
+ USER  RESPONSE DESERIALIZER: Error when checking for errors: 
+list index out of range
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\user_response_deserializer.py", line 186, in _check_for_response_errors
+    if hex_response_array[7].startswith('8'):
+IndexError: list index out of range
+===================================================================================================
+2020-08-10 09:14:18,157 
+ USER  RESPONSE DESERIALIZER: Error when checking for errors: 
+list index out of range
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\user_response_deserializer.py", line 186, in _check_for_response_errors
+    if hex_response_array[7].startswith('8'):
+IndexError: list index out of range
+===================================================================================================
+2020-08-10 09:14:35,106 
+ USER  RESPONSE DESERIALIZER: Error when checking for errors: 
+list index out of range
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\user_response_deserializer.py", line 187, in _check_for_response_errors
+    if hex_response_array[7].startswith('8'):
+IndexError: list index out of range
+===================================================================================================
+2020-08-10 09:15:37,803 
+ USER  RESPONSE DESERIALIZER: Error when checking for errors: 
+list index out of range
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\user_response_deserializer.py", line 187, in _check_for_response_errors
+    if hex_response_array[7].startswith('8'):
+IndexError: list index out of range
+===================================================================================================
+2020-08-10 09:17:01,659 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-10 09:28:22,851 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-10 14:46:33,725 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-10 15:15:53,580 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-10 15:17:38,921 
+ MODBUS CONNECTION: Cannot connect:
+Cannot connect to host localhost:3456 ssl:default [Connect call failed ('127.0.0.1', 3456)]
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 936, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)  # type: ignore  # noqa
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 962, in create_connection
+    raise exceptions[0]
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 949, in create_connection
+    await self.sock_connect(sock, address)
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 473, in sock_connect
+    return await fut
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 503, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 10061] Connect call failed ('127.0.0.1', 3456)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 53, in open_session
+    self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 728, in _ws_connect
+    proxy_headers=proxy_headers)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 483, in _request
+    timeout=real_timeout
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 523, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 859, in _create_connection
+    req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 1004, in _create_direct_connection
+    raise last_exc
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 986, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 943, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host localhost:3456 ssl:default [Connect call failed ('127.0.0.1', 3456)]
+===================================================================================================
+2020-08-10 15:17:38,928 
+ MODBUS CONNECTION: Automatic Refresh Request Error: 
+'NoneType' object has no attribute 'send_bytes'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 166, in ws_refresh
+    await self.ws.send_bytes(automatic_request)
+AttributeError: 'NoneType' object has no attribute 'send_bytes'
+===================================================================================================
+2020-08-10 15:17:38,929 
+ STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.
+'NoneType' object has no attribute 'close'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 72, in _start_readers_and_writers
+    await self.modbus_connection.ws.close()
+AttributeError: 'NoneType' object has no attribute 'close'
+===================================================================================================
+2020-08-11 09:54:59,299 
+ MODBUS CONNECTION: Cannot connect:
+Cannot connect to host localhost:3456 ssl:default [Connect call failed ('127.0.0.1', 3456)]
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 936, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)  # type: ignore  # noqa
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 962, in create_connection
+    raise exceptions[0]
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 949, in create_connection
+    await self.sock_connect(sock, address)
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 473, in sock_connect
+    return await fut
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 503, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 10061] Connect call failed ('127.0.0.1', 3456)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 82, in open_session
+    self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 728, in _ws_connect
+    proxy_headers=proxy_headers)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 483, in _request
+    timeout=real_timeout
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 523, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 859, in _create_connection
+    req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 1004, in _create_direct_connection
+    raise last_exc
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 986, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 943, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host localhost:3456 ssl:default [Connect call failed ('127.0.0.1', 3456)]
+===================================================================================================
+2020-08-11 09:54:59,308 
+ MODBUS CONNECTION: Automatic Refresh Request Error: 
+'NoneType' object has no attribute 'send_bytes'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 205, in ws_refresh
+    await self.ws.send_bytes(automatic_request)
+AttributeError: 'NoneType' object has no attribute 'send_bytes'
+===================================================================================================
+2020-08-11 09:54:59,310 
+ STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.
+'NoneType' object has no attribute 'close'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 72, in _start_readers_and_writers
+    await self.modbus_connection.ws.close()
+AttributeError: 'NoneType' object has no attribute 'close'
+===================================================================================================
+2020-08-18 09:12:21,121 
+ MODBUS CONNECTION: Cannot connect:
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 936, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)  # type: ignore  # noqa
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 962, in create_connection
+    raise exceptions[0]
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 949, in create_connection
+    await self.sock_connect(sock, address)
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 473, in sock_connect
+    return await fut
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 503, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 10061] Connect call failed ('127.0.0.1', 3456)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 97, in open_session
+    self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 728, in _ws_connect
+    proxy_headers=proxy_headers)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 483, in _request
+    timeout=real_timeout
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 523, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 859, in _create_connection
+    req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 1004, in _create_direct_connection
+    raise last_exc
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 986, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 943, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host localhost:3456 ssl:default [Connect call failed ('127.0.0.1', 3456)]
+===================================================================================================
+2020-08-18 09:12:25,991 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 09:12:26,038 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000012C49B40788>
+===================================================================================================
+2020-08-18 09:12:35,977 
+ MODBUS CONNECTION: Cannot connect:
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 936, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)  # type: ignore  # noqa
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 962, in create_connection
+    raise exceptions[0]
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 949, in create_connection
+    await self.sock_connect(sock, address)
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 473, in sock_connect
+    return await fut
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 503, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 10061] Connect call failed ('127.0.0.1', 3456)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 97, in open_session
+    self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 728, in _ws_connect
+    proxy_headers=proxy_headers)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 483, in _request
+    timeout=real_timeout
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 523, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 859, in _create_connection
+    req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 1004, in _create_direct_connection
+    raise last_exc
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 986, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 943, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host localhost:3456 ssl:default [Connect call failed ('127.0.0.1', 3456)]
+===================================================================================================
+2020-08-18 09:12:35,988 
+ MODBUS CONNECTION: Automatic Refresh Request Error: 
+'NoneType' object has no attribute 'send_bytes'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 315, in ws_refresh
+    await self.ws.send_bytes(automatic_request)
+AttributeError: 'NoneType' object has no attribute 'send_bytes'
+===================================================================================================
+2020-08-18 09:12:35,990 
+ STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.
+'NoneType' object has no attribute 'close'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 118, in _start_readers_and_writers
+    await self.modbus_connection.ws.close()
+AttributeError: 'NoneType' object has no attribute 'close'
+===================================================================================================
+2020-08-18 09:13:05,824 
+ MODBUS CONNECTION: Cannot connect:
+Cannot connect to host localhost:3456 ssl:default [Connect call failed ('127.0.0.1', 3456)]
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 936, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)  # type: ignore  # noqa
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 962, in create_connection
+    raise exceptions[0]
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 949, in create_connection
+    await self.sock_connect(sock, address)
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 473, in sock_connect
+    return await fut
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 503, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 10061] Connect call failed ('127.0.0.1', 3456)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 97, in open_session
+    self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 728, in _ws_connect
+    proxy_headers=proxy_headers)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 483, in _request
+    timeout=real_timeout
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 523, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 859, in _create_connection
+    req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 1004, in _create_direct_connection
+    raise last_exc
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 986, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 943, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host localhost:3456 ssl:default [Connect call failed ('127.0.0.1', 3456)]
+===================================================================================================
+2020-08-18 09:13:05,836 
+ MODBUS CONNECTION: Automatic Refresh Request Error: 
+'NoneType' object has no attribute 'send_bytes'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 315, in ws_refresh
+    await self.ws.send_bytes(automatic_request)
+AttributeError: 'NoneType' object has no attribute 'send_bytes'
+===================================================================================================
+2020-08-18 09:13:05,840 
+ STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.
+'NoneType' object has no attribute 'close'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 118, in _start_readers_and_writers
+    await self.modbus_connection.ws.close()
+AttributeError: 'NoneType' object has no attribute 'close'
+===================================================================================================
+2020-08-18 09:13:39,305 
+ MODBUS CONNECTION: Cannot connect:
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 936, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)  # type: ignore  # noqa
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 962, in create_connection
+    raise exceptions[0]
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 949, in create_connection
+    await self.sock_connect(sock, address)
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 473, in sock_connect
+    return await fut
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 503, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 10061] Connect call failed ('127.0.0.1', 3456)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 97, in open_session
+    self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 728, in _ws_connect
+    proxy_headers=proxy_headers)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 483, in _request
+    timeout=real_timeout
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 523, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 859, in _create_connection
+    req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 1004, in _create_direct_connection
+    raise last_exc
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 986, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 943, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host localhost:3456 ssl:default [Connect call failed ('127.0.0.1', 3456)]
+===================================================================================================
+2020-08-18 09:13:39,317 
+ MODBUS CONNECTION: Automatic Refresh Request Error: 
+'NoneType' object has no attribute 'send_bytes'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 315, in ws_refresh
+    await self.ws.send_bytes(automatic_request)
+AttributeError: 'NoneType' object has no attribute 'send_bytes'
+===================================================================================================
+2020-08-18 09:13:39,321 
+ STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.
+'NoneType' object has no attribute 'close'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 118, in _start_readers_and_writers
+    await self.modbus_connection.ws.close()
+AttributeError: 'NoneType' object has no attribute 'close'
+===================================================================================================
+2020-08-18 10:52:44,506 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 10:53:08,762 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 10:55:29,672 
+ STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.
+'NoneType' object has no attribute 'close'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 126, in _start_readers_and_writers
+    await self.modbus_connection.ws.close()
+AttributeError: 'NoneType' object has no attribute 'close'
+===================================================================================================
+2020-08-18 10:55:31,824 
+ MODBUS CONNECTION: Cannot connect:
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 97, in open_session
+    self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 728, in _ws_connect
+    proxy_headers=proxy_headers)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 483, in _request
+    timeout=real_timeout
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 526, in connect
+    raise ClientConnectionError("Connector is closed.")
+aiohttp.client_exceptions.ClientConnectionError: Connector is closed.
+===================================================================================================
+2020-08-18 10:55:32,363 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 10:56:04,561 
+ MODBUS CONNECTION: Automatic Refresh Request Error: 
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 267, in ws_refresh
+    await self.ws.send_bytes(automatic_request)
+AttributeError: 'NoneType' object has no attribute 'send_bytes'
+===================================================================================================
+2020-08-18 10:56:21,308 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 10:56:35,236 
+ MODBUS CONNECTION: Automatic Refresh Request Error: 
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 268, in ws_refresh
+    await self.ws.send_bytes(automatic_request)
+AttributeError: 'NoneType' object has no attribute 'send_bytes'
+===================================================================================================
+2020-08-18 10:56:38,301 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 10:56:38,302 
+ STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.
+Task <Task pending coro=<StateManager._start_readers_and_writers() running at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py:126> cb=[_run_until_complete_cb() at C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py:157]> got Future <Future pending> attached to a different loop
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 126, in _start_readers_and_writers
+    await self.modbus_connection.ws.close()
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client_ws.py", line 167, in close
+    await self._waiting
+RuntimeError: Task <Task pending coro=<StateManager._start_readers_and_writers() running at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py:126> cb=[_run_until_complete_cb() at C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py:157]> got Future <Future pending> attached to a different loop
+===================================================================================================
+2020-08-18 10:57:06,415 
+ MODBUS CONNECTION: Automatic Refresh Request Error: 
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 268, in ws_refresh
+    await self.ws.send_bytes(automatic_request)
+AttributeError: 'NoneType' object has no attribute 'send_bytes'
+===================================================================================================
+2020-08-18 10:57:10,836 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 10:57:10,838 
+ STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.
+Task <Task pending coro=<StateManager._start_readers_and_writers() running at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py:126> cb=[_run_until_complete_cb() at C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py:157]> got Future <Future pending> attached to a different loop
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 126, in _start_readers_and_writers
+    await self.modbus_connection.ws.close()
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client_ws.py", line 167, in close
+    await self._waiting
+RuntimeError: Task <Task pending coro=<StateManager._start_readers_and_writers() running at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py:126> cb=[_run_until_complete_cb() at C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py:157]> got Future <Future pending> attached to a different loop
+===================================================================================================
+2020-08-18 12:16:16,594 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:16:38,522 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:17:32,266 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:17:46,274 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:19:19,140 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:19:52,585 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:22:54,793 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:23:14,465 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:25:20,238 
+ MODBUS CONNECTION: Automatic Refresh Request Error: 
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 267, in ws_refresh
+    await self.ws.send_bytes(automatic_request)
+AttributeError: 'NoneType' object has no attribute 'send_bytes'
+===================================================================================================
+2020-08-18 12:25:31,547 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:25:31,548 
+ STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.
+Task <Task pending coro=<StateManager._start_readers_and_writers() running at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py:128> cb=[_run_until_complete_cb() at C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py:157]> got Future <Future pending> attached to a different loop
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 128, in _start_readers_and_writers
+    await self.modbus_connection.ws.close()
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client_ws.py", line 167, in close
+    await self._waiting
+RuntimeError: Task <Task pending coro=<StateManager._start_readers_and_writers() running at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py:128> cb=[_run_until_complete_cb() at C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py:157]> got Future <Future pending> attached to a different loop
+===================================================================================================
+2020-08-18 12:25:45,420 
+ MODBUS CONNECTION: Automatic Refresh Request Error: 
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 269, in ws_refresh
+    await self.ws.send_bytes(automatic_request)
+AttributeError: 'NoneType' object has no attribute 'send_bytes'
+===================================================================================================
+2020-08-18 12:25:49,555 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:25:49,556 
+ STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.
+Task <Task pending coro=<StateManager._start_readers_and_writers() running at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py:128> cb=[_run_until_complete_cb() at C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py:157]> got Future <Future pending> attached to a different loop
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 128, in _start_readers_and_writers
+    await self.modbus_connection.ws.close()
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client_ws.py", line 167, in close
+    await self._waiting
+RuntimeError: Task <Task pending coro=<StateManager._start_readers_and_writers() running at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py:128> cb=[_run_until_complete_cb() at C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py:157]> got Future <Future pending> attached to a different loop
+===================================================================================================
+2020-08-18 12:26:23,023 
+ MODBUS CONNECTION: Automatic Refresh Request Error: 
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 269, in ws_refresh
+    await self.ws.send_bytes(automatic_request)
+AttributeError: 'NoneType' object has no attribute 'send_bytes'
+===================================================================================================
+2020-08-18 12:26:29,725 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:26:29,726 
+ STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.
+Task <Task pending coro=<StateManager._start_readers_and_writers() running at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py:128> cb=[_run_until_complete_cb() at C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py:157]> got Future <Future pending> attached to a different loop
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 128, in _start_readers_and_writers
+    await self.modbus_connection.ws.close()
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client_ws.py", line 167, in close
+    await self._waiting
+RuntimeError: Task <Task pending coro=<StateManager._start_readers_and_writers() running at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py:128> cb=[_run_until_complete_cb() at C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py:157]> got Future <Future pending> attached to a different loop
+===================================================================================================
+2020-08-18 12:27:29,000 
+ MODBUS CONNECTION: Automatic Refresh Request Error: 
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 268, in ws_refresh
+    await self.ws.send_bytes(automatic_request)
+AttributeError: 'NoneType' object has no attribute 'send_bytes'
+===================================================================================================
+2020-08-18 12:27:33,243 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:27:33,244 
+ STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.
+Task <Task pending coro=<StateManager._start_readers_and_writers() running at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py:128> cb=[_run_until_complete_cb() at C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py:157]> got Future <Future pending> attached to a different loop
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 128, in _start_readers_and_writers
+    await self.modbus_connection.ws.close()
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client_ws.py", line 167, in close
+    await self._waiting
+RuntimeError: Task <Task pending coro=<StateManager._start_readers_and_writers() running at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py:128> cb=[_run_until_complete_cb() at C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py:157]> got Future <Future pending> attached to a different loop
+===================================================================================================
+2020-08-18 12:27:34,784 
+ Unclosed connection
+client_connection: Connection<ConnectionKey(host='localhost', port=3456, is_ssl=False, ssl=None, proxy=None, proxy_auth=None, proxy_headers_hash=None)>
+===================================================================================================
+2020-08-18 12:27:34,787 
+ Task was destroyed but it is pending!
+task: <Task pending coro=<ModbusConnection._ws_read_loop() done, defined at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py:235> wait_for=<Future finished result=None>>
+===================================================================================================
+2020-08-18 12:30:12,707 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:30:12,755 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001B0A7B6B6C8>
+===================================================================================================
+2020-08-18 12:31:11,739 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:31:11,790 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000023EA70EAEC8>
+===================================================================================================
+2020-08-18 12:32:07,146 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:33:08,960 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:33:40,014 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:34:06,287 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:34:26,098 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:34:44,816 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:34:58,048 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:35:10,807 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:36:01,560 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:44:29,194 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:44:29,240 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A9DF21FF88>
+===================================================================================================
+2020-08-18 12:44:50,634 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:44:50,680 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002414C92FD48>
+===================================================================================================
+2020-08-18 12:45:35,466 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:45:35,522 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x00000195EBF60588>
+===================================================================================================
+2020-08-18 12:47:10,194 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:47:10,238 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000027E5C572448>
+===================================================================================================
+2020-08-18 12:47:56,267 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:47:56,324 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001F5FBA0FE88>
+===================================================================================================
+2020-08-18 12:49:35,456 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:49:59,328 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:50:11,199 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:51:25,818 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:51:25,886 
+ Unclosed connection
+client_connection: Connection<ConnectionKey(host='localhost', port=3456, is_ssl=False, ssl=None, proxy=None, proxy_auth=None, proxy_headers_hash=None)>
+===================================================================================================
+2020-08-18 12:51:25,887 
+ Task was destroyed but it is pending!
+task: <Task pending coro=<ModbusConnection._ws_read_loop() done, defined at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py:241> wait_for=<Future pending cb=[Task.__wakeup()]>>
+===================================================================================================
+2020-08-18 12:51:25,887 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x00000120FD736C88>
+===================================================================================================
+2020-08-18 12:51:49,978 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:55:12,810 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:55:12,868 
+ Unclosed connection
+client_connection: Connection<ConnectionKey(host='localhost', port=3456, is_ssl=False, ssl=None, proxy=None, proxy_auth=None, proxy_headers_hash=None)>
+===================================================================================================
+2020-08-18 12:55:12,869 
+ Task was destroyed but it is pending!
+task: <Task pending coro=<ModbusConnection._ws_read_loop() done, defined at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py:242> wait_for=<Future pending cb=[Task.__wakeup()]>>
+===================================================================================================
+2020-08-18 12:55:12,869 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000029F408EE288>
+===================================================================================================
+2020-08-18 12:55:34,018 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:55:34,069 
+ Unclosed connection
+client_connection: Connection<ConnectionKey(host='localhost', port=3456, is_ssl=False, ssl=None, proxy=None, proxy_auth=None, proxy_headers_hash=None)>
+===================================================================================================
+2020-08-18 12:55:34,070 
+ Task was destroyed but it is pending!
+task: <Task pending coro=<ModbusConnection._ws_read_loop() done, defined at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py:242> wait_for=<Future pending cb=[Task.__wakeup()]>>
+===================================================================================================
+2020-08-18 12:55:34,070 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001DA4DFB9E08>
+===================================================================================================
+2020-08-18 12:57:28,027 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:57:28,075 
+ Unclosed connection
+client_connection: Connection<ConnectionKey(host='localhost', port=3456, is_ssl=False, ssl=None, proxy=None, proxy_auth=None, proxy_headers_hash=None)>
+===================================================================================================
+2020-08-18 12:57:28,078 
+ Task was destroyed but it is pending!
+task: <Task pending coro=<ModbusConnection._ws_read_loop() done, defined at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py:242> wait_for=<Future pending cb=[Task.__wakeup()]>>
+===================================================================================================
+2020-08-18 12:57:28,078 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000023D20DCF788>
+===================================================================================================
+2020-08-18 12:58:32,699 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 12:58:32,747 
+ Unclosed connection
+client_connection: Connection<ConnectionKey(host='localhost', port=3456, is_ssl=False, ssl=None, proxy=None, proxy_auth=None, proxy_headers_hash=None)>
+===================================================================================================
+2020-08-18 12:58:32,748 
+ Task was destroyed but it is pending!
+task: <Task pending coro=<ModbusConnection._ws_read_loop() done, defined at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py:240> wait_for=<Future pending cb=[Task.__wakeup()]>>
+===================================================================================================
+2020-08-18 12:58:32,748 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002671BB4E508>
+===================================================================================================
+2020-08-18 13:00:27,546 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 13:00:27,596 
+ Unclosed connection
+client_connection: Connection<ConnectionKey(host='localhost', port=3456, is_ssl=False, ssl=None, proxy=None, proxy_auth=None, proxy_headers_hash=None)>
+===================================================================================================
+2020-08-18 13:00:27,597 
+ Task was destroyed but it is pending!
+task: <Task pending coro=<ModbusConnection._ws_read_loop() done, defined at C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py:239> wait_for=<Future pending cb=[Task.__wakeup()]>>
+===================================================================================================
+2020-08-18 13:00:27,597 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000014312CDF208>
+===================================================================================================
+2020-08-18 13:00:46,724 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 13:00:46,776 
+ Unclosed connection
+client_connection: Connection<ConnectionKey(host='localhost', port=3456, is_ssl=False, ssl=None, proxy=None, proxy_auth=None, proxy_headers_hash=None)>
+===================================================================================================
+2020-08-18 13:00:46,778 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000020F66859C08>
+===================================================================================================
+2020-08-18 13:01:08,499 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 13:02:17,099 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 13:02:17,147 
+ Unclosed connection
+client_connection: Connection<ConnectionKey(host='localhost', port=3456, is_ssl=False, ssl=None, proxy=None, proxy_auth=None, proxy_headers_hash=None)>
+===================================================================================================
+2020-08-18 13:02:17,149 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000029795F29D48>
+===================================================================================================
+2020-08-18 13:02:41,419 
+ WINDOW: Error When Closing The App: 
+'NoneType' object has no attribute 'cancel'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.ws_read_loop_future.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+===================================================================================================
+2020-08-18 13:02:41,466 
+ Unclosed connection
+client_connection: Connection<ConnectionKey(host='localhost', port=3456, is_ssl=False, ssl=None, proxy=None, proxy_auth=None, proxy_headers_hash=None)>
+===================================================================================================
+2020-08-18 13:02:41,467 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001B403CD1508>
+===================================================================================================
+2020-08-19 10:25:04,143 
+ DB_READ: Database Read Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 73, in db_read
+    db_data.append(self._cursor.fetchall())
+sqlite3.ProgrammingError: Recursive use of cursors not allowed.
+===================================================================================================
+2020-08-19 10:25:04,750 
+ DB_READ: Database Read Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 73, in db_read
+    db_data.append(self._cursor.fetchall())
+sqlite3.ProgrammingError: Recursive use of cursors not allowed.
+===================================================================================================
+2020-08-19 10:27:17,473 
+ DB_READ: Database Read Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 81, in db_read
+    db_dict = self._convert_data_into_dict(db_data)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 152, in _convert_data_into_dict
+    request_time_stamp = single_dict_db[0]
+TypeError: '_asyncio.Future' object is not subscriptable
+===================================================================================================
+2020-08-19 10:27:59,635 
+ DB_READ: Database Read Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 83, in db_read
+    db_dict = self._convert_data_into_dict(db_data)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 154, in _convert_data_into_dict
+    request_time_stamp = single_dict_db[0]
+TypeError: '_asyncio.Future' object is not subscriptable
+===================================================================================================
+2020-08-19 10:35:31,575 
+ WINDOW: Error When Closing The App: 
+'coroutine' object has no attribute 'db_close'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\gui\window.py", line 132, in closeEvent
+    self._state_manager.database.db_close()
+AttributeError: 'coroutine' object has no attribute 'db_close'
+===================================================================================================
+2020-08-19 10:55:03,286 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x00000220FB0DF308>
+===================================================================================================
+2020-08-19 10:58:04,641 
+ Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000028EDE3B1348>
+===================================================================================================
+2020-08-19 10:58:34,325 
+ MODBUS CONNECTION: Cannot connect:
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 936, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)  # type: ignore  # noqa
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 962, in create_connection
+    raise exceptions[0]
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 949, in create_connection
+    await self.sock_connect(sock, address)
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 473, in sock_connect
+    return await fut
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 503, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 10061] Connect call failed ('127.0.0.1', 3456)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 82, in open_session
+    self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 728, in _ws_connect
+    proxy_headers=proxy_headers)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 483, in _request
+    timeout=real_timeout
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 523, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 859, in _create_connection
+    req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 1004, in _create_direct_connection
+    raise last_exc
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 986, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 943, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host localhost:3456 ssl:default [Connect call failed ('127.0.0.1', 3456)]
+===================================================================================================
+2020-08-19 10:58:34,335 
+ MODBUS_CONNECTION: Read Coils Request Error:
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 210, in _ws_send_request
+    await self.ws.send_bytes(request_serialized)
+AttributeError: 'NoneType' object has no attribute 'send_bytes'
+===================================================================================================
+2020-08-19 10:58:34,339 
+ STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.
+'NoneType' object has no attribute 'close'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 117, in _start_readers_and_writers
+    await self.modbus_connection.ws.close()
+AttributeError: 'NoneType' object has no attribute 'close'
+===================================================================================================
+2020-08-19 10:59:59,864 
+ MODBUS CONNECTION: Cannot connect:
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 936, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)  # type: ignore  # noqa
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 962, in create_connection
+    raise exceptions[0]
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 949, in create_connection
+    await self.sock_connect(sock, address)
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 473, in sock_connect
+    return await fut
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 503, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 10061] Connect call failed ('127.0.0.1', 3456)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 82, in open_session
+    self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 728, in _ws_connect
+    proxy_headers=proxy_headers)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 483, in _request
+    timeout=real_timeout
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 523, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 859, in _create_connection
+    req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 1004, in _create_direct_connection
+    raise last_exc
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 986, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 943, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host localhost:3456 ssl:default [Connect call failed ('127.0.0.1', 3456)]
+===================================================================================================
+2020-08-19 10:59:59,875 
+ MODBUS_CONNECTION: Read Coils Request Error:
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 210, in _ws_send_request
+    await self.ws.send_bytes(request_serialized)
+AttributeError: 'NoneType' object has no attribute 'send_bytes'
+===================================================================================================
+2020-08-19 10:59:59,878 
+ STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.
+'NoneType' object has no attribute 'close'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 118, in _start_readers_and_writers
+    await self.modbus_connection.ws.close()
+AttributeError: 'NoneType' object has no attribute 'close'
+===================================================================================================
+2020-08-19 11:10:13,243 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 136, in db_write
+    self.ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 29, in ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 11:11:25,131 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 137, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 29, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 11:24:19,514 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 136, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 28, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 11:24:24,463 
+ WINDOW: Error When Closing The App: 
+'StateManager' object has no attribute '_state_manager'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 134, in _gui_queue_read_loop
+    self._state_manager.database.db_close()
+AttributeError: 'StateManager' object has no attribute '_state_manager'
+===================================================================================================
+2020-08-19 11:26:39,795 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 136, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 28, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 11:26:43,250 
+ WINDOW: Error When Closing The App: 
+'StateManager' object has no attribute '_state_manager'
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 133, in _gui_queue_read_loop
+    self._state_manager.database.db_close()
+AttributeError: 'StateManager' object has no attribute '_state_manager'
+===================================================================================================
+2020-08-19 13:15:39,087 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 13:15:40,861 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 13:15:42,997 
+ WINDOW: Error When Closing The App: 
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 133, in _gui_queue_read_loop
+    self._state_manager.database.db_close()
+AttributeError: 'StateManager' object has no attribute '_state_manager'
+===================================================================================================
+2020-08-19 13:15:51,693 
+ MODBUS CONNECTION: Cannot connect:
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 936, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)  # type: ignore  # noqa
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 962, in create_connection
+    raise exceptions[0]
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\base_events.py", line 949, in create_connection
+    await self.sock_connect(sock, address)
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 473, in sock_connect
+    return await fut
+  File "C:\Users\ivan.cindric\AppData\Local\Programs\Python\Python37\lib\asyncio\selector_events.py", line 503, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 10061] Connect call failed ('127.0.0.1', 3456)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 82, in open_session
+    self.ws = await self.session.ws_connect('ws://localhost:3456/ws')
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 728, in _ws_connect
+    proxy_headers=proxy_headers)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\client.py", line 483, in _request
+    timeout=real_timeout
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 523, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 859, in _create_connection
+    req, traces, timeout)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 1004, in _create_direct_connection
+    raise last_exc
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 986, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\venv\lib\site-packages\aiohttp\connector.py", line 943, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host localhost:3456 ssl:default [Connect call failed ('127.0.0.1', 3456)]
+===================================================================================================
+2020-08-19 13:15:51,696 
+ MODBUS_CONNECTION: Read Coils Request Error:
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\communication\modbus_connection.py", line 210, in _ws_send_request
+    await self.ws.send_bytes(request_serialized)
+AttributeError: 'NoneType' object has no attribute 'send_bytes'
+===================================================================================================
+2020-08-19 13:15:51,697 
+ STATE MANAGER FUNCTIONS: Error When Connecting, No Connection.
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 117, in _start_readers_and_writers
+    await self.modbus_connection.ws.close()
+AttributeError: 'NoneType' object has no attribute 'close'
+===================================================================================================
+2020-08-19 13:23:32,312 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 13:23:38,773 
+ WINDOW: Error When Closing The App: 
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\state\state_manager.py", line 137, in _gui_queue_read_loop
+    self._state_manager.database.db_close()
+AttributeError: 'StateManager' object has no attribute '_state_manager'
+===================================================================================================
+2020-08-19 13:28:58,513 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 13:31:58,489 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 13:32:06,785 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 13:32:18,161 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 13:32:26,943 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 13:32:31,305 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 13:33:19,441 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 13:33:23,019 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 13:46:48,614 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 13:47:03,277 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 13:47:08,797 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 13:47:11,887 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 13:47:18,391 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 13:47:21,862 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 14:14:12,672 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 14:14:37,351 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 14:14:48,063 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 14:14:55,456 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 135, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 15:50:14,953 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 15:57:45,106 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-19 15:57:50,906 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-20 15:24:01,269 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 09:29:04,513 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\database\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 10:56:21,181 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME

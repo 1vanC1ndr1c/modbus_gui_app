@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from modbus_gui_app.database.db_handler import Backend
+from modbus_gui_app.db_handler import Backend
 
 
 class MockDBConnection:

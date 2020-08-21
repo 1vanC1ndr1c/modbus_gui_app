@@ -11,7 +11,7 @@ from modbus_gui_app.communication.modbus_connection import ModbusConnection
 from modbus_gui_app.communication.request_serializer import read_coils_serialize, read_discrete_inputs_serialize, \
     read_holding_registers_serialize, read_input_registers_serialize, write_single_coil_serialize, \
     write_single_register_serialize
-from modbus_gui_app.database.db_handler import Backend
+from modbus_gui_app.db_handler import Backend
 from modbus_gui_app.state import live_update
 from modbus_gui_app.state.data_structures import _init_user_action_state_dict, \
     _init_live_update_states

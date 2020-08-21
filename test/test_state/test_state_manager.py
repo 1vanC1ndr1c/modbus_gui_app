@@ -3,7 +3,7 @@ from copy import deepcopy
 
 import pytest
 
-from modbus_gui_app.database.db_handler import Backend
+from modbus_gui_app.db_handler import Backend
 from modbus_gui_app.state import live_update
 from modbus_gui_app.state.state_manager import StateManager
 

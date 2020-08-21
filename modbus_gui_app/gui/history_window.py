@@ -76,43 +76,24 @@ class HistoryWindow:
     def _set_history_data(self, history_dict):
         for dct in history_dict:
             current_dict = history_dict[dct]
-            req_time_stamp = QStandardItem(str(current_dict["current_request_sent_time"]))
-            req_time_stamp.setSelectable(False)
-            tid_req = QStandardItem(str(current_dict["current_tid"]))
-            tid_req.setSelectable(False)
-            req_type = QStandardItem("Request.")
-            req_type.setSelectable(False)
-            req_validity = QStandardItem(str(current_dict["current_request_from_gui_is_valid"]))
-            req_validity.setSelectable(False)
-            req_f_code_name = QStandardItem(str(current_dict["current_request_name"]))
-            req_f_code_name.setSelectable(False)
-            req_err_msg = QStandardItem(str(current_dict["current_request_from_gui_error_msg"]))
-            req_err_msg.setSelectable(False)
-            req_unit_address = QStandardItem(str(current_dict["current_unit_address"]))
-            req_unit_address.setSelectable(False)
-            req_f_code = QStandardItem(str(current_dict["current_function_code"]))
-            req_f_code.setSelectable(False)
+            req_time_stamp = CustomQtStandardItem(current_dict["current_request_sent_time"])
+            tid_req = CustomQtStandardItem(current_dict["current_tid"])
+            req_type = CustomQtStandardItem("Request.")
+            req_validity = CustomQtStandardItem(str(current_dict["current_request_from_gui_is_valid"]))
+            req_f_code_name = CustomQtStandardItem(str(current_dict["current_request_name"]))
+            req_err_msg = CustomQtStandardItem(str(current_dict["current_request_from_gui_error_msg"]))
+            req_unit_address = CustomQtStandardItem(current_dict["current_unit_address"])
+            req_f_code = CustomQtStandardItem(current_dict["current_function_code"])
             req_byte = _split_bytes_into_rows(current_dict["current_request_serialized"])
-            req_byte.setSelectable(False)
-
-            resp_time_stamp = QStandardItem(str(current_dict["current_response_received_time"]))
-            resp_time_stamp.setSelectable(False)
-            tid_resp = QStandardItem(str(current_dict["current_tid"]))
-            tid_resp.setSelectable(False)
-            resp_type = QStandardItem("Response.")
-            resp_type.setSelectable(False)
-            resp_validity = QStandardItem(str(current_dict["current_response_is_valid"]))
-            resp_validity.setSelectable(False)
-            resp_f_code_name = QStandardItem(str(current_dict["current_request_name"]))
-            resp_f_code_name.setSelectable(False)
-            resp_err_msg = QStandardItem(str(current_dict["current_response_err_msg"]))
-            resp_err_msg.setSelectable(False)
-            resp_unit_address = QStandardItem(str(current_dict["current_unit_address"]))
-            resp_unit_address.setSelectable(False)
-            resp_f_code = QStandardItem(str(current_dict["current_function_code"]))
-            resp_f_code.setSelectable(False)
+            resp_time_stamp = CustomQtStandardItem(current_dict["current_response_received_time"])
+            tid_resp = CustomQtStandardItem(current_dict["current_tid"])
+            resp_type = CustomQtStandardItem("Response.")
+            resp_validity = CustomQtStandardItem(str(current_dict["current_response_is_valid"]))
+            resp_f_code_name = CustomQtStandardItem(str(current_dict["current_request_name"]))
+            resp_err_msg = CustomQtStandardItem(str(current_dict["current_response_err_msg"]))
+            resp_unit_address = CustomQtStandardItem(current_dict["current_unit_address"])
+            resp_f_code = CustomQtStandardItem(current_dict["current_function_code"])
             resp_byte = _split_bytes_into_rows(current_dict["current_response_serialized"])
-            resp_byte.setSelectable(False)
 
             req_data_list = [req_time_stamp, tid_req, req_type, req_f_code_name, req_validity, req_err_msg,
                              req_unit_address, req_f_code, req_byte]
@@ -147,4 +128,14 @@ def _split_bytes_into_rows(data):
             if b_slash_count == 3:
                 b_slash_count = 0
                 new_data = new_data + '\n'
-    return QStandardItem(new_data)
+    data = QStandardItem()
+    data.setData(new_data, Qt.EditRole)
+    data.setSelectable(False)
+    return data
+
+
+class CustomQtStandardItem(QStandardItem):
+    def __init__(self, var):
+        super().__init__()
+        self.setSelectable(False)
+        self.setData(var, Qt.EditRole)
