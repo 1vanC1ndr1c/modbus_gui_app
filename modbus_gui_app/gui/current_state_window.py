@@ -122,7 +122,7 @@ class CurrentStateWindow:
             self._coils_table_rows.appendRow([error])
             return
         current_coils_dict = self._state_manager.live_update_states["current_read_coils"]
-        unit_address = current_coils_dict["current_unit_address"]
+        unit_address = str(current_coils_dict["current_unit_address"])
         start_address = hex(current_coils_dict["current_request_from_gui"][0])
         no_of_coils = current_coils_dict["current_request_from_gui"][1]
         active_coils = current_coils_dict["current_response_returned_values"]
@@ -163,7 +163,7 @@ class CurrentStateWindow:
             self._d_inputs_table_rows.appendRow([error])
             return
         current_discrete_inputs_dict = self._state_manager.live_update_states["current_read_discrete_inputs"]
-        unit_address = current_discrete_inputs_dict["current_unit_address"]
+        unit_address = str(current_discrete_inputs_dict["current_unit_address"])
         start_address = hex(current_discrete_inputs_dict["current_request_from_gui"][0])
         no_of_discrete_inputs = current_discrete_inputs_dict["current_request_from_gui"][1]
         active_discrete_inputs = current_discrete_inputs_dict["current_response_returned_values"]

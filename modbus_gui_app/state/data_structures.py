@@ -4,7 +4,7 @@ from datetime import datetime
 def _init_user_action_state_dict():
     current_request_and_response_dictionary = {
         "current_tid": 0,
-        "current_unit_address": "00",
+        "current_unit_address": "0",
         "current_function_code": "00",
         "current_request_name": "Unknown Request.",
         "current_request_from_gui": '-',
@@ -26,7 +26,7 @@ def _init_live_update_states():
 
     current_read_coils = {
         'current_tid': 0,
-        'current_unit_address': '01',
+        'current_unit_address': '1',
         'current_function_code': '01',
         'current_request_name': 'Read Coils.',
         'current_request_from_gui': [1, 20, 1, 1],
@@ -42,7 +42,7 @@ def _init_live_update_states():
     }
     current_read_discrete_inputs = {
         'current_tid': 0,
-        'current_unit_address': '01',
+        'current_unit_address': '1',
         'current_function_code': '02',
         'current_request_name': 'Read Discrete Inputs.',
         'current_request_from_gui': [1, 20, 1, 2],
@@ -59,7 +59,7 @@ def _init_live_update_states():
 
     current_read_holding_registers = {
         'current_tid': 0,
-        'current_unit_address': '01',
+        'current_unit_address': '1',
         'current_function_code': '03',
         'current_request_name': 'Read Holding Registers.',
         'current_request_from_gui': [1, 20, 1, 3],
@@ -79,7 +79,7 @@ def _init_live_update_states():
 
     current_read_input_registers = {
         'current_tid': 0,
-        'current_unit_address': '01',
+        'current_unit_address': '1',
         'current_function_code': '04',
         'current_request_name': 'Read Input Registers.',
         'current_request_from_gui': [1, 20, 1, 4],

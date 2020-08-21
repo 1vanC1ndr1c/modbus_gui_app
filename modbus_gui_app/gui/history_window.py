@@ -76,7 +76,7 @@ class HistoryWindow:
     def _set_history_data(self, history_dict):
         for dct in history_dict:
             current_dict = history_dict[dct]
-            req_time_stamp = CustomQtStandardItem(current_dict["current_request_sent_time"])
+            req_time_stamp = CustomQtStandardItem(str(current_dict["current_request_sent_time"]))
             tid_req = CustomQtStandardItem(current_dict["current_tid"])
             req_type = CustomQtStandardItem("Request.")
             req_validity = CustomQtStandardItem(str(current_dict["current_request_from_gui_is_valid"]))
@@ -85,7 +85,7 @@ class HistoryWindow:
             req_unit_address = CustomQtStandardItem(current_dict["current_unit_address"])
             req_f_code = CustomQtStandardItem(current_dict["current_function_code"])
             req_byte = _split_bytes_into_rows(current_dict["current_request_serialized"])
-            resp_time_stamp = CustomQtStandardItem(current_dict["current_response_received_time"])
+            resp_time_stamp = CustomQtStandardItem(str(current_dict["current_response_received_time"]))
             tid_resp = CustomQtStandardItem(current_dict["current_tid"])
             resp_type = CustomQtStandardItem("Response.")
             resp_validity = CustomQtStandardItem(str(current_dict["current_response_is_valid"]))

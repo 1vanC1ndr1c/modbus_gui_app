@@ -32,6 +32,9 @@ class ModbusConnection:
 
         logger(modbus_gui_app.error_logging.error_logger): A custom logger object that writes any exceptions raised
                                                            into a file.
+
+        ws_read_loop_future(asyncio.future): An instance of the asyncio.future saved as an attribute. Used to cancel
+                        the future by an outside actor (if such an action is needed).
     """
 
     def __init__(self):
@@ -202,14 +205,15 @@ class ModbusConnection:
         return response
 
     async def _ws_send_request(self, req_name, request_serialized, comm_dict, newest_tid):
-
         self._req_resp_dict.update(comm_dict)
         self._dicts_by_tid[newest_tid] = self._req_resp_dict
+
         try:
             self._req_resp_dict["current_request_sent_time"] = datetime.now()
             await self.ws.send_bytes(request_serialized)
         except:
             self.logger.exception("MODBUS_CONNECTION: " + req_name + " Request Error:\n")
+
         pending_response = asyncio.Future()
         self._pending_responses[newest_tid] = pending_response
         return await pending_response
@@ -225,6 +229,7 @@ class ModbusConnection:
                 bytes_response = await self.ws.receive()
             except asyncio.CancelledError:
                 return
+
             if isinstance(bytes_response.data, bytes):
                 resp_tid = int(''.join(re.findall('..', str(bytes_response.data.hex()))[:2]), 16)
                 req_dict = self._dicts_by_tid[resp_tid]

@@ -5,7 +5,7 @@ setup(
     author="Ivan Cindric",
     author_email="ivan.cindric95@example.com",
     description="ModbusGuiApplication.",
-    version="1.0",
+    version="1.1",
     packages=['modbus_gui_app',
               'modbus_gui_app.communication',
               'modbus_gui_app.gui',
@@ -25,3 +25,12 @@ setup(
     ]
 
 )
+
+"""
+pip freeze
+setup.py sdist bdist_wheel
+setup.py build_sphinx
+twine upload dist/*
+pip install -e .
+modbus_gui
+"""

@@ -1597,3 +1597,165 @@ Traceback (most recent call last):
   File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
     self._conn.execute(str_req, values)
 sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 11:10:07,401 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 11:16:49,866 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 11:39:27,958 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 13:37:20,057 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 13:37:25,858 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 13:37:58,850 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 13:38:09,208 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 13:38:14,833 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 13:39:29,834 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 13:40:42,137 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 13:40:42,474 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 13:40:42,778 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 13:45:03,120 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 13:51:00,216 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 13:51:07,336 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 13:51:10,697 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 13:51:14,040 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME
+===================================================================================================
+2020-08-21 13:51:16,679 
+ DB_WRITE: Database Writing Error:  
+Traceback (most recent call last):
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 138, in db_write
+    self._ext_conn_execute_and_commit(str_ins, values)
+  File "C:\Users\ivan.cindric\Desktop\modbusgui_ivan_cindric\modbus_gui_app\db_handler.py", line 27, in _ext_conn_execute_and_commit
+    self._conn.execute(str_req, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: REQ_AND_RESP.REQ_SENT_TIME

@@ -8,26 +8,22 @@ async def _live_update_loop(state_manager):
         state_manager.connection_info_signal.emit("Automatic Request Sent.")
         current_function_code = state_manager.gui.left_side_select_operation_box.currentIndex() + 1
 
-        req_from_gui = [1, 1, 1, 1]
+        req_from_gui = {"current_request_from_gui": [1, 1, 1, 1]}
+
         if current_function_code == 1:
             req_from_gui = state_manager.live_update_states["current_read_coils"]
-            req_from_gui = req_from_gui["current_request_from_gui"]
         elif current_function_code == 2:
             req_from_gui = state_manager.live_update_states["current_read_discrete_inputs"]
-            req_from_gui = req_from_gui["current_request_from_gui"]
         elif current_function_code == 3:
             req_from_gui = state_manager.live_update_states["current_read_holding_registers"]
-            req_from_gui = req_from_gui["current_request_from_gui"]
         elif current_function_code == 4:
             req_from_gui = state_manager.live_update_states["current_read_input_registers"]
-            req_from_gui = req_from_gui["current_request_from_gui"]
         elif current_function_code == 5:
             req_from_gui = state_manager.live_update_states["current_read_coils"]
-            req_from_gui = req_from_gui["current_request_from_gui"]
         elif current_function_code == 6:
             req_from_gui = state_manager.live_update_states["current_read_input_registers"]
-            req_from_gui = req_from_gui["current_request_from_gui"]
 
+        req_from_gui = req_from_gui["current_request_from_gui"]
         await state_manager.send_request_to_modbus([req_from_gui, "Live Update."])
 
         state_manager.periodic_update_signal.emit(False)
@@ -42,48 +38,37 @@ def set_currently_selected_automatic_request(state_manager, source):
         state_manager: An object that contains the state that needs updating
         source: The source that triggered the update ("user" or an "automatic" update).
     """
-    current_function_code = state_manager.gui.left_side_select_operation_box.currentIndex() + 1
+    f_code = str(hex(state_manager.gui.left_side_select_operation_box.currentIndex() + 1))[2:].rjust(2, '0')
+    state_manager.live_update_states["currently_selected_function"] = f_code
 
-    if current_function_code == 1:
-        current_function_code = str(hex(current_function_code))[2:].rjust(2, '0')
-        state_manager.live_update_states["currently_selected_function"] = current_function_code
+    if f_code == '01':
         req = state_manager.live_update_states["current_read_coils"]["current_request_serialized"]
         state_manager.live_update_states["current_request"] = req
         _update_current_coils_state(state_manager, source)
 
-    elif current_function_code == 2:
-        current_function_code = str(hex(current_function_code))[2:].rjust(2, '0')
-        state_manager.live_update_states["currently_selected_function"] = current_function_code
+    elif f_code == '02':
         req = state_manager.live_update_states["current_read_discrete_inputs"]["current_request_serialized"]
         state_manager.live_update_states["current_request"] = req
         _update_current_discrete_inputs_state(state_manager, source)
 
-    elif current_function_code == 3:
-        current_function_code = str(hex(current_function_code))[2:].rjust(2, '0')
-        state_manager.live_update_states["currently_selected_function"] = current_function_code
+    elif f_code == '03':
         req = state_manager.live_update_states["current_read_holding_registers"]["current_request_serialized"]
         state_manager.live_update_states["current_request"] = req
         _update_current_holding_registers_state(state_manager, source)
 
-    elif current_function_code == 4:
-        current_function_code = str(hex(current_function_code))[2:].rjust(2, '0')
-        state_manager.live_update_states["currently_selected_function"] = current_function_code
+    elif f_code == '04':
         req = state_manager.live_update_states["current_read_input_registers"]["current_request_serialized"]
         state_manager.live_update_states["current_request"] = req
         _update_current_input_registers_state(state_manager, source)
 
-    elif current_function_code == 5:
-        f_code = 1
-        f_code = str(hex(f_code))[2:].rjust(2, '0')
-        state_manager.live_update_states["currently_selected_function"] = f_code
+    elif f_code == '05':
+        state_manager.live_update_states["currently_selected_function"] = '01'
         req = state_manager.live_update_states["current_read_coils"]["current_request_serialized"]
         state_manager.live_update_states["current_request"] = req
         _update_current_coils_state(state_manager, "automatic")
 
-    elif current_function_code == 6:
-        f_code = 4
-        f_code = str(hex(f_code))[2:].rjust(2, '0')
-        state_manager.live_update_states["currently_selected_function"] = f_code
+    elif f_code == '06':
+        state_manager.live_update_states["currently_selected_function"] = '04'
         req = state_manager.live_update_states["current_read_input_registers"]["current_request_serialized"]
         state_manager.live_update_states["current_request"] = req
         _update_current_input_registers_state(state_manager, "automatic")
